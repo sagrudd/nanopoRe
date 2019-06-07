@@ -12,6 +12,7 @@
 #' @export
 setRpath <- function(path) {
   assign("r_path", path, envir=get(getEnvironment()))
+  dir.create(path, showWarnings = FALSE, recursive=TRUE)
 }
 
 
