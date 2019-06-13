@@ -13,7 +13,8 @@ LazyData: true
 RoxygenNote: 6.1.1
 Depends:
   gtools,
-  pbmcapply
+  pbmcapply,
+  digest
 Imports:
   Biostrings,
   dplyr,
