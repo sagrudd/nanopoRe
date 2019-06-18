@@ -1,3 +1,8 @@
+#' @useDynLib nanopoRe, .registration = TRUE
+#' @importFrom Rcpp sourceCpp
+NULL
+
+
 
 .onLoad <- function(libname, pkgname) {
   message(paste0("nanopoRe package - v ", packageVersion("nanopoRe")))

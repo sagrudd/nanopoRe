@@ -16,8 +16,11 @@ Depends:
   pbmcapply,
   digest
 Imports:
-  Biostrings,
-  dplyr,
-  Rsamtools,
-  GenomicAlignments,
-  ShortRead
+    Biostrings,
+    dplyr,
+    Rsamtools,
+    GenomicAlignments,
+    ShortRead,
+    Rcpp
+LinkingTo: 
+    Rcpp
