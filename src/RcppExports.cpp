@@ -86,17 +86,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// timesTwo
-NumericVector timesTwo(NumericVector x);
-RcppExport SEXP _nanopoRe_timesTwo(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(timesTwo(x));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_nanopoRe_getFastqCount", (DL_FUNC) &_nanopoRe_getFastqCount, 0},
@@ -107,7 +96,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_nanopoRe_getSequenceQualityMismatchCount", (DL_FUNC) &_nanopoRe_getSequenceQualityMismatchCount, 0},
     {"_nanopoRe_getSkippedLineCount", (DL_FUNC) &_nanopoRe_getSkippedLineCount, 0},
     {"_nanopoRe_fastqValidator", (DL_FUNC) &_nanopoRe_fastqValidator, 1},
-    {"_nanopoRe_timesTwo", (DL_FUNC) &_nanopoRe_timesTwo, 1},
     {NULL, NULL, 0}
 };
 

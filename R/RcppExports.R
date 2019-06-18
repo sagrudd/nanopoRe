@@ -65,11 +65,3 @@ fastqValidator <- function(fastq) {
     .Call(`_nanopoRe_fastqValidator`, fastq)
 }
 
-#' Multiply a number by two
-#'
-#' @param x A single integer.
-#' @export
-timesTwo <- function(x) {
-    .Call(`_nanopoRe_timesTwo`, x)
-}
-

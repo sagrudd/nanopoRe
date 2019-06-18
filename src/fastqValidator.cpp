@@ -150,7 +150,7 @@ int validate_fastq()
   char headdelim = fq.header[0];
   if (headdelim!='@')
   {
-    Rcout << "Malformed fastq entry delimitter " << headdelim << "!=@" << std::endl;
+    //Rcout << "Malformed fastq entry delimitter " << headdelim << "!=@" << std::endl;
     malformed_fastq_delim ++;
     validFastq = false;
     return(realign_fastq());
@@ -159,7 +159,7 @@ int validate_fastq()
   // is delim == "+"? - * is used to indicate runover end of file ...
   if (strcmp(fq.delim, "+")!=0)
   {
-    Rcout << "Malformed fastq entry ~ Line3[+] not present" << std::endl;
+    //Rcout << "Malformed fastq entry ~ Line3[+] not present" << std::endl;
     fastq_plus_error ++;
     validFastq = false;
     return(0); // this is not a valid fastq
@@ -169,7 +169,7 @@ int validate_fastq()
   size_t seqlength = strlen(fq.sequence);
   size_t qlength = strlen(fq.quality);
   if (seqlength == 0) {
-    Rcout << "Malformed fastq entry ~ length(sequence)==0" << std::endl;
+    //Rcout << "Malformed fastq entry ~ length(sequence)==0" << std::endl;
     zeroLengthSequence ++;
     validFastq = false;
     return(0); // this is not a valid fastq
@@ -179,7 +179,7 @@ int validate_fastq()
 
   // does sequence length == quality length
   if (seqlength != qlength) {
-    Rcout << "Malformed fastq entry ~ length(sequence)!=length(quality)" << std::endl;
+    //Rcout << "Malformed fastq entry ~ length(sequence)!=length(quality)" << std::endl;
     sequenceQualityLengthMismatch ++;
     validFastq = false;
     return(0);
@@ -190,9 +190,6 @@ int validate_fastq()
 
   return (validated_fastq);
 }
-
-
-
 
 
 
