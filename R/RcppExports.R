@@ -59,6 +59,12 @@ getSkippedLineCount <- function() {
 
 #' parse a fastq file aiming to validate sequences
 #'
+#' fastqValidator will parse the specified fastq (or fastq.gz) file looking for fastq
+#' entry compliance. A boolean value of overall file compliance will be returned. Additional
+#' summary counts describing the reason for rejection are also made available
+#'
+#' @seealso \code{\link{getFastqPlusErrorCount}}, \code{\link{getMalformedFastqHeaderCount}}, \code{\link{getZeroLengthSequenceCount}}, \code{\link{getSequenceQualityMismatchCount}} and \code{\link{getSkippedLineCount}}
+#'
 #' @param fastq A fastq format DNA/RNA sequence file
 #' @return logical defining if fastq provided is indeed valid fastq
 #' @export
@@ -68,9 +74,12 @@ fastqValidator <- function(fastq) {
 
 #' fix a corrupted fastq file (if fastq-like)
 #'
+#' fixFastq parses a fastq (or fastq.gz) file for compliant fastq entries and writes these to
+#' the file specified in newfastq parameter. Any non-compliant reads are dropped
+#'
 #' @param fastq file location of fastq source
 #' @param newfastq location of file to write content to
-#' @returns path to new fastq file (same as newfastq provided)
+#' @return path to new fastq file (same as newfastq provided)
 #'
 #' @export
 fixFastq <- function(fastq, newfastq) {

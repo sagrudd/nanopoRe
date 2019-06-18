@@ -11,6 +11,10 @@ fixFastq(fastq, newfastq)
 
 \item{newfastq}{location of file to write content to}
 }
+\value{
+path to new fastq file (same as newfastq provided)
+}
 \description{
-fix a corrupted fastq file (if fastq-like)
+fixFastq parses a fastq (or fastq.gz) file for compliant fastq entries and writes these to
+the file specified in newfastq parameter. Any non-compliant reads are dropped
 }

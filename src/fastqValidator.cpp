@@ -49,7 +49,7 @@ inline int suffix_match(const char *query, const char *suffix) {
 
 inline int is_gzipped(std::string query)
 {
-vector<string> list;
+  vector<string> list;
   list.push_back(".gzip");
   list.push_back(".gz");
   for( vector<string>::const_iterator it = list.begin(); it != list.end(); ++it )
@@ -104,34 +104,34 @@ int realign_fastq() {
       filepos = ftell(file);
     }
 
-  //Rcout << "trying to realign fastq ... " << filepos << std::endl;
-
-  if (isZipped == 1)
-  {
-    gzgets(gzfile, fq.header, LONGEST_SEQ);
-  } else {
-    fgets(fq.header ,LONGEST_SEQ , file);
-  }
-
-  char headdelim = fq.header[0];
-  if (headdelim=='@') {
-    // we may be aligned ??
-    // but @ is a valid quality score (phred=31) ... it therefore makes some sense just to check ???
-
-    // KEEPING THIS FOR A FUTURE UPDATE ???
-    // this does not break functionality, but a block selected on basis of a QUAL @ would sort itself out pretty quickly?
+    //Rcout << "trying to realign fastq ... " << filepos << std::endl;
 
     if (isZipped == 1)
     {
-      gzseek(gzfile, filepos, SEEK_SET);
+      gzgets(gzfile, fq.header, LONGEST_SEQ);
     } else {
-      fseek(file, filepos, SEEK_SET);
+      fgets(fq.header ,LONGEST_SEQ , file);
     }
 
+    char headdelim = fq.header[0];
+    if (headdelim=='@') {
+      // we may be aligned ??
+      // but @ is a valid quality score (phred=31) ... it therefore makes some sense just to check ???
 
-  } else {
-    return(realign_fastq());
-  }
+      // KEEPING THIS FOR A FUTURE UPDATE ???
+      // this does not break functionality, but a block selected on basis of a QUAL @ would sort itself out pretty quickly?
+
+      if (isZipped == 1)
+      {
+        gzseek(gzfile, filepos, SEEK_SET);
+      } else {
+        fseek(file, filepos, SEEK_SET);
+      }
+
+
+    } else {
+      return(realign_fastq());
+    }
 
   }
   return(0);
@@ -258,7 +258,7 @@ int getMalformedFastqHeaderCount()
 // [[Rcpp::export]]
 int getFastqPlusErrorCount()
 {
- return(fastq_plus_error);
+  return(fastq_plus_error);
 }
 
 //' count of fastq elements rejected due to zero length sequence
@@ -306,7 +306,14 @@ void reset() {
 }
 
 
+
 //' parse a fastq file aiming to validate sequences
+//'
+//' fastqValidator will parse the specified fastq (or fastq.gz) file looking for fastq
+//' entry compliance. A boolean value of overall file compliance will be returned. Additional
+//' summary counts describing the reason for rejection are also made available
+//'
+//' @seealso \code{\link{getFastqPlusErrorCount}}, \code{\link{getMalformedFastqHeaderCount}}, \code{\link{getZeroLengthSequenceCount}}, \code{\link{getSequenceQualityMismatchCount}} and \code{\link{getSkippedLineCount}}
 //'
 //' @param fastq A fastq format DNA/RNA sequence file
 //' @return logical defining if fastq provided is indeed valid fastq
@@ -377,9 +384,12 @@ char* getFastqEntry()
 
 //' fix a corrupted fastq file (if fastq-like)
 //'
+//' fixFastq parses a fastq (or fastq.gz) file for compliant fastq entries and writes these to
+//' the file specified in newfastq parameter. Any non-compliant reads are dropped
+//'
 //' @param fastq file location of fastq source
 //' @param newfastq location of file to write content to
-//' @returns path to new fastq file (same as newfastq provided)
+//' @return path to new fastq file (same as newfastq provided)
 //'
 //' @export
 // [[Rcpp::export]]
@@ -412,28 +422,35 @@ std::string fixFastq(std::string fastq, std::string newfastq)
     {
       if (get_next_fastq())
       {
-      if (isDestZipped)
-      {
-        gzputs (gzDestfile, getFastqEntry());
-      } else
-      {
-        fputs(getFastqEntry(), destfile);
-      }
+        if (isDestZipped)
+        {
+          gzputs (gzDestfile, getFastqEntry());
+        }
+        else
+        {
+          fputs(getFastqEntry(), destfile);
+        }
       }
     }
-  }
 
-  if (isZipped) {
-    gzclose(gzDestfile);
-  } else {
-    fclose(file);
-  }
 
-  if (isDestZipped) {
-    gzclose(gzfile);
-  } else
-  {
-    fclose(destfile);
+    if (is_gzipped(dest_filename)==1) {
+      Rcout << "closing gz dest" << std::endl;
+      gzclose(gzDestfile);
+    }
+    else
+    {
+      fclose(destfile);
+    }
+
+
+    if (isZipped) {
+      gzclose(gzfile);
+    } else {
+      fclose(file);
+    }
+
+
   }
   return(dest_filename);
 }

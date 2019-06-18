@@ -13,5 +13,10 @@ fastqValidator(fastq)
 logical defining if fastq provided is indeed valid fastq
 }
 \description{
-parse a fastq file aiming to validate sequences
+fastqValidator will parse the specified fastq (or fastq.gz) file looking for fastq
+entry compliance. A boolean value of overall file compliance will be returned. Additional
+summary counts describing the reason for rejection are also made available
+}
+\seealso{
+\code{\link{getFastqPlusErrorCount}}, \code{\link{getMalformedFastqHeaderCount}}, \code{\link{getZeroLengthSequenceCount}}, \code{\link{getSequenceQualityMismatchCount}} and \code{\link{getSkippedLineCount}}
 }
