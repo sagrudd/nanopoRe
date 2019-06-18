@@ -86,6 +86,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fixFastq
+std::string fixFastq(std::string fastq, std::string newfastq);
+RcppExport SEXP _nanopoRe_fixFastq(SEXP fastqSEXP, SEXP newfastqSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type fastq(fastqSEXP);
+    Rcpp::traits::input_parameter< std::string >::type newfastq(newfastqSEXP);
+    rcpp_result_gen = Rcpp::wrap(fixFastq(fastq, newfastq));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_nanopoRe_getFastqCount", (DL_FUNC) &_nanopoRe_getFastqCount, 0},
@@ -96,6 +108,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_nanopoRe_getSequenceQualityMismatchCount", (DL_FUNC) &_nanopoRe_getSequenceQualityMismatchCount, 0},
     {"_nanopoRe_getSkippedLineCount", (DL_FUNC) &_nanopoRe_getSkippedLineCount, 0},
     {"_nanopoRe_fastqValidator", (DL_FUNC) &_nanopoRe_fastqValidator, 1},
+    {"_nanopoRe_fixFastq", (DL_FUNC) &_nanopoRe_fixFastq, 2},
     {NULL, NULL, 0}
 };
 

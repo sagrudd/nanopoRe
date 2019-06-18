@@ -2,6 +2,7 @@
 
 export(cleanReferenceGenome)
 export(fastqValidator)
+export(fixFastq)
 export(getChromosomeIds)
 export(getChromosomeSequence)
 export(getFastqBases)

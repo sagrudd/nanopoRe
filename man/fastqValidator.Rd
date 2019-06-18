@@ -7,7 +7,10 @@
 fastqValidator(fastq)
 }
 \arguments{
-\item{x}{A fastq format DNA/RNA sequence file}
+\item{fastq}{A fastq format DNA/RNA sequence file}
+}
+\value{
+logical defining if fastq provided is indeed valid fastq
 }
 \description{
 parse a fastq file aiming to validate sequences

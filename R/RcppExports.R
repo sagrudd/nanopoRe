@@ -59,9 +59,21 @@ getSkippedLineCount <- function() {
 
 #' parse a fastq file aiming to validate sequences
 #'
-#' @param x A fastq format DNA/RNA sequence file
+#' @param fastq A fastq format DNA/RNA sequence file
+#' @return logical defining if fastq provided is indeed valid fastq
 #' @export
 fastqValidator <- function(fastq) {
     .Call(`_nanopoRe_fastqValidator`, fastq)
+}
+
+#' fix a corrupted fastq file (if fastq-like)
+#'
+#' @param fastq file location of fastq source
+#' @param newfastq location of file to write content to
+#' @returns path to new fastq file (same as newfastq provided)
+#'
+#' @export
+fixFastq <- function(fastq, newfastq) {
+    .Call(`_nanopoRe_fixFastq`, fastq, newfastq)
 }
 

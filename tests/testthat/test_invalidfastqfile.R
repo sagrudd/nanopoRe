@@ -10,3 +10,8 @@ test_that("frankenFastq.fastq parses correctly", {
   expect_equal(getSequenceQualityMismatchCount(), 1)
   expect_equal(getSkippedLineCount(), 19)
 })
+
+
+test_that("frankenFastq.fastq.gz can be fixed", {
+  expect_equal(fastqValidator(nanopoRe::fixFastq(system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe", mustWork = TRUE), tempfile(pattern="fixfastq_", fileext=".fq"))), TRUE)
+})

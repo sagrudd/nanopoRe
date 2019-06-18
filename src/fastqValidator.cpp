@@ -1,19 +1,17 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 #include<Rinternals.h>
-#include <iostream>
 #include <string.h>
-#include <string>
 using namespace std;
 #include <zlib.h>
 #include <stdio.h>
-#include <vector>
 
 static std::string fastq_filename;
+static std::string dest_filename;
 static int isZipped = 0;
-static gzFile gzfile;
-static FILE *file;
-static time_t start_time;
+static int isDestZipped = 0;
+static gzFile gzfile, gzDestfile;
+static FILE *file, *destfile;
 static bool validFastq = true;
 static long long int running_bases = 0;
 static long int running_fastq = 0;
@@ -293,17 +291,10 @@ int getSkippedLineCount()
   return(linesSkipped);
 }
 
-//' parse a fastq file aiming to validate sequences
-//'
-//' @param x A fastq format DNA/RNA sequence file
-//' @export
-// [[Rcpp::export]]
-LogicalVector fastqValidator(std::string fastq) {
 
-  // reset reported metrics for the given file ...
-  //Rcout << "set_fastq_file==" << fastq << std::endl;
-  fastq_filename = fastq;
+void reset() {
   isZipped = 0;
+  isDestZipped = 0;
   running_bases = 0;
   running_fastq = 0;
   malformed_fastq_delim = 0;
@@ -312,10 +303,25 @@ LogicalVector fastqValidator(std::string fastq) {
   sequenceQualityLengthMismatch = 0;
   linesSkipped = 0;
   validFastq = true;
+}
+
+
+//' parse a fastq file aiming to validate sequences
+//'
+//' @param fastq A fastq format DNA/RNA sequence file
+//' @return logical defining if fastq provided is indeed valid fastq
+//' @export
+// [[Rcpp::export]]
+LogicalVector fastqValidator(std::string fastq) {
+
+  // reset reported metrics for the given file ...
+  //Rcout << "set_fastq_file==" << fastq << std::endl;
+  fastq_filename = fastq;
+  reset();
 
   // TEST (1) - DOES THE SPECIFIED FILE EXIST
-  bool exists = myfile_exists(fastq_filename);
-  if (!exists) {
+  if (!myfile_exists(fastq_filename))
+  {
     Rcout << "FastqFileNotFound" << std::endl;
     validFastq = false;
     return(LogicalVector(validFastq));
@@ -324,27 +330,110 @@ LogicalVector fastqValidator(std::string fastq) {
   // HOUSE-KEEPING - IS THE FILE COMPRESSED?
   if (is_gzipped(fastq_filename)==1)
   {
-    //Rcout << "provided with a gzip file - flying decompress initiated" << std::endl;
     isZipped = 1;
-  }
-
-
-  if (isZipped == 1) {
     gzfile = gzopen(fastq_filename.c_str(), "r");
   } else {
     file = fopen(fastq_filename.c_str(), "r");
   }
-  time(&start_time);
 
   while (has_next_fastq() == 1)
   {
     get_next_fastq();
   }
 
-
+  if (isZipped) {
+    gzclose(gzDestfile);
+  } else {
+    fclose(file);
+  }
 
   return(LogicalVector(validFastq));
 }
 
 
 
+char* getFastqEntry()
+{
+  size_t len1 = strlen(fq.header);
+  size_t len2 = strlen(fq.sequence);
+  size_t len3 = strlen(fq.delim);
+  size_t len4 = strlen(fq.quality);
+  //char* fastqE = malloc(len1 + len2 + len3 + len4 + 8);
+  char* fastqE = new char[len1 + len2 + len3 + len4 + 8] ;
+
+  fastqE = strcpy(fastqE, fq.header);
+  fastqE = strcat(fastqE, "\n");
+  fastqE = strcat(fastqE, fq.sequence);
+  fastqE = strcat(fastqE, "\n");
+  fastqE = strcat(fastqE, fq.delim);
+  fastqE = strcat(fastqE, "\n");
+  fastqE = strcat(fastqE, fq.quality);
+  fastqE = strcat(fastqE, "\n");
+
+  return(fastqE);
+}
+
+
+
+//' fix a corrupted fastq file (if fastq-like)
+//'
+//' @param fastq file location of fastq source
+//' @param newfastq location of file to write content to
+//' @returns path to new fastq file (same as newfastq provided)
+//'
+//' @export
+// [[Rcpp::export]]
+std::string fixFastq(std::string fastq, std::string newfastq)
+{
+  fastq_filename = fastq;
+  dest_filename = newfastq;
+
+  reset();
+  if (myfile_exists(fastq_filename))
+  {
+    if (is_gzipped(fastq_filename)==1)
+    {
+      isZipped = 1;
+      gzfile = gzopen(fastq_filename.c_str(), "r");
+    } else {
+      file = fopen(fastq_filename.c_str(), "r");
+    }
+
+    if (is_gzipped(dest_filename)==1)
+    {
+      isDestZipped = 1;
+      gzDestfile = gzopen(dest_filename.c_str(), "wb");
+    } else {
+      destfile = fopen(dest_filename.c_str(), "w");
+    }
+
+
+    while (has_next_fastq() == 1)
+    {
+      if (get_next_fastq())
+      {
+      if (isDestZipped)
+      {
+        gzputs (gzDestfile, getFastqEntry());
+      } else
+      {
+        fputs(getFastqEntry(), destfile);
+      }
+      }
+    }
+  }
+
+  if (isZipped) {
+    gzclose(gzDestfile);
+  } else {
+    fclose(file);
+  }
+
+  if (isDestZipped) {
+    gzclose(gzfile);
+  } else
+  {
+    fclose(destfile);
+  }
+  return(dest_filename);
+}
