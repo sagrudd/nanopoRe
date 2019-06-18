@@ -24,3 +24,6 @@ Imports:
     Rcpp
 LinkingTo: 
     Rcpp
+Suggests:
+    testthat,
+    devtools

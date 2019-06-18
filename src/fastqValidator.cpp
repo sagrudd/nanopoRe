@@ -1,43 +1,38 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 #include<Rinternals.h>
-//#include <array>
 #include <iostream>
 #include <string.h>
 #include <string>
 using namespace std;
 #include <zlib.h>
 #include <stdio.h>
-#include <time.h>
-// #include <regex>
-
-
 #include <vector>
 
 static std::string fastq_filename;
-static int isZipped = 1;
+static int isZipped = 0;
 static gzFile gzfile;
 static FILE *file;
 static time_t start_time;
-static int frameiterations = 0;
-//static int allowedframeiterations = 25;
+static bool validFastq = true;
 static long long int running_bases = 0;
 static long int running_fastq = 0;
-static time_t reference_time;
-
+static int malformed_fastq_delim = 0;
+static int fastq_plus_error = 0;
+static int zeroLengthSequence = 0;
+static int sequenceQualityLengthMismatch = 0;
+static int linesSkipped = 0;
 
 struct Fastq_tag {
-  char header[1000000];
-  char sequence[1000000];
-  char delim[1000000];
-  char quality[1000000];
+  char header[10000000];
+  char sequence[10000000];
+  char delim[10000000];
+  char quality[10000000];
 };
-
 
 static Fastq_tag fq;
 
-static int LONGEST_SEQ = 1000000;
-
+static int LONGEST_SEQ = 10000000;
 
 inline bool myfile_exists (const std::string& name) {
   if (FILE *file = fopen(name.c_str(), "r")) {
@@ -61,7 +56,6 @@ vector<string> list;
   list.push_back(".gz");
   for( vector<string>::const_iterator it = list.begin(); it != list.end(); ++it )
   {
-    // Rcout << *it << endl;
     std::string suffix = *it;
     if (suffix_match(query.c_str(), suffix.c_str()) == 0)
     {
@@ -76,7 +70,7 @@ vector<string> list;
 int has_next_fastq()
 {
   if (isZipped == 1) {
-    printf("hasNext(gzeof=%d)\n", gzeof(gzfile));
+    // Rcout << "hasNext(gzeof==" << gzeof(gzfile) << ")" << std::endl;
     if ((gzfile!=NULL) && (gzeof(gzfile)==0)) {
       return (1);
     }
@@ -94,6 +88,54 @@ int has_next_fastq()
 
 
 int realign_fastq() {
+  /**
+   * the aim of this is to endeavour to resynchronise a fastq file that may contain an INS or DEL
+   * resulting in the missing header and SEQ/QUAL separator
+   */
+
+  if (has_next_fastq())
+  {
+
+    linesSkipped ++;
+
+    long filepos = 0;
+    if (isZipped == 1)
+    {
+      filepos = gztell(gzfile);
+    } else {
+      filepos = ftell(file);
+    }
+
+  //Rcout << "trying to realign fastq ... " << filepos << std::endl;
+
+  if (isZipped == 1)
+  {
+    gzgets(gzfile, fq.header, LONGEST_SEQ);
+  } else {
+    fgets(fq.header ,LONGEST_SEQ , file);
+  }
+
+  char headdelim = fq.header[0];
+  if (headdelim=='@') {
+    // we may be aligned ??
+    // but @ is a valid quality score (phred=31) ... it therefore makes some sense just to check ???
+
+    // KEEPING THIS FOR A FUTURE UPDATE ???
+    // this does not break functionality, but a block selected on basis of a QUAL @ would sort itself out pretty quickly?
+
+    if (isZipped == 1)
+    {
+      gzseek(gzfile, filepos, SEEK_SET);
+    } else {
+      fseek(file, filepos, SEEK_SET);
+    }
+
+
+  } else {
+    return(realign_fastq());
+  }
+
+  }
   return(0);
 }
 
@@ -106,46 +148,46 @@ int validate_fastq()
 
   // does header start with @ - if not there may be misalignment?
   char headdelim = fq.header[0];
-  //printf("headdelim(c=%c)\n", headdelim);
   if (headdelim!='@')
   {
+    Rcout << "Malformed fastq entry delimitter " << headdelim << "!=@" << std::endl;
+    malformed_fastq_delim ++;
+    validFastq = false;
     return(realign_fastq());
   }
 
   // is delim == "+"? - * is used to indicate runover end of file ...
-  // printf("fq.delim(%s)->%d\n", fq.delim, strcmp(fq.delim, "+"));
   if (strcmp(fq.delim, "+")!=0)
   {
+    Rcout << "Malformed fastq entry ~ Line3[+] not present" << std::endl;
+    fastq_plus_error ++;
+    validFastq = false;
     return(0); // this is not a valid fastq
   }
+
   // is sequence length > 0
-  // does sequence length == quality length
-
-  if (frameiterations>0) frameiterations=0;
-
-  running_bases += strlen(fq.sequence);
-  running_fastq += 1;
-
-  time_t now;
-  time(&now);
-
-  //printf ( "%d - %d\n", now, reference_time);
-
-  if ((now - reference_time) >= 1)
-  {
-    //
-    //show_fastq_stats();
-    //
-    time ( &reference_time);
+  size_t seqlength = strlen(fq.sequence);
+  size_t qlength = strlen(fq.quality);
+  if (seqlength == 0) {
+    Rcout << "Malformed fastq entry ~ length(sequence)==0" << std::endl;
+    zeroLengthSequence ++;
+    validFastq = false;
+    return(0); // this is not a valid fastq
   }
 
-  /**
-  time_t rawtime;
-  struct tm * timeinfo;
-  time ( &rawtime);
-  timeinfo = localtime(&rawtime);
-  printf ( "%d - Current local time and date: %s", rawtime, asctime (timeinfo) );
-  **/
+  // Rcout << "(s/q)Lengths==" << seqlength << "/" << qlength << std::endl;
+
+  // does sequence length == quality length
+  if (seqlength != qlength) {
+    Rcout << "Malformed fastq entry ~ length(sequence)!=length(quality)" << std::endl;
+    sequenceQualityLengthMismatch ++;
+    validFastq = false;
+    return(0);
+  }
+
+  running_bases += seqlength;
+  running_fastq += 1;
+
   return (validated_fastq);
 }
 
@@ -157,20 +199,19 @@ int validate_fastq()
 
 int get_next_fastq()
 {
-  int r1, r2, r3, r4;
   if (isZipped == 1)
   {
-    r1 = gzgets(gzfile, fq.header, LONGEST_SEQ)==NULL;
-    r2 = gzgets(gzfile, fq.sequence, LONGEST_SEQ)==NULL;
-    r3 = gzgets(gzfile, fq.delim, LONGEST_SEQ)==NULL;
-    r4 = gzgets(gzfile, fq.quality, LONGEST_SEQ)==NULL;
+    gzgets(gzfile, fq.header, LONGEST_SEQ);
+    gzgets(gzfile, fq.sequence, LONGEST_SEQ);
+    gzgets(gzfile, fq.delim, LONGEST_SEQ);
+    gzgets(gzfile, fq.quality, LONGEST_SEQ);
   }
   else
   {
-    r1 = fgets(fq.header, LONGEST_SEQ, file)==NULL;
-    r2 = fgets(fq.sequence, LONGEST_SEQ, file)==NULL;
-    r3 = fgets(fq.delim, LONGEST_SEQ, file)==NULL;
-    r4 = fgets(fq.quality, LONGEST_SEQ, file)==NULL;
+    fgets(fq.header, LONGEST_SEQ, file);
+    fgets(fq.sequence, LONGEST_SEQ, file);
+    fgets(fq.delim, LONGEST_SEQ, file);
+    fgets(fq.quality, LONGEST_SEQ, file);
   }
   // clip any trailing newlines
   fq.header[strcspn(fq.header, "\r\n")] = 0;
@@ -183,38 +224,116 @@ int get_next_fastq()
 
 
 
+
+//' return the number of fastq entries previously parsed from provided Fastq file
+//'
+//' @return long integer of read fastq elements
+//' @export
+// [[Rcpp::export]]
+long int getFastqCount()
+{
+  return(running_fastq);
+}
+
+
+//' return the number of fastq bases previously parsed from provided Fastq file
+//'
+//' @return long long integer of read fastq bases
+//' @export
+// [[Rcpp::export]]
+long long int getFastqBases()
+{
+  return(running_bases);
+}
+
+//' count of fastq elements rejected due to malformed fastq header
+//'
+//' @return integer count of malformed fastq header entries
+//' @export
+// [[Rcpp::export]]
+int getMalformedFastqHeaderCount()
+{
+  return(malformed_fastq_delim);
+}
+
+//' count of fastq elements rejected due to line 3 plus separator
+//'
+//' @return integer count of malformed fastq '+' separator entries
+//' @export
+// [[Rcpp::export]]
+int getFastqPlusErrorCount()
+{
+ return(fastq_plus_error);
+}
+
+//' count of fastq elements rejected due to zero length sequence
+//'
+//' @return integer count of fastq entries with zero sequence length
+//' @export
+// [[Rcpp::export]]
+int getZeroLengthSequenceCount()
+{
+  return(zeroLengthSequence);
+}
+
+//' count of fastq elements rejected due to mismatch between sequence and quality field lengths
+//'
+//' @return integer count of fastq entries with seq/qual length challenges
+//' @export
+// [[Rcpp::export]]
+int getSequenceQualityMismatchCount()
+{
+  return(sequenceQualityLengthMismatch);
+}
+
+//' count of lines of fastq file skipped to enable fastq entry parsing
+//'
+//' @return integer count of lines skipped
+//' @export
+// [[Rcpp::export]]
+int getSkippedLineCount()
+{
+  return(linesSkipped);
+}
+
 //' parse a fastq file aiming to validate sequences
 //'
 //' @param x A fastq format DNA/RNA sequence file
 //' @export
 // [[Rcpp::export]]
-std::string fastqValidator(std::string fastq) {
+LogicalVector fastqValidator(std::string fastq) {
 
-  Rcout << "set_fastq_file==" << fastq << std::endl;
+  // reset reported metrics for the given file ...
+  //Rcout << "set_fastq_file==" << fastq << std::endl;
   fastq_filename = fastq;
+  isZipped = 0;
+  running_bases = 0;
+  running_fastq = 0;
+  malformed_fastq_delim = 0;
+  fastq_plus_error = 0;
+  zeroLengthSequence = 0;
+  sequenceQualityLengthMismatch = 0;
+  linesSkipped = 0;
+  validFastq = true;
 
   // TEST (1) - DOES THE SPECIFIED FILE EXIST
   bool exists = myfile_exists(fastq_filename);
   if (!exists) {
-    return("FastqFileNotFound");
+    Rcout << "FastqFileNotFound" << std::endl;
+    validFastq = false;
+    return(LogicalVector(validFastq));
   }
 
   // HOUSE-KEEPING - IS THE FILE COMPRESSED?
   if (is_gzipped(fastq_filename)==1)
   {
-    Rcout << "provided with a gzip file - flying decompress initiated" << std::endl;
+    //Rcout << "provided with a gzip file - flying decompress initiated" << std::endl;
     isZipped = 1;
   }
-  /**   else
-  {
-    isZipped = 0;
-  }
-**/
 
 
   if (isZipped == 1) {
     gzfile = gzopen(fastq_filename.c_str(), "r");
-    Rcout << "gzopen" << std::endl;
   } else {
     file = fopen(fastq_filename.c_str(), "r");
   }
@@ -222,15 +341,12 @@ std::string fastqValidator(std::string fastq) {
 
   while (has_next_fastq() == 1)
   {
-    if (get_next_fastq()==1)
-    {
-
-    }
+    get_next_fastq();
   }
 
 
 
-  return "Hello World";
+  return(LogicalVector(validFastq));
 }
 
 
