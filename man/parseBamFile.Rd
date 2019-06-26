@@ -23,6 +23,8 @@ data.frame of summary observations
 This method will direct the parsing of a BAM file to extract summary mapping statistics
 }
 \examples{
+\dontrun{
 parseBamFile(file.path("Analysis", "Minimap2", "MyBamFile.bam"))
+}
 
 }

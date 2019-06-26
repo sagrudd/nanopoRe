@@ -24,6 +24,8 @@ vector of summary observations
 This method will direct the parsing of a specified BAM file for a named chromsome and qualified interval
 }
 \examples{
+\dontrun{
 harvestBam(100000, 1, "1", 100000, file.path("Analysis", "Minimap2", "MyBamFile.bam"))
+}
 
 }

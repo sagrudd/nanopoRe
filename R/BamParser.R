@@ -13,7 +13,9 @@
 #' @return data.frame of summary observations
 #'
 #' @examples
+#' \dontrun{
 #' parseBamFile(file.path("Analysis", "Minimap2", "MyBamFile.bam"))
+#' }
 #'
 #' @export
 parseBamFile <- function(bamfilelocation, window.size=100000, mc.cores=min(detectCores()-1, 24), force=FALSE) {
@@ -42,7 +44,9 @@ parseBamFile <- function(bamfilelocation, window.size=100000, mc.cores=min(detec
 #' @return data.frame of summary observations
 #'
 #' @examples
+#' \dontrun{
 #' harvestChromosome("1", file.path("Analysis", "Minimap2", "MyBamFile.bam"))
+#' }
 #'
 #' @export
 harvestChromosome <- function(chrId, bamfilelocation, window.size=100000, mc.cores=min(detectCores()-1, 24), force=FALSE) {
@@ -90,7 +94,9 @@ harvestChromosome <- function(chrId, bamfilelocation, window.size=100000, mc.cor
 #' @return vector of summary observations
 #'
 #' @examples
+#' \dontrun{
 #' harvestBam(100000, 1, "1", 100000, file.path("Analysis", "Minimap2", "MyBamFile.bam"))
+#' }
 #'
 #' @export
 harvestBam <- function(x, dnaStringSetId, chrId, window.size, bamfilelocation) {
@@ -165,6 +171,45 @@ harvestBam <- function(x, dnaStringSetId, chrId, window.size, bamfilelocation) {
   )
   return(res)
 }
+
+
+
+
+#' extract unmapped read quality information from provided BAM file
+#'
+#' This method will parse the unmapped reads from a BAM file and return a data frame containing
+#' readID and quality information
+#'
+#' @param bamfilelocation is the location to the BAM file to parse
+#' @param force is a boolean defining whether an existing result file should be overwritten
+#' @return vector of summary observations
+#'
+#' @examples
+#' \dontrun{
+#' harvestUnmappedReads(file.path("Analysis", "Minimap2", "MyBamFile.bam"))
+#' }
+#'
+#' @export
+harvestUnmappedReads <- function(bamfilelocation, force=FALSE) {
+  # this is a slow method since the whole file needs to be parsed ... - the parsing logic is not
+  # perfect and there is considerable system IO ...
+
+  # alternative samtools view -@ 4 -f 0x4 -O SAM ./Analysis/GM24385.15/alignment/GM24385.15_minimap2.bam | awk '{{print $11}}'
+
+  unmappedReads <- file.path(getRpath(),
+                             paste0(sub("\\.[^.]*$", "", basename(bamfilelocation)), "_UnmappedReads", ".Rdata"))
+  if (file.exists(unmappedReads) & !force) {
+    return(readRDS(file=unmappedReads))
+  }
+
+  params=ScanBamParam(what=c("qname", "flag", "qual"),
+                      flag=scanBamFlag(isUnmappedQuery=TRUE))
+  unmappedReadData <- as.data.frame(scanBam(BamFile(bamfilelocation), param=params)[[1]])
+  saveRDS(unmappedReadData, file=unmappedReads)
+  return(unmappedReadData)
+
+}
+
 
 
 
