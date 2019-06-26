@@ -150,6 +150,7 @@ harvestBam <- function(x, dnaStringSetId, chrId, window.size, bamfilelocation, l
   gccount <- 0
   ncount <- 0
   readq <- 0
+  width <- 0
 
   if (level=="SECONDARY") {
     secondary <- TRUE
@@ -186,7 +187,7 @@ harvestBam <- function(x, dnaStringSetId, chrId, window.size, bamfilelocation, l
 
   if (primary) {
     letterFreq <- letterFrequency(subseq(chromosomeSeq, x, y), c("A", "C", "G", "T", "N"))
-    width=sum(letterFreq)
+    width <- sum(letterFreq)
 
     # parse out the mean per-read base calling qvalues
     #alphabetScore <- alphabetScore(FastqQuality(SeqCigar[onStart, "qual"])) / SeqCigar[onStart, "qwidth"]
@@ -223,7 +224,7 @@ harvestBam <- function(x, dnaStringSetId, chrId, window.size, bamfilelocation, l
            cigarInsertionEvents=sum(cigarINSevents),
            cigarDeletionEvents=sum(cigarDELevents),
            mapq=round(phredmean(SeqCigar[onStart,"mapq"]), digits=2),# mean mapping quality for reads starting in this window
-           readQ=readQ,        # this is the per-read mean Q value averaged across onStart
+           readQ=readq,        # this is the per-read mean Q value averaged across onStart
            readLen=round(mean(mean(SeqCigar[onStart, "qwidth"])),digits=2),  # average sequence length for onStart reads
            unlist(tb),                                                 # the depth of coverage summary
            meanCov=round(meanCov, digits=2),
@@ -231,8 +232,6 @@ harvestBam <- function(x, dnaStringSetId, chrId, window.size, bamfilelocation, l
   )
   return(res)
 }
-
-
 
 
 #' extract unmapped read quality information from provided BAM file
