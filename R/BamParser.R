@@ -10,6 +10,7 @@
 #' @param window.size is the size of the stepping window to apply (default 100000)
 #' @param mc.cores defines the number of cores to use (default = n-1 of available cores)
 #' @param force is a logical defining whether the analysis should be recalculated (cached version will be reused if possible)
+#' @param level is one of (c("PRIMARY", "SECONDARY", "SUPPLEMENTARY"))
 #' @return data.frame of summary observations
 #'
 #' @examples
@@ -18,14 +19,26 @@
 #' }
 #'
 #' @export
-parseBamFile <- function(bamfilelocation, window.size=100000, mc.cores=min(detectCores()-1, 24), force=FALSE) {
+parseBamFile <- function(bamfilelocation, window.size=100000, mc.cores=min(detectCores()-1, 24), force=FALSE, level="PRIMARY") {
+  levels <- c("PRIMARY", "SECONDARY", "SUPPLEMENTARY")
+  if (!level %in% levels) {
+    warning("LEVEL makes no sense - use PRIMARY|SECONDARY|SUPPLEMENTARY - using PRIMARY INSTEAD")
+    level="PRIMARY"
+  }
+  filenameTag <- ""
+  if (level=="SECONDARY") {
+    filenameTag <- "secondary_"
+  }
+  if (level=="SUPPLEMENTARY") {
+    filenameTag <- "supplementary_"
+  }
   parseBamFileResults <- file.path(getRpath(),
-                                   paste(sub("\\.[^.]*$", "", basename(bamfilelocation)), paste("aggregated",as.integer(window.size),sep="_"), "Rdata",sep="."))
+                                   paste0(sub("\\.[^.]*$", "", basename(bamfilelocation)), ".", paste0("aggregated_",filenameTag,as.integer(window.size)), ".Rdata"))
   if (file.exists(parseBamFileResults) & !force) {
     return(readRDS(file=parseBamFileResults))
   }
 
-  parsedBam <- bind_rows(lapply(gtools:::mixedsort(getChromosomeIds()), harvestChromosome, force=force, bamfilelocation=bamfilelocation, window.size=window.size, mc.cores=mc.cores), .id = "column_label")
+  parsedBam <- bind_rows(lapply(gtools:::mixedsort(getChromosomeIds()), harvestChromosome, force=force, bamfilelocation=bamfilelocation, window.size=window.size, mc.cores=mc.cores, level=level), .id = "column_label")
   saveRDS(parsedBam, file=parseBamFileResults)
   return(parsedBam)
 }
@@ -41,6 +54,7 @@ parseBamFile <- function(bamfilelocation, window.size=100000, mc.cores=min(detec
 #' @param window.size is the size of the stepping window to apply (default 100000)
 #' @param mc.cores defines the number of cores to use (default = n-1 of available cores)
 #' @param force is a logical defining whether the analysis should be recalculated (cached version will be reused if possible)
+#' @param level is one of (c("PRIMARY", "SECONDARY", "SUPPLEMENTARY"))
 #' @return data.frame of summary observations
 #'
 #' @examples
@@ -49,9 +63,22 @@ parseBamFile <- function(bamfilelocation, window.size=100000, mc.cores=min(detec
 #' }
 #'
 #' @export
-harvestChromosome <- function(chrId, bamfilelocation, window.size=100000, mc.cores=min(detectCores()-1, 24), force=FALSE) {
+harvestChromosome <- function(chrId, bamfilelocation, window.size=100000, mc.cores=min(detectCores()-1, 24), force=FALSE, level="PRIMARY") {
+  levels <- c("PRIMARY", "SECONDARY", "SUPPLEMENTARY")
+  if (!level %in% levels) {
+    warning("LEVEL makes no sense - use PRIMARY|SECONDARY|SUPPLEMENTARY - using PRIMARY INSTEAD")
+    level="PRIMARY"
+  }
+  filenameTag <- ""
+  if (level=="SECONDARY") {
+    filenameTag <- "secondary_"
+  }
+  if (level=="SUPPLEMENTARY") {
+    filenameTag <- "supplementary_"
+  }
+
   chromosomeFile <- file.path(getRpath(),
-                              paste(sub("\\.[^.]*$", "", basename(bamfilelocation)), paste("chrId",chrId,as.integer(window.size),sep="_"), "Rdata",sep="."))
+                              paste0(sub("\\.[^.]*$", "", basename(bamfilelocation)), ".", paste0("chrId_",chrId,"_",filenameTag,as.integer(window.size)), ".Rdata"))
   if (file.exists(chromosomeFile) & !force) {
     return(readRDS(file=chromosomeFile))
   }
@@ -70,7 +97,8 @@ harvestChromosome <- function(chrId, bamfilelocation, window.size=100000, mc.cor
                        bamfilelocation=bamfilelocation,
                        mc.cores=mc.cores,
                        mc.preschedule=FALSE,
-                       mc.silent=FALSE)
+                       mc.silent=FALSE,
+                       level=level)
 
   chrData <- as.data.frame(t(as.data.frame(mcharv, stringsAsFactors=FALSE)),
                                              col.names=names(mcharv[[1]]),
@@ -91,6 +119,7 @@ harvestChromosome <- function(chrId, bamfilelocation, window.size=100000, mc.cor
 #' @param chrId is the name of the chromosome of interest
 #' @param window.size is the width of the window in nucleotides
 #' @param bamfilelocation is the location to the BAM file to parse
+#' @param level is one of (c("PRIMARY", "SECONDARY", "SUPPLEMENTARY"))
 #' @return vector of summary observations
 #'
 #' @examples
@@ -99,7 +128,7 @@ harvestChromosome <- function(chrId, bamfilelocation, window.size=100000, mc.cor
 #' }
 #'
 #' @export
-harvestBam <- function(x, dnaStringSetId, chrId, window.size, bamfilelocation) {
+harvestBam <- function(x, dnaStringSetId, chrId, window.size, bamfilelocation, level="PRIMARY") {
   y = x + window.size
   x <- x + 1
 
@@ -109,9 +138,24 @@ harvestBam <- function(x, dnaStringSetId, chrId, window.size, bamfilelocation) {
     y = length(chromosomeSeq)
   }
 
+  levels <- c("PRIMARY", "SECONDARY", "SUPPLEMENTARY")
+  if (!level %in% levels) {
+    warning("LEVEL makes no sense - use PRIMARY|SECONDARY|SUPPLEMENTARY - using PRIMARY INSTEAD")
+    level="PRIMARY"
+  }
+  secondary <- FALSE
+  supplementary <- FALSE
+  if (level=="SECONDARY") {
+    secondary <- TRUE
+  }
+  if (level=="SUPPLEMENTARY") {
+    supplementary <- TRUE
+  }
+
+
   params=ScanBamParam(which=GRanges(seqnames = chrId, ranges = IRanges(start = x, end = y)),
                       what=c("flag", "strand", "pos", "qwidth", "mapq", "cigar", "qual"),
-                      flag=scanBamFlag(isSupplementaryAlignment=FALSE, isSecondaryAlignment=FALSE),
+                      flag=scanBamFlag(isSupplementaryAlignment=supplementary, isSecondaryAlignment=secondary),
                       tag=c("NM"))
   SeqCigar <- as.data.frame(scanBam(BamFile(bamfilelocation), param=params)[[1]])
 

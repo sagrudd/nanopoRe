@@ -4,7 +4,8 @@
 \alias{harvestBam}
 \title{parse (indexed) BAM file for summary data for a given windows on a specific chromosome}
 \usage{
-harvestBam(x, dnaStringSetId, chrId, window.size, bamfilelocation)
+harvestBam(x, dnaStringSetId, chrId, window.size, bamfilelocation,
+  level = "PRIMARY")
 }
 \arguments{
 \item{x}{is a numeric pointer for the interval start position}
@@ -16,6 +17,8 @@ harvestBam(x, dnaStringSetId, chrId, window.size, bamfilelocation)
 \item{window.size}{is the width of the window in nucleotides}
 
 \item{bamfilelocation}{is the location to the BAM file to parse}
+
+\item{level}{is one of (c("PRIMARY", "SECONDARY", "SUPPLEMENTARY"))}
 }
 \value{
 vector of summary observations

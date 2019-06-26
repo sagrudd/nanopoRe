@@ -1,7 +1,7 @@
 Package: nanopoRe
 Type: Package
 Title: Accessory Methods for Analysis of Nanopore Data using R
-Version: 0.1.0
+Version: 0.1.1
 Author: Technical Support <support@nanoporetech.com>
 Maintainer: Technical Support <support@nanoporetech.com>
 Description: A collection of R utilities used within the ont_tutorials. The ont_tutorials are

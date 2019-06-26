@@ -5,7 +5,8 @@
 \title{parse BAM file to calculate summary statistics}
 \usage{
 parseBamFile(bamfilelocation, window.size = 1e+05,
-  mc.cores = min(detectCores() - 1, 24), force = FALSE)
+  mc.cores = min(detectCores() - 1, 24), force = FALSE,
+  level = "PRIMARY")
 }
 \arguments{
 \item{bamfilelocation}{is the location to the BAM file to parse}
@@ -15,6 +16,8 @@ parseBamFile(bamfilelocation, window.size = 1e+05,
 \item{mc.cores}{defines the number of cores to use (default = n-1 of available cores)}
 
 \item{force}{is a logical defining whether the analysis should be recalculated (cached version will be reused if possible)}
+
+\item{level}{is one of (c("PRIMARY", "SECONDARY", "SUPPLEMENTARY"))}
 }
 \value{
 data.frame of summary observations
