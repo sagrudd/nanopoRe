@@ -143,18 +143,28 @@ harvestBam <- function(x, dnaStringSetId, chrId, window.size, bamfilelocation, l
     warning("LEVEL makes no sense - use PRIMARY|SECONDARY|SUPPLEMENTARY - using PRIMARY INSTEAD")
     level="PRIMARY"
   }
+  primary <- TRUE
   secondary <- FALSE
   supplementary <- FALSE
+  what=c("flag", "strand", "pos", "qwidth", "mapq", "cigar", "qual")
+  gccount <- 0
+  ncount <- 0
+  readq <- 0
+
   if (level=="SECONDARY") {
     secondary <- TRUE
+    primary <- FALSE
+    what=c("strand", "pos", "qwidth", "mapq", "cigar")
   }
   if (level=="SUPPLEMENTARY") {
     supplementary <- TRUE
+    primary <- FALSE
+    what=c("strand", "pos", "qwidth", "mapq", "cigar")
   }
 
 
   params=ScanBamParam(which=GRanges(seqnames = chrId, ranges = IRanges(start = x, end = y)),
-                      what=c("flag", "strand", "pos", "qwidth", "mapq", "cigar", "qual"),
+                      what=what,
                       flag=scanBamFlag(isSupplementaryAlignment=supplementary, isSecondaryAlignment=secondary),
                       tag=c("NM"))
   SeqCigar <- as.data.frame(scanBam(BamFile(bamfilelocation), param=params)[[1]])
@@ -174,12 +184,18 @@ harvestBam <- function(x, dnaStringSetId, chrId, window.size, bamfilelocation, l
   cigarDELbases <- unlist(lapply(cigarDEL, sum))
   cigarINSbases <- unlist(lapply(cigarINS, sum))
 
-  letterFreq <- letterFrequency(subseq(chromosomeSeq, x, y), c("A", "C", "G", "T", "N"))
-  width=sum(letterFreq)
+  if (primary) {
+    letterFreq <- letterFrequency(subseq(chromosomeSeq, x, y), c("A", "C", "G", "T", "N"))
+    width=sum(letterFreq)
 
-  # parse out the mean per-read base calling qvalues
-  #alphabetScore <- alphabetScore(FastqQuality(SeqCigar[onStart, "qual"])) / SeqCigar[onStart, "qwidth"]
-  alphabetScore <- unlist(lapply(as.character(SeqCigar[onStart, "qual"]), qualToMeanQ))
+    # parse out the mean per-read base calling qvalues
+    #alphabetScore <- alphabetScore(FastqQuality(SeqCigar[onStart, "qual"])) / SeqCigar[onStart, "qwidth"]
+    alphabetScore <- unlist(lapply(as.character(SeqCigar[onStart, "qual"]), qualToMeanQ))
+
+    gccount <- as.integer(letterFreq['G'] + letterFreq['C'])
+    ncount <- as.integer(letterFreq['N'])
+    readq <- round(phredmean(alphabetScore), digits=2)
+  }
 
   # process the depth of coverage stuff ...
   tb <- c(0,0,0,0,0)
@@ -198,8 +214,8 @@ harvestBam <- function(x, dnaStringSetId, chrId, window.size, bamfilelocation, l
            plusStrand=length(which(SeqCigar[onStart, "strand"]=="+")),
            basesReadsStarted=sum(SeqCigar[onStart,"qwidth"]), # validated as correct with Chr20 dataset
            width=width,                                       # the width of the window considered
-           gccount=as.integer(letterFreq['G'] + letterFreq['C']),
-           ncount=as.integer(letterFreq['N']),
+           gccount=gccount,
+           ncount=ncount,
            mismatches=sum(SeqCigar[onStart,"NM"]),            # the sum of total mapping edit distance
            cigarMapped=sum(cigarMapped),                      # the sum of read bases that are mapped to reference genome, starting in this window, after softclipping
            cigarInsertionBases=sum(cigarINSbases),            # the sum of inserted bases against the reference genome (pairwise presentation)
@@ -207,7 +223,7 @@ harvestBam <- function(x, dnaStringSetId, chrId, window.size, bamfilelocation, l
            cigarInsertionEvents=sum(cigarINSevents),
            cigarDeletionEvents=sum(cigarDELevents),
            mapq=round(phredmean(SeqCigar[onStart,"mapq"]), digits=2),# mean mapping quality for reads starting in this window
-           readQ=round(phredmean(alphabetScore), digits=2),        # this is the per-read mean Q value averaged across onStart
+           readQ=readQ,        # this is the per-read mean Q value averaged across onStart
            readLen=round(mean(mean(SeqCigar[onStart, "qwidth"])),digits=2),  # average sequence length for onStart reads
            unlist(tb),                                                 # the depth of coverage summary
            meanCov=round(meanCov, digits=2),
