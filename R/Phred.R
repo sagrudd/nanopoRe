@@ -14,7 +14,7 @@
 #'
 #' @export
 phredmean <- function(q) {
-  -10 * log10(mean(10^(q/-10)))
+  -10 * log10(mean(10^(q/-10),na.rm=TRUE))
 }
 
 
