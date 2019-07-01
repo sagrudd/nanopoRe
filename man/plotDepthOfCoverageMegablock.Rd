@@ -4,12 +4,12 @@
 \alias{plotDepthOfCoverageMegablock}
 \title{plot a tiled panel of chromosomal depths-of-coverage}
 \usage{
-plotDepthOfCoverageMegablock(parsedBamFile, colMax = 4)
+plotDepthOfCoverageMegablock(coverageData, colMax = 4)
 }
 \arguments{
-\item{parsedBamFile}{is the location to the BAM file to parse}
-
 \item{colMax}{defines the number of columns}
+
+\item{parsedBamFile}{is the location to the BAM file to parse}
 }
 \description{
 This method will display depths-of-coverage for the chromosomes contained in the provided parsedBamFile

@@ -154,4 +154,74 @@ getChromosomeIds <- function() {
 }
 
 
+#' get chromosome lengths for a named set of chromosomes
+#'
+#' This method will return a vector of named chromosome lengths
+#'
+#' @param x vector of chromosome ids
+#' @return vector of names
+#'
+#' @examples
+#' \dontrun{
+#' getSeqLengths(c("1","2"))
+#' }
+#'
+#' @export
+getSeqLengths <- function(x) {
+  if (!(exists("referenceGenome", envir=get(getEnvironment())) & exists("referenceGenomeSequence", envir=get(getEnvironment())))) {
+    loadReferenceGenome()
+  }
+  keys <- gsub("\\s.+", "", names(get("referenceGenomeSequence", envir=get(getEnvironment()))))
+  wdata <- width(get("referenceGenomeSequence", envir=get(getEnvironment())))[match(x, keys)]
+  names(wdata) <- x
+  return(wdata)
+}
 
+
+#' prepare mapping summary information by chromosome
+#'
+#' This method will return a data.frame of basic per chromosome mapping statistics
+#'
+#' @param chrIds vector of chromosome ids
+#' @param path to the bamFile used for analysis
+#' @return data.frame of mapping characteristics
+#'
+#' @examples
+#' \dontrun{
+#' chromosomeMappingSummary(c("1","2"), bamFile)
+#' }
+#'
+#' @export
+chromosomeMappingSummary <- function(chrIds, bamFile) {
+  bamSummary <- bamSummarise(bamFile, blockSize=10000)
+
+  getChrData <- function(id, bamSummary, flag="Primary") {
+    dna <- getChromosomeSequence(getStringSetId(id))
+    letterFreq <- letterFrequency(dna, c("A", "C", "G", "T", "N"))
+    mapChr <- bamSummary %>% filter(readFlag==flag & rname==id)
+
+    gr <- GRanges(seqnames=mapChr$rname,
+                  ranges=IRanges(start=mapChr$start, end=mapChr$end),
+                  strand=mapChr$strand,
+                  seqlengths=getSeqLengths(levels(mapChr$rname)))
+    mc <- coverage(gr)
+    bi <- tileGenome(seqlengths(gr), ntile=1)
+    cd <- binnedAverage(bi[[1]], mc, "binned_cov")
+
+    ke <- which(as.character(seqnames(cd)) == id)
+    co <- mcols(cd[ke,])$binned_cov
+
+    return(c(chrId=id,
+             chrLength=scales::comma_format()(length(dna)),
+             "N (%)"=paste0(round(letterFreq['N']/length(dna)*100, digits=2)),
+             "GC (%)"=paste0(round((letterFreq['G']+letterFreq['G'])/length(dna)*100, digits=2)),
+             "Mapped Reads"=scales::comma_format()(nrow(mapChr)),
+             "Mapped Bases"=scales::comma_format()(sum(mapChr$coverage * mapChr$qwidth)),
+             "Mean Coverage"=paste0(round(co, digits=2))
+    ))
+  }
+
+  #lapply(gtools:::mixedsort(unique(chrIds)), getChrData, bamSummary=bamSummary)
+  chromosomeData <- data.frame(t(as.data.frame(lapply(gtools:::mixedsort(unique(chrIds)), getChrData, bamSummary=bamSummary))), stringsAsFactors = FALSE, row.names = NULL)
+  return(chromosomeData)
+}

@@ -44,6 +44,7 @@ testBam <- function(bamFile) {
 bamSummarise <- function(bamFile, force=FALSE, blockSize=50000L) {
   bamSummaryResults <- file.path(getRpath(),
                                  paste0(sub("\\.[^.]*$", "", basename(bamFile)), ".bamMetrics", ".Rdata"))
+  message(paste0("targetRdata ",bamSummaryResults,"\n"))
   if (file.exists(bamSummaryResults) & !force) {
     return(readRDS(file=bamSummaryResults))
   }
@@ -123,7 +124,7 @@ processBamChunk <- function(bamChunk) {
       strand=factor(rep("*",length(unmappedChunk$strand)), levels=c("+", "-", "*")),
       start=NA,
       end=NA,
-      qwidth=unmappedChunk$qwidth,
+      qwidth=nchar(unmappedChunk$qual),
       mapq=NA,
       readq=unlist(lapply(as.character(unmappedChunk$qual), qualToMeanQ)),
       coverage=NA,
@@ -135,3 +136,35 @@ processBamChunk <- function(bamChunk) {
   }
   return(parsed)
 }
+
+
+#' get depth of coverage information from across the genome
+#'
+#' This method will return a tiled Granges object containing mean depth of coverage information
+#'
+#' @param bamFile - path to the bamFile to use
+#' @param tilewidth - the size of the window to use for the tiling
+#' @param blocksize to use for parsing the BAM file
+#' @param flag the mapping type to filter reads for (Primary/Secondary/Supplementary)
+#' @return GRanges object with mean depth of coverage data in binned_cov field
+#'
+#' @examples
+#' \dontrun{
+#' bamSummaryToCoverage(file.path("Analysis", "Minimap2", "MyBamFile.bam"))
+#' }
+#'
+#' @export
+bamSummaryToCoverage <- function(bamFile, tilewidth=100000, blocksize=10000, flag="Primary") {
+  bamSummary <- bamSummarise(bamFile, blockSize=10000)
+  primary <- bamSummary[which(bamSummary$readFlag==flag),]
+
+  grdata <- GRanges(seqnames=primary$rname,
+                    ranges=IRanges(start=primary$start, end=primary$end),
+                    strand=primary$strand,
+                    seqlengths=getSeqLengths(levels(primary$rname)))
+  mapCoverage <- coverage(grdata)
+  bins <- tileGenome(seqlengths(grdata), tilewidth=100000, cut.last.tile.in.chrom=TRUE)
+  return(binnedAverage(bins, mapCoverage, "binned_cov"))
+}
+
+
