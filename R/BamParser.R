@@ -24,6 +24,92 @@ testBam <- function(bamFile) {
 }
 
 
+
+#' summarise mapping observations from a BAM file by chromosome
+#'
+#' This method will parse a BAM file and summarise the mapping observations in a
+#' way that can be used for preparation of figures and confidence plots by
+#' the nanopoRe package
+#'
+#' @importFrom Rsamtools ScanBamParam
+#' @importFrom Rsamtools BamFile
+#' @importFrom Rsamtools scanBam
+#' @param chrId is the chromosome to parse
+#' @param bamFile is the location to the BAM file to parse
+#' @param force logical value describing whether the analysis should be force recalculated
+#' @param blockSize the number of reads to process at the time as iterating through
+#' @return data.frame of per read summary observations
+#'
+#' @examples
+#' \dontrun{
+#' bamSummariseByChr("MyBamFile.bam", chrId="1")
+#' }
+#'
+#' @export
+bamSummariseByChr <- function(chrId, bamFile, force=FALSE, blockSize=50000L) {
+  bamSummaryResults <- file.path(getRpath(),
+                                 paste0(sub("\\.[^.]*$", "", basename(bamFile)), ".bamMetrics.chr", chrId, ".Rdata"))
+  message(paste0("targetRdata ",bamSummaryResults,"\n"))
+  if (file.exists(bamSummaryResults) & !force) {
+    return(readRDS(file=bamSummaryResults))
+  }
+  count <- 0
+  bamInfo <- data.frame()
+  bam = open(BamFile(bamFile, yieldSize = blockSize))
+  what=c("qname", "flag", "rname", "strand", "pos", "qwidth", "mapq", "qual", "cigar")
+  param=ScanBamParam(which=GRanges(seqnames = chrId, ranges = IRanges(start = 1, end = as.numeric(getSeqLengths(chrId)))), what=what, tag=c("NM", "MD"))
+  repeat {
+    reads = scanBam(bam, param = param)[[1L]]
+    if (length(reads$qname) == 0L) break
+    count = count + length(reads$qname)
+    cat(paste0(count, "\n"))
+    bamInfo <- rbind(bamInfo, processBamChunk(reads))
+  }
+  close(bam)
+  cat(paste0(bamSummaryResults," --> ",count, "\n"))
+  saveRDS(bamInfo, file=bamSummaryResults)
+  return(bamInfo)
+}
+
+
+
+#' summarise mapping observations from a BAM file using parallel chr-by-chr
+#'
+#' This method will parse a BAM file and summarise the mapping observations in a
+#' way that can be used for preparation of figures and confidence plots by
+#' the nanopoRe package
+#'
+#' @importFrom parallel detectCores
+#' @importFrom pbmcapply pbmclapply
+#' @param bamFile is the location to the BAM file to parse
+#' @param force logical value describing whether the analysis should be force recalculated
+#' @param mc.cores number of threads to use for the process
+#' @return data.frame of per read summary observations
+#'
+#' @examples
+#' \dontrun{
+#' parallelBamSummarise(file.path("Analysis", "Minimap2", "MyBamFile.bam"))
+#' }
+#'
+#' @export
+parallelBamSummarise <- function(bamFile, force=FALSE, mc.cores=min(parallel::detectCores()-1, 24)) {
+  bamSummaryResults <- file.path(getRpath(),
+                                 paste0(sub("\\.[^.]*$", "", basename(bamFile)), ".bamMetrics", ".Rdata"))
+  message(paste0("targetRdata ",bamSummaryResults,"\n"))
+  if (file.exists(bamSummaryResults) & !force) {
+    return(readRDS(file=bamSummaryResults))
+  }
+  mcharv <- pbmclapply(getChromosomeIds(), bamSummariseByChr, bamFile=bamFile, force=force, mc.cores=mc.cores, mc.preschedule=FALSE, mc.silent=FALSE)
+  result <- data.frame()
+  for (chr in getChromosomeIds()) {
+    result <- rbind(result, bamSummariseByChr(chr, bamFile))
+  }
+  saveRDS(result, file=bamSummaryResults)
+  return(result)
+}
+
+
+
 #' summarise mapping observations from a BAM file
 #'
 #' This method will parse a BAM file and summarise the mapping observations in a
@@ -105,8 +191,8 @@ processBamChunk <- function(bamChunk) {
   q_match_len <- sum(IRanges::width(cigarRangesAlongPairwiseSpace(bamChunk$cigar, ops=c("M"))))
   q_mm_len <- bamChunk$tag.NM - q_ins_len - q_del_len
   coverage = q_aln_len / bamChunk$qwidth
-  accuracy = (q_match_len - q_mm_len) / (q_match_len)
-  identity = (q_match_len - q_mm_len) / (q_match_len + q_ins_len)
+  accuracy = (q_match_len - q_mm_len) / (q_match_len + q_ins_len + q_del_len)
+  identity = (q_match_len - q_mm_len) / (q_match_len)
 
   parsed <- data.frame(
     qname=bamChunk$qname,

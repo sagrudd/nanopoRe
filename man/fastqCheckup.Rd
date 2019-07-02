@@ -11,6 +11,9 @@ fastqCheckup(input_fastq, force = FALSE)
 
 \item{force}{logical value describing whether the analysis should be force recalculated}
 }
+\value{
+vector of observations
+}
 \description{
 This method will prepare summary statistics on a fastq file and cache results (assuming immutable nature)
 }
