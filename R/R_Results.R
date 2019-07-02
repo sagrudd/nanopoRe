@@ -7,7 +7,9 @@
 #' @return None
 #'
 #' @examples
+#' \dontrun{
 #' setRpath(file.path("Analysis", "R"))
+#' }
 #'
 #' @export
 setRpath <- function(path) {
@@ -24,9 +26,11 @@ setRpath <- function(path) {
 #' @return character representation of path
 #'
 #' @examples
+#' \dontrun{
 #' getRpath()
+#' }
 #'
 #' @export
-getRpath <- function(path) {
+getRpath <- function() {
   return(get("r_path", envir=get(getEnvironment())))
 }

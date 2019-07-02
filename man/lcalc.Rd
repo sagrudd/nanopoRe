@@ -7,7 +7,9 @@
 lcalc(len.vector, n)
 }
 \arguments{
-\item{filename}{is a qualified path to a file of interest}
+\item{len.vector}{is a vector of sequence lengths}
+
+\item{n}{is a numeric of the value to use}
 }
 \value{
 character representation of md5sum

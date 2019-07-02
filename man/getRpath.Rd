@@ -4,7 +4,7 @@
 \alias{getRpath}
 \title{get path for R results}
 \usage{
-getRpath(path)
+getRpath()
 }
 \value{
 character representation of path
@@ -13,6 +13,8 @@ character representation of path
 This method returns the path where default R results will be stored during an analysis
 }
 \examples{
+\dontrun{
 getRpath()
+}
 
 }

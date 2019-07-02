@@ -7,8 +7,9 @@
 #' @return None
 #'
 #' @examples
+#' \dontrun{
 #' Nanopore::init()
-#'
+#' }
 #' @export
 init <- function() {
   eval(parse(text=paste0(nanopoRe.env.name," <<- new.env(parent=emptyenv())")))
@@ -25,8 +26,6 @@ isInitialised <- function() {
 }
 # nanopoRe.env.name <- "nanopoRe.env"
 # usethis::use_data(nanopoRe.env.name, internal=TRUE)
-
-
 getEnvironment <- function() {
   return(nanopoRe.env.name)
 }

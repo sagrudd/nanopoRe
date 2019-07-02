@@ -7,9 +7,9 @@
 plotDepthOfCoverageMegablock(coverageData, colMax = 4)
 }
 \arguments{
-\item{colMax}{defines the number of columns}
+\item{coverageData}{data.frame of coverage data}
 
-\item{parsedBamFile}{is the location to the BAM file to parse}
+\item{colMax}{defines the number of columns}
 }
 \description{
 This method will display depths-of-coverage for the chromosomes contained in the provided parsedBamFile
@@ -17,6 +17,7 @@ container
 }
 \examples{
 \dontrun{
+coverageData <- bamSummaryToCoverage(bamFile, tilewidth=250000)
 plotDepthOfCoverageMegablock(parsedBamFile)
 }
 

@@ -182,8 +182,10 @@ getSeqLengths <- function(x) {
 #'
 #' This method will return a data.frame of basic per chromosome mapping statistics
 #'
+#' @importFrom gtools mixedsort
 #' @param chrIds vector of chromosome ids
-#' @param path to the bamFile used for analysis
+#' @param bamFile to the bamFile used for analysis
+#' @param flag to define whether mapping is reported at the Primary level
 #' @return data.frame of mapping characteristics
 #'
 #' @examples
@@ -192,10 +194,10 @@ getSeqLengths <- function(x) {
 #' }
 #'
 #' @export
-chromosomeMappingSummary <- function(chrIds, bamFile) {
+chromosomeMappingSummary <- function(chrIds, bamFile, flag="Primary") {
   bamSummary <- bamSummarise(bamFile, blockSize=10000)
 
-  getChrData <- function(id, bamSummary, flag="Primary") {
+  getChrData <- function(id, bamSummary, flag=flag) {
     dna <- getChromosomeSequence(getStringSetId(id))
     letterFreq <- letterFrequency(dna, c("A", "C", "G", "T", "N"))
     mapChr <- bamSummary %>% filter(readFlag==flag & rname==id)
@@ -221,7 +223,6 @@ chromosomeMappingSummary <- function(chrIds, bamFile) {
     ))
   }
 
-  #lapply(gtools:::mixedsort(unique(chrIds)), getChrData, bamSummary=bamSummary)
-  chromosomeData <- data.frame(t(as.data.frame(lapply(gtools:::mixedsort(unique(chrIds)), getChrData, bamSummary=bamSummary))), stringsAsFactors = FALSE, row.names = NULL)
+  chromosomeData <- data.frame(t(as.data.frame(lapply(gtools::mixedsort(unique(chrIds)), getChrData, bamSummary=bamSummary))), stringsAsFactors = FALSE, row.names = NULL)
   return(chromosomeData)
 }

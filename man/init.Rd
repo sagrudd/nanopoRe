@@ -14,6 +14,7 @@ Creates a NanopoRe environment; package specific parameters and values will be s
 environment; the name of the environment is defined internally
 }
 \examples{
+\dontrun{
 Nanopore::init()
-
+}
 }

@@ -22,7 +22,8 @@ ncalc <- function(len.vector, n) {
 #'
 #' Given a set of contigs, each with its own length, the L50 count is defined as the smallest number of contigs whose length sum makes up half of genome size (https://en.wikipedia.org/wiki/N50,_L50,_and_related_statistics)
 #'
-#' @param filename is a qualified path to a file of interest
+#' @param len.vector is a vector of sequence lengths
+#' @param n is a numeric of the value to use
 #' @return character representation of md5sum
 #'
 #' @examples

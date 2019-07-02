@@ -4,12 +4,14 @@
 \alias{chromosomeMappingSummary}
 \title{prepare mapping summary information by chromosome}
 \usage{
-chromosomeMappingSummary(chrIds, bamFile)
+chromosomeMappingSummary(chrIds, bamFile, flag = "Primary")
 }
 \arguments{
 \item{chrIds}{vector of chromosome ids}
 
-\item{path}{to the bamFile used for analysis}
+\item{bamFile}{to the bamFile used for analysis}
+
+\item{flag}{to define whether mapping is reported at the Primary level}
 }
 \value{
 data.frame of mapping characteristics

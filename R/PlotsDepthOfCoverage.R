@@ -4,11 +4,12 @@
 #' This method will display depths-of-coverage for the chromosomes contained in the provided parsedBamFile
 #' container
 #'
-#' @param parsedBamFile is the location to the BAM file to parse
+#' @param coverageData data.frame of coverage data
 #' @param colMax defines the number of columns
 #'
 #' @examples
 #' \dontrun{
+#' coverageData <- bamSummaryToCoverage(bamFile, tilewidth=250000)
 #' plotDepthOfCoverageMegablock(parsedBamFile)
 #' }
 #'
@@ -18,7 +19,7 @@ plotDepthOfCoverageMegablock <- function(coverageData, colMax=4) {
   coverageDF <- as.data.frame(coverageData, stringsAsFactors=FALSE)
   coverageDF$seqnames <- as.character(coverageDF$seqnames)
 
-  suppressWarnings(posMatrix <- matrix(gtools:::mixedsort(unique(coverageDF$seqnames)), ncol=colMax, byrow=TRUE))
+  suppressWarnings(posMatrix <- matrix(gtools::mixedsort(unique(coverageDF$seqnames)), ncol=colMax, byrow=TRUE))
   # data may be recycled ... remove duplicate values ...
   posMatrix[which(duplicated(posMatrix[seq(nrow(posMatrix) * ncol(posMatrix))]))]<-NA
   coverageDF <- cbind(coverageDF,
@@ -31,7 +32,7 @@ plotDepthOfCoverageMegablock <- function(coverageData, colMax=4) {
   # set ylim to mean + 2stdev?
   ylimit <- mean(coverageDF$binned_cov, na.rm=TRUE) + 2*sd(coverageDF$binned_cov, na.rm=TRUE)
 
-  plotLegend <- paste("chr",gtools:::mixedsort(unique(coverageDF$seqnames)))
+  plotLegend <- paste("chr",gtools::mixedsort(unique(coverageDF$seqnames)))
   plotCols <- ceiling(length(plotLegend) / colMax)
   legendDF <- data.frame(x=Inf, y=Inf,
                          lab=plotLegend,

@@ -1,29 +1,31 @@
 Package: nanopoRe
 Type: Package
 Title: Accessory Methods for Analysis of Nanopore Data using R
-Version: 0.1.1
+Version: 0.1.2
 Author: Technical Support <support@nanoporetech.com>
 Maintainer: Technical Support <support@nanoporetech.com>
 Description: A collection of R utilities used within the ont_tutorials. The ont_tutorials are
     a collection of best-practise documents that demonstrate examples of how Nanopore sequence
     data may be used in applied bioinformatics workflows.
-License: Mozilla Public License Version 2.0
+License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
 Depends:
-  gtools,
-  pbmcapply,
-  digest
+  R (>= 3.1.0)
 Imports:
     Biostrings,
     dplyr,
     Rsamtools,
     GenomicAlignments,
     ShortRead,
-    Rcpp
+    Rcpp,
+    scales,
+    gtools,
+    digest,
+    ggplot2
 LinkingTo: 
     Rcpp
 Suggests:
-    testthat,
-    devtools
+    devtools,
+    testthat
