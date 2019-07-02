@@ -1,7 +1,7 @@
 Package: nanopoRe
 Type: Package
 Title: Accessory Methods for Analysis of Nanopore Data using R
-Version: 0.1.2
+Version: 0.2.0
 Author: Technical Support <support@nanoporetech.com>
 Maintainer: Technical Support <support@nanoporetech.com>
 Description: A collection of R utilities used within the ont_tutorials. The ont_tutorials are
@@ -14,6 +14,7 @@ RoxygenNote: 6.1.1
 Depends:
   R (>= 3.1.0)
 Imports:
+    rlang,
     Biostrings,
     dplyr,
     Rsamtools,
@@ -23,7 +24,14 @@ Imports:
     scales,
     gtools,
     digest,
-    ggplot2
+    ggplot2,
+    RColorBrewer,
+    IRanges,
+    magrittr,
+    S4Vectors,
+    GenomeInfoDb,
+    GenomicRanges,
+    gdata
 LinkingTo: 
     Rcpp
 Suggests:

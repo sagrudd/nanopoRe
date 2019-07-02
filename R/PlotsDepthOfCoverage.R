@@ -4,6 +4,9 @@
 #' This method will display depths-of-coverage for the chromosomes contained in the provided parsedBamFile
 #' container
 #'
+#' @import ggplot2
+#' @importFrom stats sd
+#' @import RColorBrewer
 #' @param coverageData data.frame of coverage data
 #' @param colMax defines the number of columns
 #'
@@ -30,7 +33,7 @@ plotDepthOfCoverageMegablock <- function(coverageData, colMax=4) {
 
   coverageDF$start <- (as.numeric(coverageDF$start - 1))/1000000
   # set ylim to mean + 2stdev?
-  ylimit <- mean(coverageDF$binned_cov, na.rm=TRUE) + 2*sd(coverageDF$binned_cov, na.rm=TRUE)
+  ylimit <- mean(coverageDF$binned_cov, na.rm=TRUE) + 2*stats::sd(coverageDF$binned_cov, na.rm=TRUE)
 
   plotLegend <- paste("chr",gtools::mixedsort(unique(coverageDF$seqnames)))
   plotCols <- ceiling(length(plotLegend) / colMax)
@@ -39,7 +42,7 @@ plotDepthOfCoverageMegablock <- function(coverageData, colMax=4) {
                          row=unlist(lapply(1:plotCols, rep, times=colMax))[1:length(plotLegend)],
                          col=rep(seq(1, colMax), length.out=length(plotLegend)))
 
-  suppressWarnings(megadepthplot <- ggplot(coverageDF, aes(start, binned_cov)) +
+  suppressWarnings(megadepthplot <- ggplot(coverageDF, aes_string("start", "binned_cov")) +
                      geom_hline(yintercept=meanCov, size=0.3, colour="red") +
                      geom_line(colour=brewer.pal(6, "Paired")[2]) +
                      facet_grid(rows = vars(row), cols=vars(col), shrink=TRUE) +
@@ -49,7 +52,7 @@ plotDepthOfCoverageMegablock <- function(coverageData, colMax=4) {
                      xlab("Position along chromosome (Mb)") +
                      ylab("Depth of Coverage (X)") +
                      labs(title="Plot showing depth of coverage vs position for chromosomes mapped") +
-                     geom_text(aes(x,y,label=lab), data=legendDF, vjust=1, hjust=1, size=3.5) + theme(plot.title = element_text(size=11)))
+                     geom_text(aes_string("x","y",label="lab"), data=legendDF, vjust=1, hjust=1, size=3.5) + theme(plot.title = element_text(size=11)))
 
   return(megadepthplot)
 }
@@ -61,6 +64,7 @@ plotDepthOfCoverageMegablock <- function(coverageData, colMax=4) {
 #'
 #' This method will plot a histogram of whole genome depth-of-coverage
 #'
+#' @importFrom utils head
 #' @param bamFile is the path to the bamFile to plot
 #'
 #' @examples
@@ -88,10 +92,10 @@ plotOverallCovHistogram <- function(bamFile) {
     sum(coverageMatrix[which(binAssignments==level),"bases"])
   }
   binnedData <- unlist(lapply(levels(binAssignments), scrapeBinnedBases))
-  binnedDf <- data.frame(coverage=head(breaks, -1), bases=binnedData)
+  binnedDf <- data.frame(coverage=utils::head(breaks, -1), bases=binnedData)
 
 
-  plot <- ggplot(binnedDf, aes(x=coverage, y=bases)) +
+  plot <- ggplot(binnedDf, aes_string(x="coverage", y="bases")) +
     geom_vline(xintercept=meanCov, size=0.3, colour="red") +
     geom_bar(stat="identity", fill=brewer.pal(6, "Paired")[2]) +
     scale_x_continuous(limits=c(-0, 2*meanCov)) +

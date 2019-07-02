@@ -30,6 +30,9 @@ testBam <- function(bamFile) {
 #' way that can be used for preparation of figures and confidence plots by
 #' the nanopoRe package
 #'
+#' @importFrom Rsamtools ScanBamParam
+#' @importFrom Rsamtools BamFile
+#' @importFrom Rsamtools scanBam
 #' @param bamFile is the location to the BAM file to parse
 #' @param force logical value describing whether the analysis should be force recalculated
 #' @param blockSize the number of reads to process at the time as iterating through
@@ -67,7 +70,11 @@ bamSummarise <- function(bamFile, force=FALSE, blockSize=50000L) {
 }
 
 
-
+#' @import Rsamtools
+#' @importFrom GenomicAlignments cigarRangesAlongPairwiseSpace
+#' @importFrom GenomicAlignments cigarRangesAlongQuerySpace
+#' @importFrom GenomicAlignments cigarRangesAlongReferenceSpace
+#' @importFrom IRanges width
 processBamChunk <- function(bamChunk) {
   bamChunk <- as.data.frame(bamChunk)
 
@@ -91,11 +98,11 @@ processBamChunk <- function(bamChunk) {
   readq <- unlist(lapply(as.character(bamChunk$qual), qualToMeanQ))
 
   # get the actual query bases mapped ...
-  q_aln_len <- unlist(width(cigarRangesAlongQuerySpace(bamChunk$cigar, after.soft.clipping=TRUE, reduce.ranges = TRUE)))
-  #q_ins_len <- sum(width(cigarRangesAlongQuerySpace(bamChunk$cigar, drop.empty.ranges = TRUE, after.soft.clipping=TRUE, ops=c("I"), with.ops = TRUE)))
-  q_ins_len <- sum(width(cigarRangesAlongPairwiseSpace(bamChunk$cigar, ops=c("I"))))
-  q_del_len <- sum(width(cigarRangesAlongPairwiseSpace(bamChunk$cigar, ops=c("D"))))
-  q_match_len <- sum(width(cigarRangesAlongPairwiseSpace(bamChunk$cigar, ops=c("M"))))
+  q_aln_len <- unlist(IRanges::width(cigarRangesAlongQuerySpace(bamChunk$cigar, after.soft.clipping=TRUE, reduce.ranges = TRUE)))
+  #q_ins_len <- sum(IRanges::width(cigarRangesAlongQuerySpace(bamChunk$cigar, drop.empty.ranges = TRUE, after.soft.clipping=TRUE, ops=c("I"), with.ops = TRUE)))
+  q_ins_len <- sum(IRanges::width(cigarRangesAlongPairwiseSpace(bamChunk$cigar, ops=c("I"))))
+  q_del_len <- sum(IRanges::width(cigarRangesAlongPairwiseSpace(bamChunk$cigar, ops=c("D"))))
+  q_match_len <- sum(IRanges::width(cigarRangesAlongPairwiseSpace(bamChunk$cigar, ops=c("M"))))
   q_mm_len <- bamChunk$tag.NM - q_ins_len - q_del_len
   coverage = q_aln_len / bamChunk$qwidth
   accuracy = (q_match_len - q_mm_len) / (q_match_len)

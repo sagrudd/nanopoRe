@@ -38,6 +38,7 @@ getReferenceGenome <- function() {
 #'
 #' This method will parse the defined reference.file into a DNAStringSet object for handling in memory
 #'
+#' @importFrom Biostrings readDNAStringSet
 #' @return NULL
 #'
 #' @examples
@@ -183,6 +184,18 @@ getSeqLengths <- function(x) {
 #' This method will return a data.frame of basic per chromosome mapping statistics
 #'
 #' @importFrom gtools mixedsort
+#' @importFrom scales comma
+#' @importFrom Biostrings letterFrequency
+#' @import magrittr
+#' @importFrom S4Vectors mcols
+#' @import GenomeInfoDb
+#' @importFrom GenomicRanges tileGenome
+#' @importFrom GenomicRanges binnedAverage
+#' @importFrom GenomicRanges coverage
+#' @importFrom IRanges IRanges
+#' @importFrom GenomicRanges GRanges
+#' @importFrom dplyr filter
+#' @importFrom rlang .data
 #' @param chrIds vector of chromosome ids
 #' @param bamFile to the bamFile used for analysis
 #' @param flag to define whether mapping is reported at the Primary level
@@ -195,12 +208,13 @@ getSeqLengths <- function(x) {
 #'
 #' @export
 chromosomeMappingSummary <- function(chrIds, bamFile, flag="Primary") {
+
   bamSummary <- bamSummarise(bamFile, blockSize=10000)
 
-  getChrData <- function(id, bamSummary, flag=flag) {
+  getChrData <- function(id, bamSummary, flag="Primary") {
     dna <- getChromosomeSequence(getStringSetId(id))
     letterFreq <- letterFrequency(dna, c("A", "C", "G", "T", "N"))
-    mapChr <- bamSummary %>% filter(readFlag==flag & rname==id)
+    mapChr <- bamSummary %>% filter(.data$readFlag==flag & .data$rname==id)
 
     gr <- GRanges(seqnames=mapChr$rname,
                   ranges=IRanges(start=mapChr$start, end=mapChr$end),
@@ -223,6 +237,6 @@ chromosomeMappingSummary <- function(chrIds, bamFile, flag="Primary") {
     ))
   }
 
-  chromosomeData <- data.frame(t(as.data.frame(lapply(gtools::mixedsort(unique(chrIds)), getChrData, bamSummary=bamSummary))), stringsAsFactors = FALSE, row.names = NULL)
+  chromosomeData <- data.frame(t(as.data.frame(lapply(gtools::mixedsort(unique(chrIds)), getChrData, bamSummary=bamSummary, flag=flag))), stringsAsFactors = FALSE, row.names = NULL)
   return(chromosomeData)
 }
