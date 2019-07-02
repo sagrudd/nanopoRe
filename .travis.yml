@@ -1,5 +1,7 @@
 language: r
 r:
-  - bioc-oldrel
+  - oldrel
+  - release
+  - devel
   - bioc-release
   - bioc-devel
