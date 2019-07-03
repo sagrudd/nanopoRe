@@ -1,7 +1,5 @@
 #' @useDynLib nanopoRe, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
-NULL
-
 
 
 .onAttach <- function(libname, pkgname) {

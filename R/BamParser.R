@@ -135,7 +135,7 @@ bamSummarise <- function(bamFile, force=FALSE, blockSize=50000L) {
                                  paste0(sub("\\.[^.]*$", "", basename(bamFile)), ".bamMetrics", ".Rdata"))
   message(paste0("targetRdata ",bamSummaryResults,"\n"))
   if (file.exists(bamSummaryResults) & !force) {
-    return(readRDS(file=bamSummaryResults))
+    return(getCachedFileObject("BamTargetData", bamSummaryResults))
   }
   count <- 0
   bamInfo <- data.frame()
