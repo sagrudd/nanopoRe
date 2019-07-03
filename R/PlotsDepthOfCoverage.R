@@ -66,6 +66,7 @@ plotDepthOfCoverageMegablock <- function(coverageData, colMax=4) {
 #'
 #' @importFrom utils head
 #' @param bamFile is the path to the bamFile to plot
+#' @param segments number of segments to split data into
 #'
 #' @examples
 #' \dontrun{
@@ -73,19 +74,19 @@ plotDepthOfCoverageMegablock <- function(coverageData, colMax=4) {
 #' }
 #'
 #' @export
-plotOverallCovHistogram <- function(bamFile) {
+plotOverallCovHistogram <- function(bamFile, segments=50) {
 
   coverage <- bamSummaryToCoverage(bamFile)
 
   meanCov <- mean(mcols(coverage)$binned_cov, na.rm=TRUE)
 
   coverageMatrix <- data.frame(table(mcols(coverage)$binned_cov))
-  coverageMatrix$bases <- as.integer(coverageMatrix$Freq * mean(width(coverage)))
+  coverageMatrix$bases <- as.numeric(coverageMatrix$Freq * mean(width(coverage)))
   coverageMatrix[,1] <- as.numeric(levels(coverageMatrix[,1]))[coverageMatrix[,1]]
   # mask the regions with unmapped reads
   coverageMatrix <- coverageMatrix[-which(coverageMatrix[,1]==0),]
 
-  breaks <- seq(0, 2*meanCov, length.out=35)
+  breaks <- seq(0, 2*meanCov, length.out=segments)
   binAssignments <- cut(coverageMatrix$Var1, breaks, include.lowest=TRUE, right=FALSE)
 
   scrapeBinnedBases <- function(level) {

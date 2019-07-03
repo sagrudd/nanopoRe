@@ -4,10 +4,12 @@
 \alias{plotOverallCovHistogram}
 \title{plot a histogram of whole genome depth-of-coverage}
 \usage{
-plotOverallCovHistogram(bamFile)
+plotOverallCovHistogram(bamFile, segments = 50)
 }
 \arguments{
 \item{bamFile}{is the path to the bamFile to plot}
+
+\item{segments}{number of segments to split data into}
 }
 \description{
 This method will plot a histogram of whole genome depth-of-coverage
