@@ -56,6 +56,20 @@ getCachedObject <- function(objectName) {
   return(get(objectName, envir=get(getEnvironment())))
 }
 
+
+#' Initialise the NanopoRe environment
+#'
+#' Creates a NanopoRe environment; package specific parameters and values will be stored within this
+#' environment; the name of the environment is defined internally
+#'
+#' @importFrom utils ls.str
+#' @return None
+#'
+#' @examples
+#' \dontrun{
+#' Nanopore::init()
+#' }
+#' @export
 listCachedObjects <- function() {
   ls.str(get(getEnvironment()))
 }
