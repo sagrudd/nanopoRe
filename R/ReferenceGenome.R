@@ -216,10 +216,15 @@ chromosomeMappingSummary <- function(chrIds, bamFile, flag="Primary") {
     letterFreq <- letterFrequency(dna, c("A", "C", "G", "T", "N"))
     mapChr <- bamSummary %>% filter(.data$readFlag==flag & .data$rname==id)
 
-    gr <- GRanges(seqnames=mapChr$rname,
-                  ranges=IRanges(start=mapChr$start, end=mapChr$end),
-                  strand=mapChr$strand,
-                  seqlengths=getSeqLengths(levels(mapChr$rname)))
+    # depending on the genome used there may be a load of warnings here
+    # this is likely due to reads mapping beyond segment boundaries -
+    # warnings are masked here since they are expected
+    suppressWarnings(
+      gr <- GRanges(seqnames=mapChr$rname,
+                    ranges=IRanges(start=mapChr$start, end=mapChr$end),
+                    strand=mapChr$strand,
+                    seqlengths=getSeqLengths(levels(mapChr$rname)))
+    )
     mc <- coverage(gr)
     bi <- tileGenome(seqlengths(gr), ntile=1)
     cd <- binnedAverage(bi[[1]], mc, "binned_cov")

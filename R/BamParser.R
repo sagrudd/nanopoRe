@@ -251,10 +251,15 @@ bamSummaryToCoverage <- function(bamFile, tilewidth=100000, blocksize=10000, fla
   bamSummary <- bamSummarise(bamFile, blockSize=10000)
   primary <- bamSummary[which(bamSummary$readFlag==flag),]
 
-  grdata <- GRanges(seqnames=primary$rname,
-                    ranges=IRanges(start=primary$start, end=primary$end),
-                    strand=primary$strand,
-                    seqlengths=getSeqLengths(levels(primary$rname)))
+  # depending on the genome used there may be a load of warnings here
+  # this is likely due to reads mapping beyond segment boundaries -
+  # warnings are masked here since they are expected
+  suppressWarnings(
+    grdata <- GRanges(seqnames=primary$rname,
+                      ranges=IRanges(start=primary$start, end=primary$end),
+                      strand=primary$strand,
+                      seqlengths=getSeqLengths(levels(primary$rname)))
+  )
   mapCoverage <- coverage(grdata)
   bins <- tileGenome(seqlengths(grdata), tilewidth=100000, cut.last.tile.in.chrom=TRUE)
   return(binnedAverage(bins, mapCoverage, "binned_cov"))

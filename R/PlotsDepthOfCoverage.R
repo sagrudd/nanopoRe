@@ -78,9 +78,9 @@ plotOverallCovHistogram <- function(bamFile, segments=50) {
 
   coverage <- bamSummaryToCoverage(bamFile)
 
-  meanCov <- mean(mcols(coverage)$binned_cov, na.rm=TRUE)
+  meanCov <- mean(coverage$binned_cov, na.rm=TRUE)
 
-  coverageMatrix <- data.frame(table(mcols(coverage)$binned_cov))
+  coverageMatrix <- data.frame(table(coverage$binned_cov))
   coverageMatrix$bases <- as.numeric(coverageMatrix$Freq * mean(width(coverage)))
   coverageMatrix[,1] <- as.numeric(levels(coverageMatrix[,1]))[coverageMatrix[,1]]
   # mask the regions with unmapped reads
@@ -99,7 +99,6 @@ plotOverallCovHistogram <- function(bamFile, segments=50) {
   plot <- ggplot(binnedDf, aes_string(x="coverage", y="bases")) +
     geom_vline(xintercept=meanCov, size=0.3, colour="red") +
     geom_bar(stat="identity", fill=brewer.pal(6, "Paired")[2]) +
-    scale_x_continuous(limits=c(-0, 2*meanCov)) +
     scale_y_continuous(labels = comma) +
     labs(title="Histogram showing distribution of depth-of-coverage across genome") +
     xlab("Coverage (x)") +
