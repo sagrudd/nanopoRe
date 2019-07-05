@@ -16,7 +16,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // getFastqBases
-long long int getFastqBases();
+long int getFastqBases();
 RcppExport SEXP _nanopoRe_getFastqBases() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

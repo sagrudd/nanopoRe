@@ -13,7 +13,7 @@
 #' @export
 init <- function() {
   eval(parse(text=paste0(nanopoRe.env.name," <<- new.env(parent=emptyenv())")))
-  setRpath(file.path("Analysis", "R"))
+  #setRpath(file.path("Analysis", "R"))
 }
 
 #' check NanopoRe environment

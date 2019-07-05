@@ -13,7 +13,7 @@ static int isDestZipped = 0;
 static gzFile gzfile, gzDestfile;
 static FILE *file, *destfile;
 static bool validFastq = true;
-static long long int running_bases = 0;
+static long int running_bases = 0;
 static long int running_fastq = 0;
 static int malformed_fastq_delim = 0;
 static int fastq_plus_error = 0;
@@ -236,7 +236,7 @@ long int getFastqCount()
 //' @return long long integer of read fastq bases
 //' @export
 // [[Rcpp::export]]
-long long int getFastqBases()
+long int getFastqBases()
 {
   return(running_bases);
 }
