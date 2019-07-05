@@ -1,9 +1,9 @@
 Package: nanopoRe
 Type: Package
 Title: Accessory Methods for Analysis of Nanopore Data using R
-Version: 0.2.4
-Author: Technical Support <support@nanoporetech.com>
-Maintainer: Technical Support <support@nanoporetech.com>
+Version: 0.2.5
+Author: Stephen Rudd <stephen.rudd@nanoporetech.com>
+Maintainer: Stephen Rudd <stephen.rudd@nanoporetech.com>
 Description: A collection of R utilities used within the ont_tutorials. The ont_tutorials are
     a collection of best-practise documents that demonstrate examples of how Nanopore sequence
     data may be used in applied bioinformatics workflows.
