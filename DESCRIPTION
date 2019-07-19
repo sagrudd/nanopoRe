@@ -1,13 +1,14 @@
 Package: nanopoRe
 Type: Package
-Title: Accessory Methods for Analysis of Nanopore Data using R
+Title: Accessory Methods for the Analysis of Oxford Nanopore Technologies DNA Sequence Data
 Version: 0.2.5
 Author: Stephen Rudd <stephen.rudd@nanoporetech.com>
 Maintainer: Stephen Rudd <stephen.rudd@nanoporetech.com>
-Description: A collection of R utilities used within the ont_tutorials. The ont_tutorials are
-    a collection of best-practise documents that demonstrate examples of how Nanopore sequence
-    data may be used in applied bioinformatics workflows.
-License: file LICENSE
+Description: A collection of utilities used by the Oxford Nanopore Technologies DNA sequence 
+    analysis tutorials. These tutorials provide a collection of best-practise workflows that 
+    demonstrate examples of how Nanopore sequence data may be used in applied bioinformatics 
+    workflows.
+License: Mozilla Public License Version 2.0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
