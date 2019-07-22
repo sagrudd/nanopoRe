@@ -2,7 +2,7 @@
 % Please edit documentation in R/SequenceSummary.R
 \name{sequencingSummaryChannelActivity}
 \alias{sequencingSummaryChannelActivity}
-\title{prepare a gauge plot of sequencing_summary reads passing QC}
+\title{prepare a channel activity plot from sequencing_summary reads file}
 \usage{
 sequencingSummaryChannelActivity(seqsum = NA, platform = NA)
 }
@@ -12,10 +12,10 @@ sequencingSummaryChannelActivity(seqsum = NA, platform = NA)
 \item{platform}{is the nanopore platform [MinION/Flongle/PromethION]}
 }
 \value{
-ggplot2 gauge plot
+ggplot2 channel activity plot
 }
 \description{
-plots the basic eye-candy gauge plot of reads passing QC threshold
+plots the basic eye-candy gauge channel activity plot of reads against channel of origin
 }
 \examples{
 seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
