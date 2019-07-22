@@ -18,7 +18,7 @@ memory and performs basic sanity checking to ensure that the file
 is cleaned of potential duplicate headers from aggregation
 }
 \examples{
-seqsumFile <- system.file("extdata", "example.fastq.gz", package = "nanopoRe", mustWork = TRUE)
+seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 seqsum <- importSequencingSummary(seqsumFile)
 
 }
