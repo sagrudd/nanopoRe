@@ -36,6 +36,7 @@ Imports:
     RColorBrewer,
     Rcpp,
     Rsamtools,
+    RCurl,
     scales,
     ShortRead,
     S4Vectors,
