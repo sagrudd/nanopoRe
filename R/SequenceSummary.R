@@ -771,8 +771,10 @@ SequencingSummaryActiveChannelPlot <- function(seqsum, scaling=1, sampleHours = 
 #'
 #' @export
 SequenceSummaryExecutiveSummary <- function(seqsum, flowcellId="undefined") {
-
   # calculate some basic, but key, metrics
+
+  passedSeqs <- seqsum[which(seqsum$passes_filtering), ]
+
   readCount <- formatC(nrow(seqsum), big.mark=",")
   totalBases = sum(seqsum$sequence_length_template,na.rm=T)/10^9
   passedBases = sum(passedSeqs$sequence_length_template,na.rm=T)/10^9
