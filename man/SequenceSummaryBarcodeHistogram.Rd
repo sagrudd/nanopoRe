@@ -18,8 +18,10 @@ a ggplot2 histogram or NULL
 present a ggplot2 histogram of read counts by sorted barcode Id
 }
 \examples{
+\dontrun{
 seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 seqsum <- importSequencingSummary(seqsumFile)
 SequenceSummaryBarcodeHistogram(seqsum)
+}
 
 }

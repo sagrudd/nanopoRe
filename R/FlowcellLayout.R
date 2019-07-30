@@ -20,7 +20,9 @@ sequencingSummaryGetChannelMap <- function(platform) {
 #' @return data.frame with channel, row and col columns
 #'
 #' @examples
+#' \dontrun{
 #' getMinIONChannelMap()
+#' }
 #'
 #' @export
 getMinIONChannelMap <- function() {
@@ -42,7 +44,9 @@ getMinIONChannelMap <- function() {
 #' @return data.frame with channel, row and col columns
 #'
 #' @examples
+#' \dontrun{
 #' getFlongleChannelMap()
+#' }
 #'
 #' @export
 getFlongleChannelMap <- function() {

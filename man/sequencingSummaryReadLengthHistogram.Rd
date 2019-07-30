@@ -16,8 +16,10 @@ ggplot2 showing read length distribution
 plots the histogram of read lengths shaded by pass/fail status
 }
 \examples{
+\dontrun{
 seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- sequencingSummaryReadLengthHistogram(seqsum)
+}
 
 }

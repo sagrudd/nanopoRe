@@ -18,8 +18,10 @@ file path to ggplot2 format file
 present an infographic styled executive summary of sequence_summary.txt content
 }
 \examples{
+\dontrun{
 seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequenceSummaryExecutiveSummary(seqsum)
+}
 
 }

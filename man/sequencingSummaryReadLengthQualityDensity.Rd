@@ -21,8 +21,10 @@ ggplot2 showing densities of read length and quality distribution
 plots the density plot of read length against read mean quality scores
 }
 \examples{
+\dontrun{
 seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- sequencingSummaryReadLengthQualityDensity(seqsum)
+}
 
 }

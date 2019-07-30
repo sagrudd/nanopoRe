@@ -16,8 +16,10 @@ ggplot2 showing weighted read length distribution
 plots the histogram of read lengths, weighted, and shaded by pass/fail status
 }
 \examples{
+\dontrun{
 seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- sequencingSummaryWeightedReadLength(seqsum)
+}
 
 }

@@ -8,10 +8,12 @@
 #' @return a numeric value expressed in gigabases
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' barcodeFile <- NULL
 #' seqsum <- SequencingSummaryBarcodeMerge(seqsum, barcodeFile)
+#' }
 #'
 #' @export
 SequencingSummaryBarcodeMerge <- function(seqsum, barcodeFile) {
@@ -44,9 +46,11 @@ SequencingSummaryBarcodeMerge <- function(seqsum, barcodeFile) {
 #' @return a numeric value expressed in gigabases
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' SequenceSummaryBarcodeInfoGraphic(seqsum)
+#' }
 #'
 #' @export
 SequenceSummaryBarcodeInfoGraphic <- function(seqsum, bctheshold=150) {
@@ -96,9 +100,11 @@ SequenceSummaryBarcodeInfoGraphic <- function(seqsum, bctheshold=150) {
 #' @return a kable table or NULL
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' SequenceSummaryBarcodeTable(seqsum)
+#' }
 #'
 #' @export
 SequenceSummaryBarcodeTable <- function(seqsum, bctheshold=150) {
@@ -168,9 +174,11 @@ SequenceSummaryBarcodeTable <- function(seqsum, bctheshold=150) {
 #' @return a ggplot2 histogram or NULL
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' SequenceSummaryBarcodeHistogram(seqsum)
+#' }
 #'
 #' @export
 SequenceSummaryBarcodeHistogram <- function(seqsum, bctheshold=150) {

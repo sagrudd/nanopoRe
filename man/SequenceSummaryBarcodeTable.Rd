@@ -18,8 +18,10 @@ a kable table or NULL
 tabulate information on the SequencingSummary barcode fields and status
 }
 \examples{
+\dontrun{
 seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 seqsum <- importSequencingSummary(seqsumFile)
 SequenceSummaryBarcodeTable(seqsum)
+}
 
 }

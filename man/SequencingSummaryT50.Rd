@@ -25,8 +25,10 @@ a numeric value expressed in hours
 an accessory method for identifying a timepoint where a given amount of data has been produced
 }
 \examples{
+\dontrun{
 seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 seqsum <- importSequencingSummary(seqsumFile)
 T50 <- SequencingSummaryT50(seqsum)
+}
 
 }

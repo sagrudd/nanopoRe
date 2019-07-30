@@ -18,8 +18,10 @@ a numeric value expressed in gigabases
 an accessory method for various logicals; simple fractional base calculator
 }
 \examples{
+\dontrun{
 seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 seqsum <- importSequencingSummary(seqsumFile)
 SequenceSummaryBarcodeInfoGraphic(seqsum)
+}
 
 }

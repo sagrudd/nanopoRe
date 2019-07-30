@@ -24,8 +24,10 @@ plots a ggplot2 graph of accumulated sequence reads against time for run and sep
 failed sequence reads
 }
 \examples{
+\dontrun{
 seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequencingSummaryCumulativeReads(seqsum)
+}
 
 }

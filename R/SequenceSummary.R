@@ -9,8 +9,10 @@
 #' @return data.frame of observations from the sequencing_summary.txt file provided
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
+#' }
 #'
 #' @export
 importSequencingSummary <- function(seqsum) {
@@ -58,9 +60,11 @@ importSequencingSummary <- function(seqsum) {
 #' @return ggplot2 gauge plot
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- sequencingSummaryPassGauge(seqsum)
+#' }
 #'
 #' @export
 sequencingSummaryPassGauge <- function(seqsum=NA) {
@@ -114,9 +118,11 @@ sequencingSummaryPassGauge <- function(seqsum=NA) {
 #' @return ggplot2 channel activity plot
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- sequencingSummaryChannelActivity(seqsum)
+#' }
 #'
 #' @export
 sequencingSummaryChannelActivity <- function(seqsum=NA, platform=NA) {
@@ -177,9 +183,11 @@ sequencingSummaryChannelActivity <- function(seqsum=NA, platform=NA) {
 #' @return platform is the nanopore platform [MinION/Flongle/PromethION]
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' platform <- sequencingSummaryGetPlatform(seqsum)
+#' }
 #'
 #' @export
 sequencingSummaryGetPlatform <- function(seqsum=NA) {
@@ -244,9 +252,11 @@ getBinBreaks <- function(seqsum) {
 #' @return ggplot2 showing weighted read length distribution
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- sequencingSummaryWeightedReadLength(seqsum)
+#' }
 #'
 #' @export
 sequencingSummaryWeightedReadLength <- function(seqsum) {
@@ -299,9 +309,11 @@ sequencingSummaryWeightedReadLength <- function(seqsum) {
 #' @return ggplot2 showing read length distribution
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- sequencingSummaryReadLengthHistogram(seqsum)
+#' }
 #'
 #' @export
 sequencingSummaryReadLengthHistogram <- function(seqsum) {
@@ -351,9 +363,11 @@ sequencingSummaryReadLengthHistogram <- function(seqsum) {
 #' @return ggplot2 showing read quality distribution
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- sequencingSummaryReadQualityHistogram(seqsum)
+#' }
 #'
 #' @export
 sequencingSummaryReadQualityHistogram <- function(seqsum) {
@@ -382,9 +396,11 @@ sequencingSummaryReadQualityHistogram <- function(seqsum) {
 #' @return ggplot2 showing densities of read length and quality distribution
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- sequencingSummaryReadLengthQualityDensity(seqsum)
+#' }
 #'
 #' @export
 sequencingSummaryReadLengthQualityDensity <- function(seqsum, binFilter=5, qcThreshold=7) {
@@ -449,9 +465,11 @@ getTemporalDataset <- function(seqsum, sampleIntervalMinutes, breaks, binass) {
 #' @return ggplot2 showing temporal performance
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryTemporalThroughput(seqsum)
+#' }
 #'
 #' @export
 SequencingSummaryTemporalThroughput <- function(seqsum, scaling=1, sampleHours = 48, sampleIntervalMinutes = 60) {
@@ -488,9 +506,11 @@ SequencingSummaryTemporalThroughput <- function(seqsum, scaling=1, sampleHours =
 #' @return ggplot2 showing temporal performance
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryCumulativeBases(seqsum)
+#' }
 #'
 #' @export
 SequencingSummaryCumulativeBases <- function(seqsum, scaling=1, sampleHours = 48, sampleIntervalMinutes = 60) {
@@ -543,9 +563,11 @@ SequencingSummaryCumulativeBases <- function(seqsum, scaling=1, sampleHours = 48
 #' @return a numeric value expressed in gigabases
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' Base50 <- SequencingSummaryBase50(seqsum)
+#' }
 #'
 #' @export
 SequencingSummaryBase50 <- function(seqsum, b=0.5) {
@@ -569,9 +591,11 @@ SequencingSummaryBase50 <- function(seqsum, b=0.5) {
 #' @return a numeric value expressed in hours
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' T50 <- SequencingSummaryT50(seqsum)
+#' }
 #'
 #' @export
 SequencingSummaryT50 <- function(seqsum, t=0.5, scaling=1, sampleHours = 48, sampleIntervalMinutes = 60) {
@@ -613,9 +637,11 @@ SequencingSummaryT50 <- function(seqsum, t=0.5, scaling=1, sampleHours = 48, sam
 #' @return ggplot2 showing temporal performance
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryCumulativeReads(seqsum)
+#' }
 #'
 #' @export
 SequencingSummaryCumulativeReads <- function(seqsum, scaling=1, sampleHours = 48, sampleIntervalMinutes = 60) {
@@ -676,9 +702,11 @@ SequencingSummaryCumulativeReads <- function(seqsum, scaling=1, sampleHours = 48
 #' @return ggplot2 showing temporal performance
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummarySpeedPlot(seqsum)
+#' }
 #'
 #' @export
 SequencingSummarySpeedPlot <- function(seqsum, scaling=1, sampleHours = 48, sampleIntervalMinutes = 60) {
@@ -714,9 +742,11 @@ SequencingSummarySpeedPlot <- function(seqsum, scaling=1, sampleHours = 48, samp
 #' @return ggplot2 showing temporal performance
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryActiveChannelPlot(seqsum)
+#' }
 #'
 #' @export
 SequencingSummaryActiveChannelPlot <- function(seqsum, scaling=1, sampleHours = 48, sampleIntervalMinutes = 60) {
@@ -767,9 +797,11 @@ SequencingSummaryActiveChannelPlot <- function(seqsum, scaling=1, sampleHours = 
 #' @return file path to ggplot2 format file
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequenceSummaryExecutiveSummary(seqsum)
+#' }
 #'
 #' @export
 SequenceSummaryExecutiveSummary <- function(seqsum, flowcellId="undefined") {
@@ -803,9 +835,11 @@ SequenceSummaryExecutiveSummary <- function(seqsum, flowcellId="undefined") {
 #' @return file path to ggplot2 format file
 #'
 #' @examples
+#' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequenceSummaryBasicInfoPlot(seqsum)
+#' }
 #'
 #' @export
 SequenceSummaryBasicInfoPlot <- function(seqsum) {

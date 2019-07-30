@@ -16,8 +16,10 @@ ggplot2 gauge plot
 plots the basic eye-candy gauge plot of reads passing QC threshold
 }
 \examples{
+\dontrun{
 seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- sequencingSummaryPassGauge(seqsum)
+}
 
 }
