@@ -419,7 +419,7 @@ sequencingSummaryReadLengthQualityDensity <- function(seqsum, binFilter=5, qcThr
     geom_hline(yintercept = qcThreshold, size = 1) +
     xlab("log10(read length)") +
     ylab("read mean quality") +
-    scale_x_continuous(breaks = c(1,2,3,4,5), label = c("10", "100", "1000", "10,000", "100,000")) +
+    scale_x_continuous(breaks = c(1,2,3,4,5), labels = c("10", "100", "1000", "10,000", "100,000")) +
     annotation_logticks(base = 10, sides = "b", scaled = TRUE) +
     labs(title="Contour Plot showing distribution of quality scores against log10 read lengths (all reads)")
   return(qldensityplot)
