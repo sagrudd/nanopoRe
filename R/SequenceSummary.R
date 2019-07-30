@@ -767,7 +767,7 @@ SequencingSummaryActiveChannelPlot <- function(seqsum, scaling=1, sampleHours = 
 #' @examples
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
-#' plot <- executiveSummary(seqsum)
+#' plot <- SequenceSummaryExecutiveSummary(seqsum)
 #'
 #' @export
 SequenceSummaryExecutiveSummary <- function(seqsum, flowcellId="undefined") {
