@@ -27,6 +27,9 @@ isInitialised <- function() {
 # nanopoRe.env.name <- "nanopoRe.env"
 # usethis::use_data(nanopoRe.env.name, internal=TRUE)
 getEnvironment <- function() {
+  if (!isInitialised()) {
+    init()
+  }
   return(nanopoRe.env.name)
 }
 
