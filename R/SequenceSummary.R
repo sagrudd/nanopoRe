@@ -231,7 +231,7 @@ getBinAssignments <- function(seqsum, breaks) {
   return(binAssignments)
 }
 
-
+#' @importFrom stats quantile
 getBinBreaks <- function(seqsum) {
   # pick a friendly upper limit to render sequence lengths into a histogram
   # here we're aiming for a robustly rounded up 97.5 quantile of the data (skip a few outliers ...)
@@ -248,6 +248,7 @@ getBinBreaks <- function(seqsum) {
 #'
 #' plots the histogram of read lengths, weighted, and shaded by pass/fail status
 #'
+#' @importFrom dplyr last
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
 #' @return ggplot2 showing weighted read length distribution
 #'
@@ -280,7 +281,7 @@ sequencingSummaryWeightedReadLength <- function(seqsum) {
   binnedBaseDist <- data.frame(length=head(breaks, -1), pass=passedBinnedBases, fail=failedBinnedBases)
   binnedBaseMelt <- reshape2::melt(binnedBaseDist, id.vars=c("length"))
 
-  weightedReadLengths <- ggplot(binnedBaseMelt, aes(x=length, fill=variable, y=value)) +
+  weightedReadLengths <- ggplot(binnedBaseMelt, aes_string(x="length", fill="variable", y="value")) +
     geom_bar(stat="identity") +
     xlab("Read length\n") + ylab("Number of bases sequenced\n") +
     scale_fill_manual("QC", values=c("fail"=brewer.pal(6, "Paired")[1], "pass"=brewer.pal(6, "Paired")[2])) +
@@ -583,6 +584,8 @@ SequencingSummaryBase50 <- function(seqsum, b=0.5) {
 #'
 #' an accessory method for identifying a timepoint where a given amount of data has been produced
 #'
+#' @importFrom stats approxfun
+#' @importFrom stats optimize
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
 #' @param t is a fractional point through run against which time will be calculated
 #' @param scaling factor

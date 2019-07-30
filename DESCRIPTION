@@ -40,9 +40,7 @@ Imports:
     reshape2,
     Rsamtools,
     RCurl,
-    R.utils,
     scales,
-    ShortRead,
     S4Vectors,
     tibble,
     vcfR
