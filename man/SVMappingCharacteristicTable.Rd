@@ -4,10 +4,14 @@
 \alias{SVMappingCharacteristicTable}
 \title{ont_tutorial_sv = summarise the mapping characteristics from a given BAM file}
 \usage{
-SVMappingCharacteristicTable(bamSummary)
+SVMappingCharacteristicTable(bamSummary, validationResponse, bamFile)
 }
 \arguments{
-\item{bamSummary}{is a path to a file}
+\item{bamSummary}{is the result from  bamSummarise}
+
+\item{validationResponse}{is the product of the floundeR fastqCheckup method}
+
+\item{bamFile}{is a path to a file}
 }
 \value{
 kable table of mapping characteristics as tuned for the ont_tutorial_sv document

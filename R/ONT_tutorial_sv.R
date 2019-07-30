@@ -11,7 +11,13 @@
 #' as primary, secondary and supplementary and will overlay additional data that releases to read
 #' length, read quality and other characteristics as reported in the tutorial document
 #'
-#' @param bamSummary is a path to a file
+#' @importFrom knitr kable
+#' @importFrom tibble add_row
+#' @importFrom kableExtra footnote
+#' @importFrom kableExtra footnote_marker_symbol
+#' @param bamSummary is the result from  bamSummarise
+#' @param validationResponse is the product of the floundeR fastqCheckup method
+#' @param bamFile  is a path to a file
 #' @return kable table of mapping characteristics as tuned for the ont_tutorial_sv document
 #'
 #' @examples
@@ -22,7 +28,7 @@
 #' }
 #'
 #' @export
-SVMappingCharacteristicTable <- function(bamSummary) {
+SVMappingCharacteristicTable <- function(bamSummary, validationResponse, bamFile) {
 
   primaryBAM <- bamSummary[which(bamSummary$readFlag=="Primary"),]
   unmappedBAM <- bamSummary[which(bamSummary$readFlag=="Unmapped"),]
