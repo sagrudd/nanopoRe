@@ -37,6 +37,7 @@ Imports:
     Rcpp,
     Rsamtools,
     RCurl,
+    R.utils,
     scales,
     ShortRead,
     S4Vectors,
