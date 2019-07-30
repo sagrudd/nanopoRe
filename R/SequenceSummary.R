@@ -377,6 +377,7 @@ sequencingSummaryReadQualityHistogram <- function(seqsum) {
 #' plots the density plot of read length against read mean quality scores
 #'
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
+#' @param binFilter is the minimum number of reads to include a cell in plot (removes speckle)
 #' @return ggplot2 showing densities of read length and quality distribution
 #'
 #' @examples
@@ -385,7 +386,7 @@ sequencingSummaryReadQualityHistogram <- function(seqsum) {
 #' plot <- sequencingSummaryReadLengthQualityDensity(seqsum)
 #'
 #' @export
-sequencingSummaryReadLengthQualityDensity <- function(seqsum) {
+sequencingSummaryReadLengthQualityDensity <- function(seqsum, binFilter=5) {
   # prepare the density plot, but do not render
   lq_dens <- ggplot(seqsum, aes(log10(sequence_length_template), mean_qscore_template)) + geom_bin2d(bins=100)
   # extract the density map from the plot
