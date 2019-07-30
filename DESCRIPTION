@@ -30,6 +30,7 @@ Imports:
     gtools,
     IRanges,
     kableExtra,
+    knitr,
     magrittr,
     pbmcapply,
     plyr,
@@ -43,6 +44,7 @@ Imports:
     scales,
     ShortRead,
     S4Vectors,
+    tibble,
     vcfR
 LinkingTo: 
     Rcpp
