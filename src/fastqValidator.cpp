@@ -203,10 +203,10 @@ int get_next_fastq()
   }
   else
   {
-    fgets(fq.header, LONGEST_SEQ, file);
-    fgets(fq.sequence, LONGEST_SEQ, file);
-    fgets(fq.delim, LONGEST_SEQ, file);
-    fgets(fq.quality, LONGEST_SEQ, file);
+    if (fgets(fq.header, LONGEST_SEQ, file) != NULL) {}
+    if (fgets(fq.sequence, LONGEST_SEQ, file) != NULL) {}
+    if (fgets(fq.delim, LONGEST_SEQ, file) != NULL) {}
+    if (fgets(fq.quality, LONGEST_SEQ, file) != NULL) {}
   }
   // clip any trailing newlines
   fq.header[strcspn(fq.header, "\r\n")] = 0;
