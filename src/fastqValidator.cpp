@@ -110,7 +110,7 @@ int realign_fastq() {
     {
       gzgets(gzfile, fq.header, LONGEST_SEQ);
     } else {
-      fgets(fq.header ,LONGEST_SEQ , file);
+      if (fgets(fq.header ,LONGEST_SEQ , file) != NULL) {}
     }
 
     char headdelim = fq.header[0];
