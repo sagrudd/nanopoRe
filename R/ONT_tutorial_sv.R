@@ -15,6 +15,7 @@
 #' @importFrom tibble add_row
 #' @importFrom kableExtra footnote
 #' @importFrom kableExtra footnote_marker_symbol
+#' @importFrom kableExtra group_rows pack_rows
 #' @param bamSummary is the result from  bamSummarise
 #' @param validationResponse is the product of the floundeR fastqCheckup method
 #' @param bamFile  is a path to a file

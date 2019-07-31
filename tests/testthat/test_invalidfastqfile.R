@@ -1,7 +1,7 @@
 context("Invalid/Corrupt Fastq")
 
 test_that("frankenFastq.fastq parses correctly", {
-  expect_equal(fastqValidator(system.file("extdata", "frankenFastq.fastq", package = "nanopoRe", mustWork = TRUE)), FALSE)
+  expect_equal(fastqValidator(system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")), FALSE)
   expect_equal(getFastqCount(), 608)
   expect_equal(getFastqBases(), 655281)
   expect_equal(getFastqPlusErrorCount(), 6)

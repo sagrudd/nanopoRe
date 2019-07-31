@@ -3,7 +3,7 @@
 sequencingSummaryGetChannelMap <- function(platform) {
   if (platform=="MinION") {
     return(getMinIONChannelMap())
-  } else if (plaform=="Flongle") {
+  } else if (platform=="Flongle") {
     return(getFlongleChannelMap())
   } else if (platform=="PromethION") {
     return(getPromethIONChannelMap())

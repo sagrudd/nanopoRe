@@ -5,6 +5,8 @@
 #' memory and performs basic sanity checking to ensure that the file
 #' is cleaned of potential duplicate headers from aggregation
 #'
+#' @importFrom R.utils bunzip2
+#' @importFrom R.utils gunzip
 #' @param seqsum is a path to a file
 #' @return data.frame of observations from the sequencing_summary.txt file provided
 #'
@@ -82,13 +84,13 @@ sequencingSummaryPassGauge <- function(seqsum=NA) {
   df$variable <- c("pass")
   df$percentage <- c(round(length(which(seqsum$passes_filtering==TRUE)) / nrow(seqsum), 3))
 
-  df <- df %>% dplyr::mutate(group=ifelse(percentage <0.6, "red",
-                                          ifelse(percentage>=0.6 & percentage<0.8, "orange","green")),
+  df <- df %>% dplyr::mutate(group=ifelse(df$percentage <0.6, "red",
+                                          ifelse(df$percentage>=0.6 & df$percentage<0.8, "orange","green")),
                              label=paste0(df$percentage*100, "%"))
 
   title="Percentage of reads\npassing QC filter"
 
-  gaugePlot <- ggplot(df, aes(fill = group, ymax = percentage, ymin = 0, xmax = 2, xmin = 1)) +
+  gaugePlot <- ggplot(df, aes_string(fill = "group", ymax = "percentage", ymin = 0, xmax = 2, xmin = 1)) +
     geom_rect(aes(ymax=1, ymin=0, xmax=2, xmin=1), fill ="#ece8bd") +
     geom_rect() +
     coord_polar(theta = "y",start=-pi/2) + xlim(c(0, 2)) + ylim(c(0,2)) +
@@ -96,8 +98,8 @@ sequencingSummaryPassGauge <- function(seqsum=NA) {
     guides(colour=FALSE) +
     theme_void() +
     theme(strip.background = element_blank(), strip.text.x = element_blank()) +
-    geom_text(aes(x = 0, y = 0, label = label), size=13) +
-    geom_text(aes(x=1.5, y=1.5, label=title), size=11) +
+    geom_text(aes_string(x = 0, y = 0, label = "label"), size=13) +
+    geom_text(aes_string(x = 1.5, y = 1.5, label = "title"), size=11) +
     scale_fill_manual(values = c("red"="#C9146C", "orange"="#DA9112", "green"="#129188")) +
     scale_colour_manual(values = c("red"="#C9146C", "orange"="#DA9112", "green"="#129188"))
 
@@ -113,6 +115,8 @@ sequencingSummaryPassGauge <- function(seqsum=NA) {
 #'
 #' plots the basic eye-candy gauge channel activity plot of reads against channel of origin
 #'
+#' @importFrom reshape2 acast
+#' @importFrom grDevices colorRamp colorRampPalette
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
 #' @param platform is the nanopore platform [MinION/Flongle/PromethION]
 #' @return ggplot2 channel activity plot
@@ -153,9 +157,9 @@ sequencingSummaryChannelActivity <- function(seqsum=NA, platform=NA) {
 
   theme_update(plot.title = element_text(hjust = 0.5))
 
-  activityPlot <- ggplot(channelMap, aes(x = row, y = col, fill = count)) +
+  activityPlot <- ggplot(channelMap, aes_string(x = "row", y = "col", fill = "count")) +
     geom_tile() +
-    geom_text(data=channelMap,aes(x=row, y=col,label=count,color=count),show.legend = F, size=2.5) +
+    geom_text(data=channelMap,aes_string(x="row", y="col",label="count",color="count"),show.legend = F, size=2.5) +
     scale_x_discrete(breaks=NULL) +
     scale_y_discrete(breaks=NULL) +
     coord_equal() +
@@ -272,7 +276,8 @@ sequencingSummaryWeightedReadLength <- function(seqsum) {
   passedMeanLength = round(mean(passedSeqs$sequence_length_template), digits = 0)
 
   scrapeBinnedBases <- function(level, qcpass, binAssignments, seqsum) {
-    sum(subset(seqsum[which(binAssignments == level), ], passes_filtering==qcpass)$sequence_length_template)
+    data <- seqsum[which(binAssignments == level), ]
+    sum(data[data$passes_filtering==qcpass,"sequence_length_template"])
   }
 
   passedBinnedBases <- unlist(lapply(levels(binAssignments), scrapeBinnedBases, qcpass=TRUE, binAssignments=binAssignments, seqsum=seqsum))
@@ -329,7 +334,8 @@ sequencingSummaryReadLengthHistogram <- function(seqsum) {
   passedMeanLength = round(mean(passedSeqs$sequence_length_template), digits = 0)
 
   scrapeBinnedReads <- function(level, qcpass) {
-    length(subset(seqsum[which(binAssignments == level), ], passes_filtering==qcpass)$sequence_length_template)
+    #length(subset(seqsum[which(binAssignments == level), ], `passes_filtering`==qcpass)$sequence_length_template)
+    length(which(seqsum[which(binAssignments == level), ]$passes_filtering==qcpass))
   }
 
   passedBinnedReads <- unlist(lapply(levels(binAssignments), scrapeBinnedReads, qcpass=TRUE))
@@ -338,7 +344,7 @@ sequencingSummaryReadLengthHistogram <- function(seqsum) {
   binnedReadDist <- data.frame(length=head(breaks, -1), pass=passedBinnedReads, fail=failedBinnedReads)
   binnedReadMelt <- reshape2::melt(binnedReadDist, id.vars=c("length"))
 
-  lengthHistogram <- ggplot(binnedReadMelt, aes(x=length, fill=variable, y=value)) +
+  lengthHistogram <- ggplot(binnedReadMelt, aes_string(x="length", fill="variable", y="value")) +
     geom_bar(stat="identity") +
     xlab("Read length\n") + ylab("Number of reads\n") +
     scale_fill_manual("QC", values=c("fail"=brewer.pal(6, "Paired")[1], "pass"=brewer.pal(6, "Paired")[2])) +
@@ -372,7 +378,7 @@ sequencingSummaryReadLengthHistogram <- function(seqsum) {
 #'
 #' @export
 sequencingSummaryReadQualityHistogram <- function(seqsum) {
-  qdist <- ggplot(seqsum, aes(x=mean_qscore_template, fill=passes_filtering)) +
+  qdist <- ggplot(seqsum, aes_string(x="mean_qscore_template", fill="passes_filtering")) +
     geom_histogram(breaks=seq(from=0, to=15, by=0.1)) +
     scale_fill_manual(name="QC", values=c("TRUE"=brewer.pal(6, "Paired")[2], "FALSE"=brewer.pal(6, "Paired")[1]), labels=c( "pass", "fail"), breaks=c("TRUE", "FALSE")) +
     labs(title="Plot showing distribution of quality scores across all reads") +
@@ -406,7 +412,7 @@ sequencingSummaryReadQualityHistogram <- function(seqsum) {
 #' @export
 sequencingSummaryReadLengthQualityDensity <- function(seqsum, binFilter=5, qcThreshold=7) {
   # prepare the density plot, but do not render
-  lq_dens <- ggplot(seqsum, aes(log10(sequence_length_template), mean_qscore_template)) + geom_bin2d(bins=100)
+  lq_dens <- ggplot(seqsum, aes(log10(seqsum$sequence_length_template), seqsum$mean_qscore_template)) + geom_bin2d(bins=100)
   # extract the density map from the plot
   lq_dens_counts <- ggplot_build(lq_dens)$data[[1]]
   if (binFilter > 0) {
@@ -415,7 +421,7 @@ sequencingSummaryReadLengthQualityDensity <- function(seqsum, binFilter=5, qcThr
   }
   # directly plot this modified density map (stat=="identity")
   qldensityplot <- ggplot(lq_dens_counts) +
-    geom_bin2d(aes(x,y,fill=count), stat="identity") +
+    geom_bin2d(aes_string("x","y",fill="count"), stat="identity") +
     scale_fill_distiller(palette="Blues", trans="reverse") +
     geom_hline(yintercept = qcThreshold, size = 1) +
     xlab("log10(read length)") +
@@ -483,9 +489,9 @@ SequencingSummaryTemporalThroughput <- function(seqsum, scaling=1, sampleHours =
 
   binnedTemporalDataPerHour <- getTemporalDataset(seqsum, sampleIntervalMinutes, breaks, binass)
 
-  plot <- ggplot(binnedTemporalDataPerHour, aes(time)) +
-    geom_line(aes(y = fail, colour = "fail"), size=1) +
-    geom_line(aes(y = pass, colour = "pass"), size=1) +
+  plot <- ggplot(binnedTemporalDataPerHour, aes_string("time")) +
+    geom_line(aes(y = binnedTemporalDataPerHour$fail, colour = "fail"), size=1) +
+    geom_line(aes(y = binnedTemporalDataPerHour$pass, colour = "pass"), size=1) +
     scale_color_manual(name="QV", values=c("fail"=brewer.pal(6, "Paired")[1], "pass"=brewer.pal(6, "Paired")[2])) +
     xlab("Time (hours)") +
     ylab("Gigabases sequenced per hour") +
@@ -534,9 +540,9 @@ SequencingSummaryCumulativeBases <- function(seqsum, scaling=1, sampleHours = 48
   T90 <- SequencingSummaryT50(seqsum, t=0.9, scaling=scaling, sampleHours=sampleHours, sampleIntervalMinutes=sampleIntervalMinutes)
 
 
-  cumulativePlot <- ggplot(binnedTemporalDataPerHour, aes(time)) +
-    geom_line(aes(y = cumsum(fail), colour = "fail"), size=1) +
-    geom_line(aes(y = cumsum(pass), colour = "pass"), size=1) +
+  cumulativePlot <- ggplot(binnedTemporalDataPerHour, aes_string("time")) +
+    geom_line(aes(y = cumsum(binnedTemporalDataPerHour$fail), colour = "fail"), size=1) +
+    geom_line(aes(y = cumsum(binnedTemporalDataPerHour$pass), colour = "pass"), size=1) +
     scale_color_manual(name="QV", values=c("fail"=brewer.pal(6, "Paired")[1], "pass"=brewer.pal(6, "Paired")[2])) +
     geom_segment(x=T50$minimum, y=0, xend=T50$minimum, yend=base50, colour="darkgray", size=1) +
     geom_segment(x=0, y=base50, xend=T50$minimum, yend=base50, colour="darkgray", size=1) +
@@ -655,7 +661,7 @@ SequencingSummaryCumulativeReads <- function(seqsum, scaling=1, sampleHours = 48
   breaks = seq(0, sampleHours*60*60, by=60*sampleIntervalMinutes)
   binass <- findInterval(seqsum$start_time, breaks)
 
-  mergeItReadsPerHour <- function(interval, binnedAssignments,filter) {
+  mergeItReadsPerHour <- function(interval, binnedAssignments, filter) {
     totalreads = 0
     if (length(which(binnedAssignments==interval))>0) {
       subset <- seqsum[which(binnedAssignments==interval), ]
@@ -679,9 +685,9 @@ SequencingSummaryCumulativeReads <- function(seqsum, scaling=1, sampleHours = 48
   binnedTemporalDataReadsPerHour$pass <- binnedTemporalDataReadsPerHour$pass / 60 * sampleIntervalMinutes
   binnedTemporalDataReadsPerHour$fail <- binnedTemporalDataReadsPerHour$fail / 60 * sampleIntervalMinutes
 
-  cumulativePlot <- ggplot(binnedTemporalDataReadsPerHour, aes(time)) +
-    geom_line(aes(y = cumsum(fail), colour = "fail"), size=1) +
-    geom_line(aes(y = cumsum(pass), colour = "pass"), size=1) +
+  cumulativePlot <- ggplot(binnedTemporalDataReadsPerHour, aes_string("time")) +
+    geom_line(aes(y = cumsum(binnedTemporalDataReadsPerHour$fail), colour = "fail"), size=1) +
+    geom_line(aes(y = cumsum(binnedTemporalDataReadsPerHour$pass), colour = "pass"), size=1) +
     scale_color_manual(name="QV", values=c("fail"=brewer.pal(6, "Paired")[1], "pass"=brewer.pal(6, "Paired")[2])) +
     xlab("Time (hours)") +
     ylab("Number of reads sequenced (Millions)") +
@@ -722,7 +728,7 @@ SequencingSummarySpeedPlot <- function(seqsum, scaling=1, sampleHours = 48, samp
 
   speedTime <- data.frame(segment=binass, rate=seqsum$sequence_length_template / (seqsum$duration/scaling))
 
-  speedplot <- ggplot(speedTime, aes(x=segment, y=rate, group=segment)) +
+  speedplot <- ggplot(speedTime, aes_string(x="segment", y="rate", group="segment")) +
     geom_boxplot(fill="steelblue", outlier.shape=NA) +
     scale_x_continuous(name="Time (hours)") +
     ylab("Sequencing rate (bases per second)") +
@@ -776,8 +782,8 @@ SequencingSummaryActiveChannelPlot <- function(seqsum, scaling=1, sampleHours = 
 
   binnedTemporalChannels$time <- binnedTemporalChannels$time / 60 / 60
 
-  activityPlot <- ggplot(binnedTemporalChannels, aes(time)) +
-    geom_step(aes(y = channels), size=1, colour = "Steelblue") +
+  activityPlot <- ggplot(binnedTemporalChannels, aes_string("time")) +
+    geom_step(aes_string(y = "channels"), size=1, colour = "Steelblue") +
     xlab("Time (hours)") +
     ylab("Number of channels producing data") +
     labs(title="Plot showing number of functional channels against time")
