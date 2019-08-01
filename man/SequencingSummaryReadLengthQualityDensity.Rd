@@ -22,7 +22,7 @@ plots the density plot of read length against read mean quality scores
 }
 \examples{
 \dontrun{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequencingSummaryReadLengthQualityDensity(seqsum)
 }

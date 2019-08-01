@@ -19,7 +19,7 @@ present an infographic styled executive summary of sequence_summary.txt content
 }
 \examples{
 \dontrun{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequenceSummaryExecutiveSummary(seqsum)
 }

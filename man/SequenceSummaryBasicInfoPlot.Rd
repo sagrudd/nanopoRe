@@ -17,7 +17,7 @@ present an infographic styled basic characteristics plot of sequence_summary.txt
 }
 \examples{
 \dontrun{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequenceSummaryBasicInfoPlot(seqsum)
 }

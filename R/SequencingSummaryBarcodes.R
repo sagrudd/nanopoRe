@@ -12,9 +12,9 @@
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
-#' barcodeFile <- NULL
+#' barcodeFile <- system.file("extdata", "barcoding_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- SequencingSummaryBarcodeMerge(seqsum, barcodeFile)
 #' }
 #'

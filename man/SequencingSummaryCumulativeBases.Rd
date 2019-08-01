@@ -25,7 +25,7 @@ from passed and failed sequence reads
 }
 \examples{
 \dontrun{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequencingSummaryCumulativeBases(seqsum)
 }

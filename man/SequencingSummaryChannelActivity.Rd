@@ -19,7 +19,7 @@ plots the basic eye-candy gauge channel activity plot of reads against channel o
 }
 \examples{
 \dontrun{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequencingSummaryChannelActivity(seqsum)
 }

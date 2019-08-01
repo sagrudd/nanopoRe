@@ -24,7 +24,7 @@ plots a ggplot2 box-and-whisker plot for the distribution of sequencing speeds a
 }
 \examples{
 \dontrun{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequencingSummarySpeedPlot(seqsum)
 }

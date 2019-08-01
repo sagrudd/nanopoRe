@@ -6,6 +6,9 @@
 \usage{
 setPlotDimensions(dim)
 }
+\arguments{
+\item{dim}{list of properties}
+}
 \value{
 list defining dpi, width, height and units
 }

@@ -24,7 +24,7 @@ plots a ggplot2 graph of performance against time for run and separates passed a
 }
 \examples{
 \dontrun{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequencingSummaryTemporalThroughput(seqsum)
 }

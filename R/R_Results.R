@@ -62,6 +62,7 @@ getOutputFormat <- function() {
 #'
 #' This method defines the expected output format for figure management
 #'
+#' @param gg2out string specifying type
 #' @return character of format
 #'
 #' @examples
@@ -74,6 +75,8 @@ setOutputFormat <- function(gg2out) {
   objName = "gg2out"
   if (gg2out %in% listOutputFormat()) {
     setCachedObject(objName, gg2out)
+  } else {
+    warning(paste0(gg2out, "is not a valid outputformat - see listOutputFormat()"))
   }
 }
 
@@ -102,7 +105,7 @@ ggplot2save <- function(plot) {
   return(dest)
 }
 
-
+#' @importFrom IRdisplay display_png
 ggplot2handler <- function(plot) {
   if (getOutputFormat()=="raw") {
     return(plot)
@@ -142,6 +145,7 @@ getPlotDimensions <- function() {
 #'
 #' This method sets and stores the list with the defined metrics for a ggplot2 presentation
 #'
+#' @param dim list of properties
 #' @return list defining dpi, width, height and units
 #'
 #' @examples

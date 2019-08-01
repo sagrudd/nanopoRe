@@ -12,7 +12,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' }
 #'
@@ -63,7 +63,7 @@ importSequencingSummary <- function(seqsum) {
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryPassGauge(seqsum)
 #' }
@@ -123,7 +123,7 @@ SequencingSummaryPassGauge <- function(seqsum=NA) {
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryChannelActivity(seqsum)
 #' }
@@ -188,7 +188,7 @@ SequencingSummaryChannelActivity <- function(seqsum=NA, platform=NA) {
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' platform <- SequencingSummaryGetPlatform(seqsum)
 #' }
@@ -258,7 +258,7 @@ getBinBreaks <- function(seqsum) {
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryWeightedReadLength(seqsum)
 #' }
@@ -316,7 +316,7 @@ SequencingSummaryWeightedReadLength <- function(seqsum) {
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryReadLengthHistogram(seqsum)
 #' }
@@ -371,7 +371,7 @@ SequencingSummaryReadLengthHistogram <- function(seqsum) {
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryReadQualityHistogram(seqsum)
 #' }
@@ -404,7 +404,7 @@ SequencingSummaryReadQualityHistogram <- function(seqsum) {
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryReadLengthQualityDensity(seqsum)
 #' }
@@ -473,7 +473,7 @@ getTemporalDataset <- function(seqsum, sampleIntervalMinutes, breaks, binass) {
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryTemporalThroughput(seqsum)
 #' }
@@ -514,7 +514,7 @@ SequencingSummaryTemporalThroughput <- function(seqsum, scaling=1, sampleHours =
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryCumulativeBases(seqsum)
 #' }
@@ -571,7 +571,7 @@ SequencingSummaryCumulativeBases <- function(seqsum, scaling=1, sampleHours = 48
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' Base50 <- SequencingSummaryBase50(seqsum)
 #' }
@@ -601,7 +601,7 @@ SequencingSummaryBase50 <- function(seqsum, b=0.5) {
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' T50 <- SequencingSummaryT50(seqsum)
 #' }
@@ -647,7 +647,7 @@ SequencingSummaryT50 <- function(seqsum, t=0.5, scaling=1, sampleHours = 48, sam
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryCumulativeReads(seqsum)
 #' }
@@ -712,7 +712,7 @@ SequencingSummaryCumulativeReads <- function(seqsum, scaling=1, sampleHours = 48
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummarySpeedPlot(seqsum)
 #' }
@@ -752,7 +752,7 @@ SequencingSummarySpeedPlot <- function(seqsum, scaling=1, sampleHours = 48, samp
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequencingSummaryActiveChannelPlot(seqsum)
 #' }
@@ -807,7 +807,7 @@ SequencingSummaryActiveChannelPlot <- function(seqsum, scaling=1, sampleHours = 
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequenceSummaryExecutiveSummary(seqsum)
 #' }
@@ -845,7 +845,7 @@ SequenceSummaryExecutiveSummary <- function(seqsum, flowcellId="undefined") {
 #'
 #' @examples
 #' \dontrun{
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
 #' plot <- SequenceSummaryBasicInfoPlot(seqsum)
 #' }

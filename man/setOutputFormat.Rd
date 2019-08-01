@@ -6,6 +6,9 @@
 \usage{
 setOutputFormat(gg2out)
 }
+\arguments{
+\item{gg2out}{string specifying type}
+}
 \value{
 character of format
 }

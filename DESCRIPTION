@@ -30,6 +30,7 @@ Imports:
     grid,
     gtools,
     IRanges,
+    IRdisplay,
     kableExtra,
     knitr,
     magrittr,
