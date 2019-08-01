@@ -9,7 +9,7 @@ test_that("sequencing_summary.txt.bz2 can be parsed", {
 
   expect_equal(nrow(seqsum), 10000)
 
-  platform <- sequencingSummaryGetPlatform(seqsum)
+  platform <- SequencingSummaryGetPlatform(seqsum)
   expect_equal(platform, "MinION")
 })
 
@@ -23,22 +23,22 @@ test_that("passed and failed analytics make sense", {
 
 test_that("SequencingSummary based plots", {
 
-  plot1 <- sequencingSummaryPassGauge(seqsum)
+  plot1 <- SequencingSummaryPassGauge(seqsum)
   expect_is(plot1,"ggplot")
 
-  plot2 <- sequencingSummaryChannelActivity(seqsum)
+  plot2 <- SequencingSummaryChannelActivity(seqsum)
   expect_is(plot2,"ggplot")
 
-  plot3 <- sequencingSummaryWeightedReadLength(seqsum)
+  plot3 <- SequencingSummaryWeightedReadLength(seqsum)
   expect_is(plot3,"ggplot")
 
-  plot4 <- sequencingSummaryReadLengthHistogram(seqsum)
+  plot4 <- SequencingSummaryReadLengthHistogram(seqsum)
   expect_is(plot4,"ggplot")
 
-  plot5 <- sequencingSummaryReadQualityHistogram(seqsum)
+  plot5 <- SequencingSummaryReadQualityHistogram(seqsum)
   expect_is(plot5,"ggplot")
 
-  plot6 <- sequencingSummaryReadLengthQualityDensity(seqsum)
+  plot6 <- SequencingSummaryReadLengthQualityDensity(seqsum)
   expect_is(plot6,"ggplot")
 
   plot7 <- SequencingSummaryTemporalThroughput(seqsum)

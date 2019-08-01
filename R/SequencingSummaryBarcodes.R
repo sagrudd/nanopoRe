@@ -65,7 +65,7 @@ SequenceSummaryBarcodeInfoGraphic <- function(seqsum, bcthreshold=150) {
 
   if ("barcode_arrangement" %in% names(seqsum)) {
     barcodedata=plyr::count(seqsum$barcode_arrangement)
-    barcodedata=subset(barcodedata, "freq" > bcthreshold)
+    barcodedata=subset(barcodedata, barcodedata$freq > bcthreshold)
     names(barcodedata) <- gsub("x", "barcode", names(barcodedata))
     if ("unclassified" %in% barcodedata$barcode) {
       barcodes <- nrow(barcodedata[-which(barcodedata$barcode=="unclassified"),])
@@ -121,7 +121,7 @@ SequenceSummaryBarcodeTable <- function(seqsum, bcthreshold=150) {
 
   if ("barcode_arrangement" %in% names(seqsum)) {
     barcodedata=plyr::count(seqsum$barcode_arrangement)
-    barcodedata=subset(barcodedata, "freq" > bcthreshold)
+    barcodedata=subset(barcodedata, barcodedata$freq > bcthreshold)
     names(barcodedata) <- gsub("x", "barcode", names(barcodedata))
     if ("unclassified" %in% barcodedata$barcode) {
       barcodes <- nrow(barcodedata[-which(barcodedata$barcode=="unclassified"),])
@@ -197,7 +197,7 @@ SequenceSummaryBarcodeHistogram <- function(seqsum, bcthreshold=150) {
 
   if ("barcode_arrangement" %in% names(seqsum)) {
     barcodedata=plyr::count(seqsum$barcode_arrangement)
-    barcodedata=subset(barcodedata, "freq" > bcthreshold)
+    barcodedata=subset(barcodedata, barcodedata$freq > bcthreshold)
     names(barcodedata) <- gsub("x", "barcode", names(barcodedata))
     if ("unclassified" %in% barcodedata$barcode) {
       barcodes <- nrow(barcodedata[-which(barcodedata$barcode=="unclassified"),])
@@ -222,5 +222,5 @@ SequenceSummaryBarcodeHistogram <- function(seqsum, bcthreshold=150) {
 
   }
 
-  return(barcodeHistogram)
+  return(ggplot2handler(barcodeHistogram))
 }

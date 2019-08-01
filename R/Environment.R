@@ -43,7 +43,7 @@ getCachedFileObject <- function(objectName, fileName) {
 }
 
 setCachedObject <- function(objectName, data) {
-  message(paste0("caching object ",objectName,"\n"))
+  #message(paste0("caching object ",objectName,"\n"))
   assign(objectName, data, envir=get(getEnvironment()))
 }
 
@@ -55,7 +55,7 @@ hasCachedObject <- function(objectName) {
 }
 
 getCachedObject <- function(objectName) {
-  message(paste0("uncaching object ",objectName,"\n"))
+  #message(paste0("uncaching object ",objectName,"\n"))
   return(get(objectName, envir=get(getEnvironment())))
 }
 

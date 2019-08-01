@@ -1,6 +1,6 @@
 
 
-sequencingSummaryGetChannelMap <- function(platform) {
+SequencingSummaryGetChannelMap <- function(platform) {
   if (platform=="MinION") {
     return(getMinIONChannelMap())
   } else if (platform=="Flongle") {

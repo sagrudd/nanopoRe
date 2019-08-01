@@ -65,11 +65,11 @@ importSequencingSummary <- function(seqsum) {
 #' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
-#' plot <- sequencingSummaryPassGauge(seqsum)
+#' plot <- SequencingSummaryPassGauge(seqsum)
 #' }
 #'
 #' @export
-sequencingSummaryPassGauge <- function(seqsum=NA) {
+SequencingSummaryPassGauge <- function(seqsum=NA) {
 
   if (!is.data.frame(seqsum) && is.na(seqsum)) {
     oname <- "seqsumdata"
@@ -103,7 +103,7 @@ sequencingSummaryPassGauge <- function(seqsum=NA) {
     scale_fill_manual(values = c("red"="#C9146C", "orange"="#DA9112", "green"="#129188")) +
     scale_colour_manual(values = c("red"="#C9146C", "orange"="#DA9112", "green"="#129188"))
 
-  return(gaugePlot)
+  return(ggplot2handler(gaugePlot))
 }
 
 
@@ -125,11 +125,11 @@ sequencingSummaryPassGauge <- function(seqsum=NA) {
 #' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
-#' plot <- sequencingSummaryChannelActivity(seqsum)
+#' plot <- SequencingSummaryChannelActivity(seqsum)
 #' }
 #'
 #' @export
-sequencingSummaryChannelActivity <- function(seqsum=NA, platform=NA) {
+SequencingSummaryChannelActivity <- function(seqsum=NA, platform=NA) {
 
   if (!is.data.frame(seqsum) && is.na(seqsum)) {
     oname <- "seqsumdata"
@@ -139,10 +139,10 @@ sequencingSummaryChannelActivity <- function(seqsum=NA, platform=NA) {
   }
 
   if (is.na(platform)) {
-    platform <- sequencingSummaryGetPlatform(seqsum)
+    platform <- SequencingSummaryGetPlatform(seqsum)
   }
 
-  channelMap <- sequencingSummaryGetChannelMap(platform)
+  channelMap <- SequencingSummaryGetChannelMap(platform)
 
 
   hm.palette <- colorRampPalette(brewer.pal(9, 'Blues'), space='Lab') #RdPu, Oranges, Greens, YlOrRd, Purples
@@ -174,7 +174,7 @@ sequencingSummaryChannelActivity <- function(seqsum=NA, platform=NA) {
           legend.position="bottom",
           legend.key.width=unit(5.6,"cm"))
 
-  return(activityPlot)
+  return(ggplot2handler(activityPlot))
 }
 
 
@@ -190,11 +190,11 @@ sequencingSummaryChannelActivity <- function(seqsum=NA, platform=NA) {
 #' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
-#' platform <- sequencingSummaryGetPlatform(seqsum)
+#' platform <- SequencingSummaryGetPlatform(seqsum)
 #' }
 #'
 #' @export
-sequencingSummaryGetPlatform <- function(seqsum=NA) {
+SequencingSummaryGetPlatform <- function(seqsum=NA) {
 
   if (!is.data.frame(seqsum) && is.na(seqsum)) {
     oname <- "seqsumdata"
@@ -260,11 +260,11 @@ getBinBreaks <- function(seqsum) {
 #' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
-#' plot <- sequencingSummaryWeightedReadLength(seqsum)
+#' plot <- SequencingSummaryWeightedReadLength(seqsum)
 #' }
 #'
 #' @export
-sequencingSummaryWeightedReadLength <- function(seqsum) {
+SequencingSummaryWeightedReadLength <- function(seqsum) {
 
   breaks <- getBinBreaks(seqsum)
   breakVal <- breaks[2] # assuming that the range is 0 based
@@ -298,7 +298,7 @@ sequencingSummaryWeightedReadLength <- function(seqsum) {
     geom_vline(xintercept = passedMeanLength, size = 1) +
     annotate("text", x=passedMeanLength, y=max(passedBinnedBases + failedBinnedBases), label = " Mean", hjust=0, colour="SteelBlue")
 
-  return(weightedReadLengths)
+  return(ggplot2handler(weightedReadLengths))
 }
 
 
@@ -318,11 +318,11 @@ sequencingSummaryWeightedReadLength <- function(seqsum) {
 #' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
-#' plot <- sequencingSummaryReadLengthHistogram(seqsum)
+#' plot <- SequencingSummaryReadLengthHistogram(seqsum)
 #' }
 #'
 #' @export
-sequencingSummaryReadLengthHistogram <- function(seqsum) {
+SequencingSummaryReadLengthHistogram <- function(seqsum) {
 
   breaks <- getBinBreaks(seqsum)
   breakVal <- breaks[2] # assuming that the range is 0 based
@@ -356,7 +356,7 @@ sequencingSummaryReadLengthHistogram <- function(seqsum) {
     geom_vline(xintercept = passedMeanLength, size = 1) +
     annotate("text", x=passedMeanLength, y=max(passedBinnedReads + failedBinnedReads), label = " Mean", hjust=0, colour="SteelBlue")
 
-  return(lengthHistogram)
+  return(ggplot2handler(lengthHistogram))
 }
 
 
@@ -373,11 +373,11 @@ sequencingSummaryReadLengthHistogram <- function(seqsum) {
 #' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
-#' plot <- sequencingSummaryReadQualityHistogram(seqsum)
+#' plot <- SequencingSummaryReadQualityHistogram(seqsum)
 #' }
 #'
 #' @export
-sequencingSummaryReadQualityHistogram <- function(seqsum) {
+SequencingSummaryReadQualityHistogram <- function(seqsum) {
   qdist <- ggplot(seqsum, aes_string(x="mean_qscore_template", fill="passes_filtering")) +
     geom_histogram(breaks=seq(from=0, to=15, by=0.1)) +
     scale_fill_manual(name="QC", values=c("TRUE"=brewer.pal(6, "Paired")[2], "FALSE"=brewer.pal(6, "Paired")[1]), labels=c( "pass", "fail"), breaks=c("TRUE", "FALSE")) +
@@ -385,7 +385,7 @@ sequencingSummaryReadQualityHistogram <- function(seqsum) {
     xlab("Mean Q score of read") +
     ylab("Number of reads")
 
-  return(qdist)
+  return(ggplot2handler(qdist))
 }
 
 
@@ -406,11 +406,11 @@ sequencingSummaryReadQualityHistogram <- function(seqsum) {
 #' \dontrun{
 #' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
 #' seqsum <- importSequencingSummary(seqsumFile)
-#' plot <- sequencingSummaryReadLengthQualityDensity(seqsum)
+#' plot <- SequencingSummaryReadLengthQualityDensity(seqsum)
 #' }
 #'
 #' @export
-sequencingSummaryReadLengthQualityDensity <- function(seqsum, binFilter=5, qcThreshold=7) {
+SequencingSummaryReadLengthQualityDensity <- function(seqsum, binFilter=5, qcThreshold=7) {
   # prepare the density plot, but do not render
   lq_dens <- ggplot(seqsum, aes(log10(seqsum$sequence_length_template), seqsum$mean_qscore_template)) + geom_bin2d(bins=100)
   # extract the density map from the plot
@@ -429,7 +429,7 @@ sequencingSummaryReadLengthQualityDensity <- function(seqsum, binFilter=5, qcThr
     scale_x_continuous(breaks = c(1,2,3,4,5), labels = c("10", "100", "1000", "10,000", "100,000")) +
     annotation_logticks(base = 10, sides = "b", scaled = TRUE) +
     labs(title="Contour Plot showing distribution of quality scores against log10 read lengths (all reads)")
-  return(qldensityplot)
+  return(ggplot2handler(qldensityplot))
 }
 
 
@@ -497,7 +497,7 @@ SequencingSummaryTemporalThroughput <- function(seqsum, scaling=1, sampleHours =
     ylab("Gigabases sequenced per hour") +
     labs(title="Plot showing sequence throughput against time")
 
-  return(plot)
+  return(ggplot2handler(plot))
 }
 
 
@@ -554,7 +554,7 @@ SequencingSummaryCumulativeBases <- function(seqsum, scaling=1, sampleHours = 48
     ylab("Number of bases sequenced (Gigabases)") +
     labs(title="Plot showing cumulative bases sequenced against time")
 
-  return(cumulativePlot)
+  return(ggplot2handler(cumulativePlot))
 
 }
 
@@ -693,7 +693,7 @@ SequencingSummaryCumulativeReads <- function(seqsum, scaling=1, sampleHours = 48
     ylab("Number of reads sequenced (Millions)") +
     labs(title="Plot showing cumulative reads sequenced against time")
 
-  return(cumulativePlot)
+  return(ggplot2handler(cumulativePlot))
 }
 
 
@@ -734,7 +734,7 @@ SequencingSummarySpeedPlot <- function(seqsum, scaling=1, sampleHours = 48, samp
     ylab("Sequencing rate (bases per second)") +
     labs(title="boxplot showing distribution of translocation speed against time")
 
-  return(speedplot)
+  return(ggplot2handler(speedplot))
 }
 
 
@@ -787,7 +787,7 @@ SequencingSummaryActiveChannelPlot <- function(seqsum, scaling=1, sampleHours = 
     xlab("Time (hours)") +
     ylab("Number of channels producing data") +
     labs(title="Plot showing number of functional channels against time")
-  return(activityPlot)
+  return(ggplot2handler(activityPlot))
 }
 
 
