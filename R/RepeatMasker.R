@@ -20,12 +20,15 @@
 #'
 #' @examples
 #' \dontrun{
-#' RepeatMaskerGR(RepeatMaskerSRC="http://www.repeatmasker.org/genomes/hg19/RepeatMasker-rm405-db20140131/hg19.fa.out.gz", force=TRUE)
+#' src = "http://www.repeatmasker.org/genomes/hg19/RepeatMasker-rm405-db20140131/hg19.fa.out.gz"
+#' RepeatMaskerGR(RepeatMaskerSRC=src, force=TRUE)
 #' }
 #'
 #' @export
-RepeatMaskerGR <- function(RepeatMaskerFile=NULL, RepeatMaskerSRC="http://www.repeatmasker.org/genomes/hg19/RepeatMasker-rm405-db20140131/hg19.fa.out.gz", force=FALSE) {
-
+RepeatMaskerGR <- function(RepeatMaskerFile=NULL, RepeatMaskerSRC=NULL, force=FALSE) {
+  if (is.null(RepeatMaskerSRC)) {
+    RepeatMaskerSRC="http://www.repeatmasker.org/genomes/hg19/RepeatMasker-rm405-db20140131/hg19.fa.out.gz"
+  }
   if (is.null(RepeatMaskerFile)) {
     RepeatMaskerFile <- file.path(getRpath(), basename(RepeatMaskerSRC))
     if (!file.exists(RepeatMaskerFile) || force) {

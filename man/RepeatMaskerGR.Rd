@@ -4,8 +4,7 @@
 \alias{RepeatMaskerGR}
 \title{extract GRanges object corresponding to RepeatMasker annotation}
 \usage{
-RepeatMaskerGR(RepeatMaskerFile = NULL,
-  RepeatMaskerSRC = "http://www.repeatmasker.org/genomes/hg19/RepeatMasker-rm405-db20140131/hg19.fa.out.gz",
+RepeatMaskerGR(RepeatMaskerFile = NULL, RepeatMaskerSRC = NULL,
   force = FALSE)
 }
 \arguments{
@@ -25,7 +24,8 @@ associate with repeat types
 }
 \examples{
 \dontrun{
-RepeatMaskerGR(RepeatMaskerSRC="http://www.repeatmasker.org/genomes/hg19/RepeatMasker-rm405-db20140131/hg19.fa.out.gz", force=TRUE)
+src = "http://www.repeatmasker.org/genomes/hg19/RepeatMasker-rm405-db20140131/hg19.fa.out.gz"
+RepeatMaskerGR(RepeatMaskerSRC=src, force=TRUE)
 }
 
 }

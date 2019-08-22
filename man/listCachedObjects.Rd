@@ -15,6 +15,6 @@ environment; the name of the environment is defined internally
 }
 \examples{
 \dontrun{
-Nanopore::init()
+init()
 }
 }

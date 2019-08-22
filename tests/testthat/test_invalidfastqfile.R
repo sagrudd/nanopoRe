@@ -13,7 +13,7 @@ test_that("frankenFastq.fastq parses correctly", {
 
 
 test_that("frankenFastq.fastq.gz can be fixed", {
-  expect_equal(fastqValidator(nanopoRe::fixFastq(system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe", mustWork = TRUE), tempfile(pattern="fixfastq_", fileext=".fq"))), TRUE)
+  expect_equal(fastqValidator(fixFastq(system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe", mustWork = TRUE), tempfile(pattern="fixfastq_", fileext=".fq"))), TRUE)
 
   tfile <- tempfile(pattern="fixfastq_", fileext=".fq.gz", tmpdir = tempdir(check=TRUE))
   fixFastq(system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe", mustWork = TRUE), tfile)

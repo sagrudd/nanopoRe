@@ -29,11 +29,13 @@ Imports:
     ggplot2,
     grid,
     gtools,
+    Hmisc,
     IRanges,
     IRdisplay,
     kableExtra,
     knitr,
     magrittr,
+    methods,
     pbmcapply,
     plyr,
     rlang,
@@ -46,7 +48,9 @@ Imports:
     scales,
     S4Vectors,
     tibble,
-    vcfR
+    vcfR,
+    writexl,
+    yaml
 LinkingTo: 
     Rcpp
 Suggests:

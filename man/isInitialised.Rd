@@ -2,7 +2,7 @@
 % Please edit documentation in R/Environment.R
 \name{isInitialised}
 \alias{isInitialised}
-\title{check NanopoRe environment}
+\title{check nanopoRe environment}
 \usage{
 isInitialised()
 }
@@ -10,5 +10,5 @@ isInitialised()
 a logical defining whether the environment is initialised
 }
 \description{
-performs a sanity check to ensure that NanopoRe environment is initialised
+performs a sanity check to ensure that nanopoRe environment is initialised
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Environment.R
 \name{init}
 \alias{init}
-\title{Initialise the NanopoRe environment}
+\title{Initialise the nanopoRe environment}
 \usage{
 init()
 }
@@ -10,11 +10,11 @@ init()
 None
 }
 \description{
-Creates a NanopoRe environment; package specific parameters and values will be stored within this
+Creates a nanopoRe environment; package specific parameters and values will be stored within this
 environment; the name of the environment is defined internally
 }
 \examples{
 \dontrun{
-Nanopore::init()
+init()
 }
 }
