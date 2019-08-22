@@ -70,7 +70,7 @@ getCachedObject <- function(objectName) {
 #'
 #' @examples
 #' \dontrun{
-#' Nanopore::init()
+#' nanopoRe::init()
 #' }
 #' @export
 listCachedObjects <- function() {
