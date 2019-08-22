@@ -16,22 +16,28 @@
 #' @export
 importCas9TutorialData <- function(reference, study) {
 
-  referenceFile <<- file.path("ReferenceData", basename(reference))
+  reference <- get("reference", envir=nanopoRe:::getCachedObject("cas9"))
+  study <- get("study", envir=nanopoRe:::getCachedObject("cas9"))
+
+  referenceFile <- file.path("ReferenceData", basename(reference))
 
   # load the general mapping results and analysis ...
   mappingResultsFile <- file.path(getRpath(), paste0(study, "_mapping_results", ".Rdata"))
-  load(mappingResultsFile, envir=globalenv())
+  load(mappingResultsFile, envir=nanopoRe:::getCachedObject("cas9"))
 
   # load the aggregated coverage file - used for plotting coverage at finer resolution for the pre-defined targets
   aggregatedCovFile <- file.path(getRpath(), paste0(study, "_aggregated_coverage", ".Rdata"))
-  load(aggregatedCovFile, envir=globalenv())
+  load(aggregatedCovFile, envir=nanopoRe:::getCachedObject("cas9"))
 
   # load the sequence metadata for the unmapped sequence reads
   qualfilelocation = file.path("Analysis","Minimap2", paste0(study, ".unmapped.quals"))
   chromosomeFile <- file.path(getRpath(), paste(sub("\\.[^.]*$", "", basename(qualfilelocation)), "rcounts", "Rdata",sep="."))
-  unmappedReads <<- readRDS(file=chromosomeFile)
 
-  aggregatedGR$rev_cov <<- aggregatedGR$binned_cov - aggregatedGR$fwd_cov
+  assign("unmappedReads",          readRDS(file=chromosomeFile),          envir=nanopoRe:::getCachedObject("cas9"))
+
+  aggregatedGR <- get("aggregatedGR", envir=nanopoRe:::getCachedObject("cas9"))
+  aggregatedGR$rev_cov <- aggregatedGR$binned_cov - aggregatedGR$fwd_cov
+  assign("aggregatedGR",         aggregatedGR,          envir=nanopoRe:::getCachedObject("cas9"))
 
 }
 
@@ -53,15 +59,16 @@ importCas9TutorialData <- function(reference, study) {
 
 sourceCas9Parameters <- function(yaml) {
 
-  config           <<- yaml
+  nanopoRe:::setCachedObject("cas9", new.env())
+  assign("config",           yaml, envir=nanopoRe:::getCachedObject("cas9"))
 
-  bed_src          <<- config$target_regions
-  study            <<- config$study_name
-  reference        <<- config$reference_genome
-  target_proximity <<- as.integer(config$target_proximity)
-  offtarget_level  <<- as.integer(config$offtarget_level)
-  tutorialText     <<- config$tutorialText
-  gstride          <<- as.integer(config$gstride)
+  assign("bed_src",          yaml$target_regions,               envir=nanopoRe:::getCachedObject("cas9"))
+  assign("study",            yaml$study_name,                   envir=nanopoRe:::getCachedObject("cas9"))
+  assign("reference",        yaml$reference_genome,             envir=nanopoRe:::getCachedObject("cas9"))
+  assign("target_proximity", as.integer(yaml$target_proximity), envir=nanopoRe:::getCachedObject("cas9"))
+  assign("offtarget_level",  as.integer(yaml$offtarget_level),  envir=nanopoRe:::getCachedObject("cas9"))
+  assign("tutorialText",     yaml$tutorialText,                 envir=nanopoRe:::getCachedObject("cas9"))
+  assign("gstride",          as.integer(yaml$gstride),          envir=nanopoRe:::getCachedObject("cas9"))
 
 }
 
@@ -81,6 +88,15 @@ sourceCas9Parameters <- function(yaml) {
 #' }
 #' @export
 cas9ExecutiveSummary <- function() {
+
+  backgroundUniverse <- get("backgroundUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+  unmappedReads <- get("unmappedReads", envir=nanopoRe:::getCachedObject("cas9"))
+  offtargetUniverse <- get("offtargetUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+  targetproximalUniverse <- get("targetproximalUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+  ontargetUniverse <- get("ontargetUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+
+  study <- get("study", envir=nanopoRe:::getCachedObject("cas9"))
+
   cas9Throughput <- sum(backgroundUniverse$basesstart) +
     sum(unmappedReads$width) +
     sum(offtargetUniverse$basesstart) +
@@ -154,6 +170,12 @@ cas9MappingByGenomicSegment <- function() {
     return(summary.df)
   }
 
+  backgroundUniverse <- get("backgroundUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+  unmappedReads <- get("unmappedReads", envir=nanopoRe:::getCachedObject("cas9"))
+  offtargetUniverse <- get("offtargetUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+  targetproximalUniverse <- get("targetproximalUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+  ontargetUniverse <- get("ontargetUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+
   effectiveGenomeSize <- sum(IRanges::width(backgroundUniverse)) + sum(IRanges::width(offtargetUniverse)) + sum(IRanges::width(targetproximalUniverse)) + sum(IRanges::width(ontargetUniverse))
 
   summary.df <- as.data.frame(cbind(collateMappingCharacteristics(backgroundUniverse, unmappedReads),
@@ -197,6 +219,8 @@ cas9MappingByGenomicSegment <- function() {
 #' }
 #' @export
 cas9TargetPerformanceTable <- function() {
+  ontargetUniverse <- get("ontargetUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+
   bygene <- cbind(names(ontargetUniverse),
                   scales::comma_format()(IRanges::width(ontargetUniverse)),
                   round(ontargetUniverse$dmean, digits=2),
@@ -228,6 +252,24 @@ cas9TargetPerformanceTable <- function() {
 
 
 
+#' return list of defined cas9 target regions
+#'
+#' return list of defined cas9 target regions
+#'
+#' @return vector of target ids
+#'
+#' @examples
+#' \dontrun{
+#' cas9GetTargetList()
+#' }
+#' @export
+cas9GetTargetList <- function() {
+  aggregatedGR <- get("aggregatedGR", envir=nanopoRe:::getCachedObject("cas9"))
+  return(unique(as.data.frame(aggregatedGR)$gene))
+}
+
+
+
 #' prepare a plot of sequence coverage over a cas9 target region
 #'
 #' prepare a plot of depth-of-coverage over and around a specified target region
@@ -244,6 +286,12 @@ cas9TargetPerformanceTable <- function() {
 #' }
 #' @export
 cas9SingleTargetPlot <- function(geneName, delta=0) {
+
+  aggregatedGR <- get("aggregatedGR", envir=nanopoRe:::getCachedObject("cas9"))
+  target_proximity <- get("target_proximity", envir=nanopoRe:::getCachedObject("cas9"))
+  wga.cov <- get("wga.cov", envir=nanopoRe:::getCachedObject("cas9"))
+  offtarget_level <- get("offtarget_level", envir=nanopoRe:::getCachedObject("cas9"))
+
   delta=min(delta, target_proximity)
   covData <- as.data.frame(aggregatedGR)
   covData <- covData[which(covData$gene==geneName),]
@@ -281,6 +329,12 @@ cas9SingleTargetPlot <- function(geneName, delta=0) {
 #' }
 #' @export
 cas9StrandedTargetPlot <- function(geneName, delta=0) {
+
+  aggregatedGR <- get("aggregatedGR", envir=nanopoRe:::getCachedObject("cas9"))
+  target_proximity <- get("target_proximity", envir=nanopoRe:::getCachedObject("cas9"))
+  wga.cov <- get("wga.cov", envir=nanopoRe:::getCachedObject("cas9"))
+  offtarget_level <- get("offtarget_level", envir=nanopoRe:::getCachedObject("cas9"))
+
   delta=min(delta, target_proximity)
   covData <- as.data.frame(aggregatedGR)
   covData <- covData[which(covData$gene==geneName),]
@@ -320,6 +374,8 @@ cas9StrandedTargetPlot <- function(geneName, delta=0) {
 #' }
 #' @export
 cas9WriteExcelOnTarget <- function() {
+  ontargetUniverse <- get("ontargetUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+  study <- get("study", envir=nanopoRe:::getCachedObject("cas9"))
   ontarget.meta <- file.path("Analysis", "OnTarget", paste0(study,"_ontarget.xlsx"))
   writexl::write_xlsx(as.data.frame(ontargetUniverse)[,c(1,2,3,4,6,8,14,16,23)],
                       path = ontarget.meta)
@@ -341,7 +397,8 @@ cas9WriteExcelOnTarget <- function() {
 #' }
 #' @export
 cas9WriteExcelOffTarget <- function() {
-
+  offtargetUniverse <- get("offtargetUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+  study <- get("study", envir=nanopoRe:::getCachedObject("cas9"))
   offtarget.meta <- file.path("Analysis", "OffTarget", paste0(study,"_offtarget.xlsx"))
 
   # small reporting issue - reads are not double counted that means we can have blocks of background where there is
@@ -369,8 +426,13 @@ cas9WriteExcelOffTarget <- function() {
 #' @export
 cas9MultiGeneCoveragePanel <- function(colMax=4) {
 
-  covData <- as.data.frame(aggregatedGR)
+  aggregatedGR <- get("aggregatedGR", envir=nanopoRe:::getCachedObject("cas9"))
+  target_proximity <- get("target_proximity", envir=nanopoRe:::getCachedObject("cas9"))
+  wga.cov <- get("wga.cov", envir=nanopoRe:::getCachedObject("cas9"))
+  offtarget_level <- get("offtarget_level", envir=nanopoRe:::getCachedObject("cas9"))
+  br <- get("br", envir=nanopoRe:::getCachedObject("cas9"))
 
+  covData <- as.data.frame(aggregatedGR)
 
   suppressWarnings(
     posMatrix <- matrix(gtools::mixedsort(names(br)), ncol=colMax, byrow=TRUE)
@@ -438,6 +500,12 @@ cas9MultiGeneCoveragePanel <- function(colMax=4) {
 #' @export
 cas9CoverageTypeOverChromosomes <- function() {
   setLogFile()
+
+  backgroundUniverse <- get("backgroundUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+  offtargetUniverse <- get("offtargetUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+  targetproximalUniverse <- get("targetproximalUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+  ontargetUniverse <- get("ontargetUniverse", envir=nanopoRe:::getCachedObject("cas9"))
+
   targetMap <- data.frame(chromosome=gtools::mixedsort(levels(GenomeInfoDb::seqnames(backgroundUniverse))),
                           stringsAsFactors=FALSE)
   targetMap <- cbind(targetMap, offtarget=unlist(lapply(targetMap$chromosome, function(x) {
@@ -555,6 +623,7 @@ ggbiosave <- function (filename, plot = last_plot(), device = default_device(fil
 #' @export
 cas9OffTargetKaryogram <- function() {
   setLogFile()
+  offtargetUniverse <- get("offtargetUniverse", envir=nanopoRe:::getCachedObject("cas9"))
   GenomeInfoDb::seqlevels(offtargetUniverse) <- unique(gtools::mixedsort(as.character(GenomeInfoDb::seqnames(offtargetUniverse))))
   if (length(unique(as.character(GenomeInfoDb::seqnames(offtargetUniverse))))==1) {
     # this is a tutorial workflow ... may require debugging depending on how script is used in real workflows?
@@ -594,6 +663,7 @@ cas9OffTargetKaryogram <- function() {
 #' }
 #' @export
 cas9OffTargetTable <- function() {
+  offtargetUniverse <- get("offtargetUniverse", envir=nanopoRe:::getCachedObject("cas9"))
   offtargtop <- as.data.frame(offtargetUniverse[order(offtargetUniverse$dmean, decreasing=TRUE)[1:10]])[,c(1,2,3,23,6,8,10,11,16,14)]
 
   offtargtop$strandp <- round(as.numeric(offtargtop$strandp)/(as.numeric(offtargtop$strandp)+as.numeric(offtargtop$strandn))*100, digits=2)
