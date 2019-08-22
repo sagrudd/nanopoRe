@@ -18,12 +18,12 @@
 setLogFile <- function(filename=NULL, append=TRUE) {
   if (is.null(filename)) {
     if (hasCachedObject("logfile")) {
-      filename <- nanopoRe:::getCachedObject("logfile")
+      filename <- getCachedObject("logfile")
     } else {
       filename = "unnamed.log"
     }
   } else {
-    nanopoRe:::setCachedObject("logfile", filename)
+    setCachedObject("logfile", filename)
   }
   con <- file(filename)
   sink(con, append=append)

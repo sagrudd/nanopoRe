@@ -1,14 +1,14 @@
 
-#' Initialise the NanopoRe environment
+#' Initialise the nanopoRe environment
 #'
-#' Creates a NanopoRe environment; package specific parameters and values will be stored within this
+#' Creates a nanopoRe environment; package specific parameters and values will be stored within this
 #' environment; the name of the environment is defined internally
 #'
 #' @return None
 #'
 #' @examples
 #' \dontrun{
-#' Nanopore::init()
+#' init()
 #' }
 #' @export
 init <- function() {
@@ -16,9 +16,9 @@ init <- function() {
   setRpath(file.path("Analysis", "R"))
 }
 
-#' check NanopoRe environment
+#' check nanopoRe environment
 #'
-#' performs a sanity check to ensure that NanopoRe environment is initialised
+#' performs a sanity check to ensure that nanopoRe environment is initialised
 #'
 #' @return a logical defining whether the environment is initialised
 isInitialised <- function() {
@@ -70,7 +70,7 @@ getCachedObject <- function(objectName) {
 #'
 #' @examples
 #' \dontrun{
-#' nanopoRe::init()
+#' init()
 #' }
 #' @export
 listCachedObjects <- function() {

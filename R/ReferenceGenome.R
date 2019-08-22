@@ -195,7 +195,9 @@ getSeqLengths <- function(x) {
 #' @importFrom IRanges IRanges
 #' @importFrom GenomicRanges GRanges
 #' @importFrom dplyr filter
+#' @importFrom scales comma_format
 #' @importFrom rlang .data
+#' @importFrom gtools mixedsort
 #' @param chrIds vector of chromosome ids
 #' @param bamFile to the bamFile used for analysis
 #' @param flag to define whether mapping is reported at the Primary level

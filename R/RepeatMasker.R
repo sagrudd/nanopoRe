@@ -12,6 +12,7 @@
 #' associate with repeat types
 #'
 #' @importFrom RCurl getBinaryURL
+#' @importFrom data.table fread
 #' @param RepeatMaskerFile is a path to an already downloaded RepeatMasker results file
 #' @param RepeatMaskerSRC is the URL to RepeatMasker dataset
 #' @param force is a boolean to specify whether the build of external data should be forced

@@ -11,7 +11,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' Nanopore::init()
+#' init()
 #' }
 #' @export
 importCas9TutorialData <- function(reference, study) {
@@ -36,10 +36,9 @@ importCas9TutorialData <- function(reference, study) {
 }
 
 
-#' Initialise the NanopoRe environment
+#' import the cas9 parameters from YAML file
 #'
-#' Creates a NanopoRe environment; package specific parameters and values will be stored within this
-#' environment; the name of the environment is defined internally
+#' import the cas9 parameters from YAML file
 #'
 #' @import yaml
 #' @param yaml is a yaml object as prepared by loading from file
@@ -73,6 +72,7 @@ sourceCas9Parameters <- function(yaml) {
 #' prepare an infographic style executive summary for key cas9 enrichment measurements
 #'
 #' @import emojifont
+#' @importFrom Hmisc wtd.quantile
 #' @return path to a file that has been created
 #'
 #' @examples
@@ -373,19 +373,19 @@ cas9MultiGeneCoveragePanel <- function(colMax=4) {
 
 
   suppressWarnings(
-    posMatrix <- matrix(gtools:::mixedsort(names(br)), ncol=colMax, byrow=TRUE)
+    posMatrix <- matrix(gtools::mixedsort(names(br)), ncol=colMax, byrow=TRUE)
   )
   # data may be recycled ... remove duplicate values ...
   posMatrix[which(duplicated(posMatrix[seq(nrow(posMatrix) * ncol(posMatrix))]))]<-NA
 
-  plotLegend <- paste0("t::",gtools:::mixedsort(names(br)))
+  plotLegend <- paste0("t::",gtools::mixedsort(names(br)))
   plotCols <- ceiling(length(plotLegend) / colMax)
   legendDF <- data.frame(x=Inf, y=Inf,
                          lab=plotLegend,
                          row=unlist(lapply(1:plotCols, rep, times=colMax))[1:length(plotLegend)],
                          col=rep(seq(1, colMax), length.out=length(plotLegend)))
 
-  plotLegend <- paste0("t::",gtools:::mixedsort(names(br)))
+  plotLegend <- paste0("t::",gtools::mixedsort(names(br)))
   plotCols <- ceiling(length(plotLegend) / colMax)
   legendDF <- data.frame(x=Inf, y=Inf,
                          lab=plotLegend,
@@ -414,7 +414,7 @@ cas9MultiGeneCoveragePanel <- function(colMax=4) {
                      geom_text(aes(x,y,label=lab), data=legendDF, vjust=1, hjust=1, size=3.5) +
                      theme(plot.title = element_text(size=11)))
 
-  megadepthplot <- nanopoRe:::ggplot2handler(megadepthplot)
+  megadepthplot <- ggplot2handler(megadepthplot)
 
   return(megadepthplot)
 
@@ -438,7 +438,7 @@ cas9MultiGeneCoveragePanel <- function(colMax=4) {
 #' @export
 cas9CoverageTypeOverChromosomes <- function() {
   setLogFile()
-  targetMap <- data.frame(chromosome=gtools:::mixedsort(levels(GenomeInfoDb::seqnames(backgroundUniverse))),
+  targetMap <- data.frame(chromosome=gtools::mixedsort(levels(GenomeInfoDb::seqnames(backgroundUniverse))),
                           stringsAsFactors=FALSE)
   targetMap <- cbind(targetMap, offtarget=unlist(lapply(targetMap$chromosome, function(x) {
     sum(offtargetUniverse[which(levels(GenomeInfoDb::seqnames(offtargetUniverse))==x)]$basesstart) } )))
@@ -453,7 +453,7 @@ cas9CoverageTypeOverChromosomes <- function() {
   #targetMap
   targetMelt <- melt(targetMap)
   targetMelt$variable <- factor(as.character(targetMelt$variable), c("background", "ontarget", "offtarget"))
-  targetMelt$chromosome <- factor(targetMelt$chromosome, gtools:::mixedsort(unique(targetMelt$chromosome)))
+  targetMelt$chromosome <- factor(targetMelt$chromosome, gtools::mixedsort(unique(targetMelt$chromosome)))
 
   suppressWarnings(plot <- ggplot(targetMelt, aes(chromosome, value)) +
                      geom_col(aes(fill=variable)) +
@@ -470,14 +470,6 @@ cas9CoverageTypeOverChromosomes <- function() {
 
 
 
-
-#' save a ggbio-based plot to file
-#'
-#' the ggbio::ggsave method is not working as expected and is throwing errors; the code below is copied but the
-#' data object checking has been removed (there is less sanity checking) - this method is not exported ... so needs
-#' to be called as an internal method only
-#'
-#' @return None
 ggbiosave <- function (filename, plot = last_plot(), device = default_device(filename),
                        path = NULL, scale = 1, width = par("din")[1], height = par("din")[2],
                        units = c("in", "cm", "mm"), dpi = 300, limitsize = TRUE,
@@ -576,7 +568,7 @@ cas9OffTargetKaryogram <- function() {
   plot <- ggbio::autoplot(offtargetUniverse, layout="karyogram")
 
   dest <- tempfile(pattern="", tmpdir=getRpath(), fileext=".png")
-  dim <- nanopoRe:::getPlotDimensions()
+  dim <- getPlotDimensions()
   unsetLog()
   ggbiosave(filename=dest, plot, width=dim$width, height=dim$height, units=dim$units, dpi=dim$dpi)
 

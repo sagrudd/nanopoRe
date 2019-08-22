@@ -5,6 +5,7 @@
 #' This method will prepare summary statistics on a fastq file and cache results (assuming immutable nature)
 #'
 #' @importFrom gdata humanReadable
+#' @importFrom scales comma_format
 #' @param input_fastq is the path to the fastq file to check
 #' @param force logical value describing whether the analysis should be force recalculated
 #' @return vector of observations
@@ -33,7 +34,7 @@ fastqCheckup <- function(input_fastq, force=FALSE) {
   bases <- gsub("kB", "kbases", bases)
 
   fileinfo <- c(filename=basename(input_fastq),
-                checksum=nanopoRe::md5sum(input_fastq),
+                checksum=md5sum(input_fastq),
                 reads=scales::comma_format()(getFastqCount()),
                 bases=bases,
                 size=gdata::humanReadable(file.info(input_fastq)$size),
