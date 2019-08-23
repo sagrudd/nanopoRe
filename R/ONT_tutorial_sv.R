@@ -115,10 +115,10 @@ SVMappingCharacteristicTable <- function(bamSummary, validationResponse, bamFile
 
   ktable <- kable(mapping, format="html", col.names=rep(" ", ncol(mapping)), caption="Table summarising mapping characteristics", booktabs=TRUE, table.envir='table*', linesep="", escape = FALSE) %>%
     kable_styling(c("striped", "condensed"))  %>%
-    pack_rows("Sequence Read Mapping", 1, 4) %>%
-    pack_rows("Nucleotides Mapped", 5, 9) %>%
-    pack_rows("Reads lengths", 10, 12) %>%
-    pack_rows("Reads Qualities", 13, 15) %>%
+    pack_rows("Read Mapping", 1, 4) %>%
+    pack_rows("Nucleotide Mapping", 5, 9) %>%
+    pack_rows("Read lengths", 10, 12) %>%
+    pack_rows("Read Qualities", 13, 15) %>%
     pack_rows("Mapping Qualities", 16, 18) %>%
     pack_rows("Depth of Coverage", 19, 21) %>%
     footnote(symbol=c("fastq bases are calculated from the qwidth field of the primary mapped sequences", "soft-clipped nucleotide bases are calculated from the BAM CIGAR annotation"), symbol_title="please note: ", footnote_as_chunk = TRUE)
