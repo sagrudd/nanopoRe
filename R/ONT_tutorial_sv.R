@@ -50,16 +50,14 @@ SVMappingCharacteristicTable <- function(bamSummary, validationResponse, bamFile
 
   mapping <- mapping %>% add_row(key="mapped reads (primary)",
                                  value=scales::comma_format()(primaryMaps),
-                                 percentage=paste0(round(primaryMaps / totalSeqs * 100, digits=2),"%"))
+                                 percentage="")
   mapping <- mapping %>% add_row(key="mapped reads (secondary)",
                                  value=scales::comma_format()(length(which(bamSummary$readFlag=="Secondary"))),
                                  percentage="")
   mapping <- mapping %>% add_row(key="mapped reads (supplementary)",
                                  value=scales::comma_format()(length(which(bamSummary$readFlag=="Supplementary"))),
                                  percentage="")
-  mapping <- mapping %>% add_row(key="unmapped reads",
-                                 value=scales::comma_format()(unmapped),
-                                 percentage=paste0(round(unmapped / totalSeqs * 100, digits=2),"%"))
+
 
   mapping <- mapping %>% add_row(key="fastq nucleotides", value=scales::comma_format()(totalNucleotides), percentage="")
 
@@ -69,9 +67,6 @@ SVMappingCharacteristicTable <- function(bamSummary, validationResponse, bamFile
   mapping <- mapping %>% add_row(key="clipped nucleotides from primary mappings",
                                  value=scales::comma_format()(clippedReadNt),
                                  percentage=paste0(round(clippedReadNt / totalNucleotides * 100, digits=2),"%"))
-  mapping <- mapping %>% add_row(key="unmapped nucleotides",
-                                 value=scales::comma_format()(unmappedNt),
-                                 percentage=paste0(round(unmappedNt / totalNucleotides * 100, digits=2),"%"))
   mapping <- mapping %>% add_row(key="nucleotides mapped (secondary mappings)",
                                  value=scales::comma_format()(sum(bamSummary[which(bamSummary$readFlag=="Secondary"),]$qwidth * bamSummary[which(bamSummary$readFlag=="Secondary"),]$coverage)),
                                  percentage="")
@@ -85,8 +80,6 @@ SVMappingCharacteristicTable <- function(bamSummary, validationResponse, bamFile
                                  value=scales::comma_format()(mean(bamSummary[which(bamSummary$readFlag=="Secondary"),]$qwidth)), percentage="")
   mapping <- mapping %>% add_row(key="mean read length (supplementary mapping)",
                                  value=scales::comma_format()(mean(bamSummary[which(bamSummary$readFlag=="Supplementary"),]$qwidth)), percentage="")
-  mapping <- mapping %>% add_row(key="mean read length (unmapped)",
-                                 value=scales::comma_format()(mean(bamSummary[which(bamSummary$readFlag=="Unmapped"),]$qwidth)), percentage="")
 
 
   mapping <- mapping %>% add_row(key="mean read quality (primary mapping)",
@@ -95,9 +88,6 @@ SVMappingCharacteristicTable <- function(bamSummary, validationResponse, bamFile
                                  value=paste0(round(phredmean(bamSummary[which(bamSummary$readFlag=="Secondary"),]$readq), digits=2)), percentage="")
   mapping <- mapping %>% add_row(key="mean read quality (supplementary mapping)",
                                  value=paste0(round(phredmean(bamSummary[which(bamSummary$readFlag=="Supplementary"),]$readq), digits=2)), percentage="")
-  mapping <- mapping %>% add_row(key="mean read quality (unmapped)",
-                                 value=paste0(round(phredmean(bamSummary[which(bamSummary$readFlag=="Unmapped"),]$readq), digits=2)), percentage="")
-
 
   mapping <- mapping %>% add_row(key="mean mapping quality (primary mapping)",
                                  value=paste0(round(mean(bamSummary[which(bamSummary$readFlag=="Primary"),]$mapq), digits=2)), percentage="")
@@ -120,17 +110,17 @@ SVMappingCharacteristicTable <- function(bamSummary, validationResponse, bamFile
   rownames(mapping) <- mapping[,1]
   mapping <- mapping[,-1]
 
-  row.names(mapping)[7]<- paste0(row.names(mapping)[7], footnote_marker_symbol(1, "html"))
-  row.names(mapping)[8]<- paste0(row.names(mapping)[8], footnote_marker_symbol(2, "html"))
+  row.names(mapping)[6]<- paste0(row.names(mapping)[6], footnote_marker_symbol(1, "html"))
+  row.names(mapping)[7]<- paste0(row.names(mapping)[7], footnote_marker_symbol(2, "html"))
 
   ktable <- kable(mapping, format="html", col.names=rep(" ", ncol(mapping)), caption="Table summarising mapping characteristics", booktabs=TRUE, table.envir='table*', linesep="", escape = FALSE) %>%
     kable_styling(c("striped", "condensed"))  %>%
-    pack_rows("Sequence Read Mapping", 1, 5) %>%
-    pack_rows("Nucleotides Mapped", 6, 11) %>%
-    pack_rows("Reads lengths", 12, 15) %>%
-    pack_rows("Reads Qualities", 16, 19) %>%
-    pack_rows("Mapping Qualities", 20, 22) %>%
-    pack_rows("Depth of Coverage", 23, 25) %>%
+    pack_rows("Sequence Read Mapping", 1, 4) %>%
+    pack_rows("Nucleotides Mapped", 5, 9) %>%
+    pack_rows("Reads lengths", 10, 12) %>%
+    pack_rows("Reads Qualities", 13, 15) %>%
+    pack_rows("Mapping Qualities", 16, 18) %>%
+    pack_rows("Depth of Coverage", 19, 21) %>%
     footnote(symbol=c("fastq bases are calculated from the qwidth field of the primary mapped sequences", "soft-clipped nucleotide bases are calculated from the BAM CIGAR annotation"), symbol_title="please note: ", footnote_as_chunk = TRUE)
 
   return(ktable)
