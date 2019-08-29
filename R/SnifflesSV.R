@@ -96,9 +96,15 @@ snifflesKaryogram <- function(vcfFile) {
   karyo <- karyo[grep("(MT)|(\\..+)", as.character(seqnames(karyo)), invert=TRUE),]
   factoids <- gtools::mixedsort(unique(as.character(seqnames(karyo))))
   seqlevels(karyo) <- factoids
-
   seqlengths(karyo) <- getSeqLengths(names(seqlengths(karyo)))
 
+  if (length(unique(as.character(seqnames(karyo))))==1) {
+    # this is a tutorial workflow ... may require debugging depending on how script is used in real workflows?
+    if (unique(gtools:::mixedsort(as.character(seqnames(karyo))))=="4") {
+      seqlevels(karyo) <- append(seq(1,22), c("X", "Y"))
+      seqlengths(karyo) <- c(248956422, 242193529, 198295559, 190214555, 181538259, 170805979, 159345973, 145138636, 138394717, 133797422, 135086622, 133275309, 114364328, 107043718, 101991189, 90338345, 83257441, 80373285, 58617616, 64444167, 46709983, 50818468, 156040895, 57227415)
+    }
+  }
 
   karyogram <- autoplot(karyo,
                                layout="karyogram",
