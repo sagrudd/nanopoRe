@@ -49,9 +49,10 @@ getReferenceGenome <- function() {
 #' @export
 loadReferenceGenome <- function() {
     message(paste0("loading reference genome(", getReferenceGenome(), ")"))
-    # derive a referenceGenome object from the named fasta elements in the provided fasta reference resource
+    # derive a referenceGenome object from the named fasta elements in the provided fasta reference
+    # resource
     referenceGenomeSequence <- readDNAStringSet(getReferenceGenome())
-    referenceGenome <- data.frame(id = gsub(" .+", "", names(referenceGenomeSequence)), sid = seq_along(names(referenceGenomeSequence)),
+    referenceGenome <- data.frame(id = gsub(" .+", "", names(referenceGenomeSequence)), sid = seq_along(names(referenceGenomeSequence)), 
         stringsAsFactors = FALSE)
     referenceGenome$sid <- seq(nrow(referenceGenome))
     assign("referenceGenome", referenceGenome, envir = get(getEnvironment()))
@@ -101,7 +102,8 @@ cleanReferenceGenome <- function(delIds) {
 #'
 #' @export
 getStringSetId <- function(chrId) {
-    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", envir = get(getEnvironment())))) {
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", 
+        envir = get(getEnvironment())))) {
         loadReferenceGenome()
     }
     referenceGenome <- get("referenceGenome", envir = get(getEnvironment()))
@@ -126,7 +128,8 @@ getStringSetId <- function(chrId) {
 #' @seealso [getStringSetId()] for method to prepare numeric pointer
 #' @export
 getChromosomeSequence <- function(dnaStringSetId) {
-    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", envir = get(getEnvironment())))) {
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", 
+        envir = get(getEnvironment())))) {
         loadReferenceGenome()
     }
     referenceGenomeSequence <- get("referenceGenomeSequence", envir = get(getEnvironment()))
@@ -149,7 +152,8 @@ getChromosomeSequence <- function(dnaStringSetId) {
 #'
 #' @export
 getChromosomeIds <- function() {
-    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", envir = get(getEnvironment())))) {
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", 
+        envir = get(getEnvironment())))) {
         loadReferenceGenome()
     }
     return(get("referenceGenome", envir = get(getEnvironment()))[, 1])
@@ -170,7 +174,8 @@ getChromosomeIds <- function() {
 #'
 #' @export
 getSeqLengths <- function(x) {
-    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", envir = get(getEnvironment())))) {
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", 
+        envir = get(getEnvironment())))) {
         loadReferenceGenome()
     }
     keys <- gsub("\\s.+", "", names(get("referenceGenomeSequence", envir = get(getEnvironment()))))
@@ -211,31 +216,32 @@ getSeqLengths <- function(x) {
 #'
 #' @export
 chromosomeMappingSummary <- function(chrIds, bamFile, flag = "Primary") {
-
+    
     bamSummary <- bamSummarise(bamFile, blockSize = 10000)
-
+    
     getChrData <- function(id, bamSummary, flag = "Primary") {
         dna <- getChromosomeSequence(getStringSetId(id))
         letterFreq <- letterFrequency(dna, c("A", "C", "G", "T", "N"))
         mapChr <- bamSummary %>% filter(.data$readFlag == flag & .data$rname == id)
-
-        # depending on the genome used there may be a load of warnings here this is likely due to reads mapping beyond segment boundaries -
-        # warnings are masked here since they are expected
-        suppressWarnings(gr <- GRanges(seqnames = mapChr$rname, ranges = IRanges(start = mapChr$start, end = mapChr$end), strand = mapChr$strand,
-            seqlengths = getSeqLengths(levels(mapChr$rname))))
+        
+        # depending on the genome used there may be a load of warnings here this is likely due to reads
+        # mapping beyond segment boundaries - warnings are masked here since they are expected
+        suppressWarnings(gr <- GRanges(seqnames = mapChr$rname, ranges = IRanges(start = mapChr$start, 
+            end = mapChr$end), strand = mapChr$strand, seqlengths = getSeqLengths(levels(mapChr$rname))))
         mc <- coverage(gr)
         bi <- tileGenome(seqlengths(gr), ntile = 1)
         cd <- binnedAverage(bi[[1]], mc, "binned_cov")
-
+        
         ke <- which(as.character(seqnames(cd)) == id)
         co <- mcols(cd[ke, ])$binned_cov
-
-        return(c(chrId = id, chrLength = (scales::comma_format())(length(dna)), `N (%)` = paste0(round(letterFreq["N"]/length(dna) * 100,
-            digits = 2)), `GC (%)` = paste0(round((letterFreq["G"] + letterFreq["G"])/length(dna) * 100, digits = 2)), `Mapped Reads` = (scales::comma_format())(nrow(mapChr)),
-            `Mapped Bases` = (scales::comma_format())(sum(mapChr$coverage * mapChr$qwidth)), `Mean Coverage` = paste0(round(co, digits = 2))))
+        
+        return(c(chrId = id, chrLength = (scales::comma_format())(length(dna)), `N (%)` = paste0(round(letterFreq["N"]/length(dna) * 
+            100, digits = 2)), `GC (%)` = paste0(round((letterFreq["G"] + letterFreq["G"])/length(dna) * 
+            100, digits = 2)), `Mapped Reads` = (scales::comma_format())(nrow(mapChr)), `Mapped Bases` = (scales::comma_format())(sum(mapChr$coverage * 
+            mapChr$qwidth)), `Mean Coverage` = paste0(round(co, digits = 2))))
     }
-
-    chromosomeData <- data.frame(t(as.data.frame(lapply(gtools::mixedsort(unique(chrIds)), getChrData, bamSummary = bamSummary, flag = flag))),
-        stringsAsFactors = FALSE, row.names = NULL)
+    
+    chromosomeData <- data.frame(t(as.data.frame(lapply(gtools::mixedsort(unique(chrIds)), getChrData, 
+        bamSummary = bamSummary, flag = flag))), stringsAsFactors = FALSE, row.names = NULL)
     return(chromosomeData)
 }

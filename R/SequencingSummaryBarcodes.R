@@ -25,7 +25,8 @@ SequencingSummaryBarcodeMerge <- function(seqsum, barcodeFile) {
     if (!"barcode_arrangement" %in% colnames(seqsum)) {
         
         if (!is.null(barcodeFile) && file.exists(barcodeFile)) {
-            barcodedata <- data.table::fread(barcodeFile, select = c("read_id", "barcode_arrangement"), showProgress = TRUE, stringsAsFactors = FALSE)
+            barcodedata <- data.table::fread(barcodeFile, select = c("read_id", "barcode_arrangement"), 
+                showProgress = TRUE, stringsAsFactors = FALSE)
             pso <- order(seqsum$read_id, method = "radix")
             seqsum <- seqsum[pso, ]
             
@@ -69,7 +70,8 @@ SequenceSummaryBarcodeInfoGraphic <- function(seqsum, bcthreshold = 150) {
         names(barcodedata) <- gsub("x", "barcode", names(barcodedata))
         if ("unclassified" %in% barcodedata$barcode) {
             barcodes <- nrow(barcodedata[-which(barcodedata$barcode == "unclassified"), ])
-            barcodeUnass <- sum(barcodedata[-which(barcodedata$barcode == "unclassified"), "freq"])/sum(barcodedata$freq) * 100
+            barcodeUnass <- sum(barcodedata[-which(barcodedata$barcode == "unclassified"), "freq"])/sum(barcodedata$freq) * 
+                100
             barcodeRange <- range(subset(barcodedata, "barcode" != "unclassified")$freq)
         } else {
             barcodes <- nrow(barcodedata)
@@ -81,9 +83,10 @@ SequenceSummaryBarcodeInfoGraphic <- function(seqsum, bcthreshold = 150) {
     if (barcodes > 0) {
         
         
-        infographicFile <- infoGraphicPlot3(identifier = "seqsumBarcodes", panelA = c(key = "Reads with barcode (%)", value = round(barcodeUnass, 
-            digits = 1), icon = "fa-pie-chart"), panelB = c(key = "Barcodes identified", value = barcodes, icon = "fa-barcode"), panelC = c(key = "barcode variance", 
-            value = paste(barcodeRange, collapse = "\n"), icon = "fa-sliders"))
+        infographicFile <- infoGraphicPlot3(identifier = "seqsumBarcodes", panelA = c(key = "Reads with barcode (%)", 
+            value = round(barcodeUnass, digits = 1), icon = "fa-pie-chart"), panelB = c(key = "Barcodes identified", 
+            value = barcodes, icon = "fa-barcode"), panelC = c(key = "barcode variance", value = paste(barcodeRange, 
+            collapse = "\n"), icon = "fa-sliders"))
     }
     
     return(infographicFile)
@@ -91,7 +94,14 @@ SequenceSummaryBarcodeInfoGraphic <- function(seqsum, bcthreshold = 150) {
 
 
 
-
+barcodeSeqSummary <- function(barcodeId, myBarcode, myVector, myMethod, xlist = NA) {
+    subVector <- myVector[which(myBarcode == barcodeId)]
+    params <- list(subVector)
+    if (!is.na(xlist)) {
+        params <- append(params, xlist)
+    }
+    do.call(myMethod, params)
+}
 
 
 #' tabulate information on the SequencingSummary barcode fields and status
@@ -114,17 +124,16 @@ SequenceSummaryBarcodeInfoGraphic <- function(seqsum, bcthreshold = 150) {
 #'
 #' @export
 SequenceSummaryBarcodeTable <- function(seqsum, bcthreshold = 150) {
-    
     barcodes <- 0
     barcodeTable <- NULL
-    
     if ("barcode_arrangement" %in% names(seqsum)) {
         barcodedata = plyr::count(seqsum$barcode_arrangement)
         barcodedata = subset(barcodedata, barcodedata$freq > bcthreshold)
         names(barcodedata) <- gsub("x", "barcode", names(barcodedata))
         if ("unclassified" %in% barcodedata$barcode) {
             barcodes <- nrow(barcodedata[-which(barcodedata$barcode == "unclassified"), ])
-            barcodeUnass <- sum(barcodedata[-which(barcodedata$barcode == "unclassified"), "freq"])/sum(barcodedata$freq) * 100
+            barcodeUnass <- sum(barcodedata[-which(barcodedata$barcode == "unclassified"), "freq"])/sum(barcodedata$freq) * 
+                100
             barcodeRange <- range(subset(barcodedata, "barcode" != "unclassified")$freq)
         } else {
             barcodes <- nrow(barcodedata)
@@ -132,44 +141,30 @@ SequenceSummaryBarcodeTable <- function(seqsum, bcthreshold = 150) {
             barcodeRange <- range(barcodedata$freq)
         }
     }
-    
     if (barcodes > 0) {
         
-        
-        seqSummary <- function(barcodeId, myBarcode, myVector, myMethod, xlist = NA) {
-            subVector <- myVector[which(myBarcode == barcodeId)]
-            params <- list(subVector)
-            if (!is.na(xlist)) {
-                params <- append(params, xlist)
-            }
-            do.call(myMethod, params)
-        }
-        
-        barcodedata <- cbind(barcodedata, `%` = round(barcodedata$freq/sum(barcodedata$freq) * 100, digits = 1))
-        
-        barcodedata <- cbind(barcodedata, Mb = round(unlist(lapply(as.character(barcodedata$barcode), seqSummary, myBarcode = seqsum$barcode_arrangement, 
-            myVector = seqsum$sequence_length_template, myMethod = "sum"))/1e+06, digits = 0))
-        
-        barcodedata <- cbind(barcodedata, min = unlist(lapply(as.character(barcodedata$barcode), seqSummary, myBarcode = seqsum$barcode_arrangement, 
-            myVector = seqsum$sequence_length_template, myMethod = "min")))
-        
-        barcodedata <- cbind(barcodedata, max = unlist(lapply(as.character(barcodedata$barcode), seqSummary, myBarcode = seqsum$barcode_arrangement, 
-            myVector = seqsum$sequence_length_template, myMethod = "max")))
-        
-        barcodedata <- cbind(barcodedata, mean = round(unlist(lapply(as.character(barcodedata$barcode), seqSummary, myBarcode = seqsum$barcode_arrangement, 
-            myVector = seqsum$sequence_length_template, myMethod = "mean")), digits = 0))
-        
-        barcodedata <- cbind(barcodedata, N50 = unlist(lapply(as.character(barcodedata$barcode), seqSummary, myBarcode = seqsum$barcode_arrangement, 
-            myVector = seqsum$sequence_length_template, myMethod = "ncalc", xlist = list(n = 0.5))))
-        
-        barcodedata <- cbind(barcodedata, L50 = unlist(lapply(as.character(barcodedata$barcode), seqSummary, myBarcode = seqsum$barcode_arrangement, 
-            myVector = seqsum$sequence_length_template, myMethod = "lcalc", xlist = list(n = 0.5))))
-        
+        barcodedata <- cbind(barcodedata, `%` = round(barcodedata$freq/sum(barcodedata$freq) * 100, 
+            digits = 1))
+        barcodedata <- cbind(barcodedata, Mb = round(unlist(lapply(as.character(barcodedata$barcode), 
+            barcodeSeqSummary, myBarcode = seqsum$barcode_arrangement, myVector = seqsum$sequence_length_template, 
+            myMethod = "sum"))/1e+06, digits = 0))
+        barcodedata <- cbind(barcodedata, min = unlist(lapply(as.character(barcodedata$barcode), barcodeSeqSummary, 
+            myBarcode = seqsum$barcode_arrangement, myVector = seqsum$sequence_length_template, myMethod = "min")))
+        barcodedata <- cbind(barcodedata, max = unlist(lapply(as.character(barcodedata$barcode), barcodeSeqSummary, 
+            myBarcode = seqsum$barcode_arrangement, myVector = seqsum$sequence_length_template, myMethod = "max")))
+        barcodedata <- cbind(barcodedata, mean = round(unlist(lapply(as.character(barcodedata$barcode), 
+            barcodeSeqSummary, myBarcode = seqsum$barcode_arrangement, myVector = seqsum$sequence_length_template, 
+            myMethod = "mean")), digits = 0))
+        barcodedata <- cbind(barcodedata, N50 = unlist(lapply(as.character(barcodedata$barcode), barcodeSeqSummary, 
+            myBarcode = seqsum$barcode_arrangement, myVector = seqsum$sequence_length_template, myMethod = "ncalc", 
+            xlist = list(n = 0.5))))
+        barcodedata <- cbind(barcodedata, L50 = unlist(lapply(as.character(barcodedata$barcode), barcodeSeqSummary, 
+            myBarcode = seqsum$barcode_arrangement, myVector = seqsum$sequence_length_template, myMethod = "lcalc", 
+            xlist = list(n = 0.5))))
         barcodeTable <- kable(barcodedata, format = "html", caption = "Table summarising sequence collections ranked by barcode annotation", 
-            booktabs = TRUE, table.envir = "table*", linesep = "", escape = FALSE) %>% kable_styling(c("striped", "condensed"))
-        
+            booktabs = TRUE, table.envir = "table*", linesep = "", escape = FALSE) %>% kable_styling(c("striped", 
+            "condensed"))
     }
-    
     return(barcodeTable)
 }
 
@@ -206,7 +201,8 @@ SequenceSummaryBarcodeHistogram <- function(seqsum, bcthreshold = 150) {
         names(barcodedata) <- gsub("x", "barcode", names(barcodedata))
         if ("unclassified" %in% barcodedata$barcode) {
             barcodes <- nrow(barcodedata[-which(barcodedata$barcode == "unclassified"), ])
-            barcodeUnass <- sum(barcodedata[-which(barcodedata$barcode == "unclassified"), "freq"])/sum(barcodedata$freq) * 100
+            barcodeUnass <- sum(barcodedata[-which(barcodedata$barcode == "unclassified"), "freq"])/sum(barcodedata$freq) * 
+                100
             barcodeRange <- range(subset(barcodedata, "barcode" != "unclassified")$freq)
         } else {
             barcodes <- nrow(barcodedata)
@@ -217,8 +213,9 @@ SequenceSummaryBarcodeHistogram <- function(seqsum, bcthreshold = 150) {
     
     if (barcodes > 0) {
         
-        barcodeHistogram <- ggplot(barcodedata, aes_string("barcode", "freq", fill = "barcode")) + geom_bar(stat = "identity", width = 0.5, 
-            fill = "#9ecae1") + xlab("\nDemultiplexed barcodes") + ylab("\nFrequency") + scale_y_continuous(expand = c(0, 0)) + labs(title = "Histogram showing abundance of different barcodes") + 
+        barcodeHistogram <- ggplot(barcodedata, aes_string("barcode", "freq", fill = "barcode")) + geom_bar(stat = "identity", 
+            width = 0.5, fill = "#9ecae1") + xlab("\nDemultiplexed barcodes") + ylab("\nFrequency") + 
+            scale_y_continuous(expand = c(0, 0)) + labs(title = "Histogram showing abundance of different barcodes") + 
             theme(axis.text.x = element_text(angle = 45, hjust = 1))
         
     }
