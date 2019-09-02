@@ -1,0 +1,10 @@
+\name{NEWS}
+\title{nanopoRe NEWS}
+\encoding{UTF-8}
+
+\section{Version 0.2.8}{\itemize{
+\item functionality to support new ont_tutorial_sv structural variation tutorial
+\item some exploration with Jupyter interactions (IRdisplay dependency)
+\item code refinements starting Bioconductor integration process
+}}
+
