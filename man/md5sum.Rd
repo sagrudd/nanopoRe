@@ -17,7 +17,7 @@ This method calculates the md5 checksum for the specified file
 }
 \examples{
 \dontrun{
-md5sum(file.path("DESCRIPTION"))
+md5sum(file.path('DESCRIPTION'))
 }
 
 }

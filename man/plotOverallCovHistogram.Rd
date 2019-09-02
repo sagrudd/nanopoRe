@@ -11,6 +11,9 @@ plotOverallCovHistogram(bamFile, segments = 50)
 
 \item{segments}{number of segments to split data into}
 }
+\value{
+ggplot2 plot
+}
 \description{
 This method will plot a histogram of whole genome depth-of-coverage
 }

@@ -24,7 +24,7 @@ associate with repeat types
 }
 \examples{
 \dontrun{
-src = "http://www.repeatmasker.org/genomes/hg19/RepeatMasker-rm405-db20140131/hg19.fa.out.gz"
+src = 'http://www.repeatmasker.org/genomes/hg19/RepeatMasker-rm405-db20140131/hg19.fa.out.gz'
 RepeatMaskerGR(RepeatMaskerSRC=src, force=TRUE)
 }
 

@@ -19,6 +19,6 @@ prepare a plot of depth-of-coverage shaded by strand over and around a specified
 }
 \examples{
 \dontrun{
-cas9StrandedTargetPlot("HTT")
+cas9StrandedTargetPlot('HTT')
 }
 }

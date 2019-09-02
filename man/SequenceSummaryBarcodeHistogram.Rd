@@ -19,9 +19,9 @@ present a ggplot2 histogram of read counts by sorted barcode Id
 }
 \examples{
 \dontrun{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
+seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
 seqsum <- importSequencingSummary(seqsumFile)
-barcodeFile <- system.file("extdata", "barcoding_summary.txt.bz2", package = "nanopoRe")
+barcodeFile <- system.file('extdata', 'barcoding_summary.txt.bz2', package = 'nanopoRe')
 barcodedSeqs <- SequencingSummaryBarcodeMerge(seqsum, barcodeFile)
 SequenceSummaryBarcodeHistogram(barcodedSeqs)
 }

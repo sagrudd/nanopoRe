@@ -26,7 +26,7 @@ an accessory method for identifying a timepoint where a given amount of data has
 }
 \examples{
 \dontrun{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
+seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
 seqsum <- importSequencingSummary(seqsumFile)
 T50 <- SequencingSummaryT50(seqsum)
 }

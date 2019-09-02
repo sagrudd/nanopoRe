@@ -11,23 +11,23 @@
 #'
 #' @examples
 #' \dontrun{
-#' setLogFile("demofile.log", append=FALSE)
+#' setLogFile('demofile.log', append=FALSE)
 #' unsetLog()
 #' }
 #' @export
-setLogFile <- function(filename=NULL, append=TRUE) {
-  if (is.null(filename)) {
-    if (hasCachedObject("logfile")) {
-      filename <- getCachedObject("logfile")
+setLogFile <- function(filename = NULL, append = TRUE) {
+    if (is.null(filename)) {
+        if (hasCachedObject("logfile")) {
+            filename <- getCachedObject("logfile")
+        } else {
+            filename = "unnamed.log"
+        }
     } else {
-      filename = "unnamed.log"
+        setCachedObject("logfile", filename)
     }
-  } else {
-    setCachedObject("logfile", filename)
-  }
-  con <- file(filename)
-  sink(con, append=append)
-  sink(con, append=append, type="message")
+    con <- file(filename)
+    sink(con, append = append)
+    sink(con, append = append, type = "message")
 }
 
 #' method to output capture to log file
@@ -38,11 +38,11 @@ setLogFile <- function(filename=NULL, append=TRUE) {
 #'
 #' @examples
 #' \dontrun{
-#' setLogFile("demofile.log", append=FALSE)
+#' setLogFile('demofile.log', append=FALSE)
 #' unsetLog()
 #' }
 #' @export
 unsetLog <- function() {
-  sink()
-  sink(type="message")
+    sink()
+    sink(type = "message")
 }

@@ -9,7 +9,7 @@ infoGraphicPlot3(identifier, panelA, panelB, panelC, reportDPI = 90)
 \arguments{
 \item{identifier}{a key for the plot}
 
-\item{panelA}{information for panel1 in format of panelA=c(key="", value="", icon="")}
+\item{panelA}{information for panel1 in format of panelA=c(key='', value='', icon='')}
 
 \item{panelB}{see panelA}
 
@@ -25,9 +25,9 @@ This method will prepare a 3x graphical plot summarising user data with an empha
 }
 \examples{
 \dontrun{
-infoGraphicPlot3(identifier="mappingSummary",
-    panelA=c(key="Alignments", value="123456", icon="fa-sliders"),
-    panelB=c(key="Mapping Yield", value="680M", icon="fa-calculator"),
-    panelC=c(key="Average Accuracy", value="89.0 \%", icon="fa-area-chart"))
+infoGraphicPlot3(identifier='mappingSummary',
+    panelA=c(key='Alignments', value='123456', icon='fa-sliders'),
+    panelB=c(key='Mapping Yield', value='680M', icon='fa-calculator'),
+    panelC=c(key='Average Accuracy', value='89.0 \%', icon='fa-area-chart'))
 }
 }

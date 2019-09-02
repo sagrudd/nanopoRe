@@ -19,6 +19,6 @@ prepare a plot of depth-of-coverage over and around a specified target region
 }
 \examples{
 \dontrun{
-cas9SingleTargetPlot("HTT")
+cas9SingleTargetPlot('HTT')
 }
 }

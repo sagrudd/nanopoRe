@@ -24,7 +24,7 @@ plots a ggplot2 plot of active channels against time
 }
 \examples{
 \dontrun{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
+seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequencingSummaryActiveChannelPlot(seqsum)
 }

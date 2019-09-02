@@ -6,6 +6,9 @@
 \usage{
 loadReferenceGenome()
 }
+\value{
+None
+}
 \description{
 This method will parse the defined reference.file into a DNAStringSet object for handling in memory
 }

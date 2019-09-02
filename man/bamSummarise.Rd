@@ -23,7 +23,7 @@ the nanopoRe package
 }
 \examples{
 \dontrun{
-bamSummarise(file.path("Analysis", "Minimap2", "MyBamFile.bam"), force=FALSE, blockSize=1000L)
+bamSummarise(file.path('Analysis', 'Minimap2', 'MyBamFile.bam'), force=FALSE, blockSize=1000L)
 }
 
 }

@@ -9,10 +9,10 @@
 #'
 #' @examples
 #' \dontrun{
-#' md5sum(file.path("DESCRIPTION"))
+#' md5sum(file.path('DESCRIPTION'))
 #' }
 #'
 #' @export
 md5sum <- function(filename) {
-  digest(filename, algo="md5", file=TRUE)
+    digest(filename, algo = "md5", file = TRUE)
 }

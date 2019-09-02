@@ -14,7 +14,7 @@ This method will return a vector of chromsome identifiers
 }
 \examples{
 \dontrun{
-getChromosomeIds("1")
+getChromosomeIds('1')
 }
 
 }

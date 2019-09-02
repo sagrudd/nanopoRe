@@ -24,7 +24,7 @@ length, read quality and other characteristics as reported in the tutorial docum
 }
 \examples{
 \dontrun{
-mappingFile <- system.file("extdata", "mapping.bam", package = "nanopoRe", mustWork = TRUE)
+mappingFile <- system.file('extdata', 'mapping.bam', package = 'nanopoRe', mustWork = TRUE)
 bamSummary <- bamSummarise(bamFile)
 kable <- SVMappingCharacteristicTable(bamSummary)
 }

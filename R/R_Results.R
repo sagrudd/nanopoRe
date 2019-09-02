@@ -8,13 +8,13 @@
 #'
 #' @examples
 #' \dontrun{
-#' setRpath(file.path("Analysis", "R"))
+#' setRpath(file.path('Analysis', 'R'))
 #' }
 #'
 #' @export
 setRpath <- function(path) {
-  assign("r_path", path, envir=get(getEnvironment()))
-  dir.create(path, showWarnings = FALSE, recursive=TRUE)
+    assign("r_path", path, envir = get(getEnvironment()))
+    dir.create(path, showWarnings = FALSE, recursive = TRUE)
 }
 
 
@@ -32,7 +32,7 @@ setRpath <- function(path) {
 #'
 #' @export
 getRpath <- function() {
-  return(get("r_path", envir=get(getEnvironment())))
+    return(get("r_path", envir = get(getEnvironment())))
 }
 
 
@@ -50,12 +50,12 @@ getRpath <- function() {
 #'
 #' @export
 getOutputFormat <- function() {
-  objName = "gg2out"
-  if (hasCachedObject(objName)) {
-    return(getCachedObject(objName))
-  } else {
-    return(listOutputFormat()[1])
-  }
+    objName = "gg2out"
+    if (hasCachedObject(objName)) {
+        return(getCachedObject(objName))
+    } else {
+        return(listOutputFormat()[1])
+    }
 }
 
 #' set the defined output format for ggplot2 figures
@@ -72,12 +72,12 @@ getOutputFormat <- function() {
 #'
 #' @export
 setOutputFormat <- function(gg2out) {
-  objName = "gg2out"
-  if (gg2out %in% listOutputFormat()) {
-    setCachedObject(objName, gg2out)
-  } else {
-    warning(paste0(gg2out, "is not a valid outputformat - see listOutputFormat()"))
-  }
+    objName = "gg2out"
+    if (gg2out %in% listOutputFormat()) {
+        setCachedObject(objName, gg2out)
+    } else {
+        warning(paste0(gg2out, "is not a valid outputformat - see listOutputFormat()"))
+    }
 }
 
 
@@ -93,31 +93,31 @@ setOutputFormat <- function(gg2out) {
 #'
 #' @export
 listOutputFormat <- function() {
-  return(c("raw", "file", "knitr", "jupyter"))
+    return(c("raw", "file", "knitr", "jupyter"))
 }
 
 
 
 ggplot2save <- function(plot) {
-  dim <- getPlotDimensions()
-  dest <- tempfile(pattern="",tmpdir=getRpath(),fileext=".png")
-  ggplot2::ggsave(dest, plot=plot, width=dim$width, height=dim$height, units=dim$units, dpi=dim$dpi)
-  return(dest)
+    dim <- getPlotDimensions()
+    dest <- tempfile(pattern = "", tmpdir = getRpath(), fileext = ".png")
+    ggplot2::ggsave(dest, plot = plot, width = dim$width, height = dim$height, units = dim$units, dpi = dim$dpi)
+    return(dest)
 }
 
 #' @importFrom IRdisplay display_png
 ggplot2handler <- function(plot) {
-  if (getOutputFormat()=="raw") {
+    if (getOutputFormat() == "raw") {
+        return(plot)
+    } else if (getOutputFormat() == "file") {
+        return(ggplot2save(plot))
+    } else if (getOutputFormat() == "knitr") {
+        return(plot)
+    } else if (getOutputFormat() == "jupyter") {
+        return(IRdisplay::display_png(file = ggplot2save(plot)))
+    }
+    message(paste0("ggplot2 output format { ", getOutputFormat(), "} not known - returning *raw*\n"))
     return(plot)
-  } else if (getOutputFormat()=="file") {
-    return(ggplot2save(plot))
-  } else if (getOutputFormat()=="knitr") {
-    return(plot)
-  } else if (getOutputFormat()=="jupyter") {
-    return(IRdisplay::display_png(file=ggplot2save(plot)))
-  }
-  message(paste0("ggplot2 output format { ",getOutputFormat(),"} not known - returning *raw*\n"))
-  return(plot)
 }
 
 
@@ -132,12 +132,12 @@ ggplot2handler <- function(plot) {
 #'
 #' @export
 getPlotDimensions <- function() {
-  objName = "gg2dimensions"
-  if (hasCachedObject(objName)) {
-    return(getCachedObject(objName))
-  } else {
-    return(list(dpi=90, width=9, height=6, units="in"))
-  }
+    objName = "gg2dimensions"
+    if (hasCachedObject(objName)) {
+        return(getCachedObject(objName))
+    } else {
+        return(list(dpi = 90, width = 9, height = 6, units = "in"))
+    }
 }
 
 
@@ -149,26 +149,26 @@ getPlotDimensions <- function() {
 #' @return list defining dpi, width, height and units
 #'
 #' @examples
-#' setPlotDimensions(list(dpi=180, width=21, height=12, units="cm"))
+#' setPlotDimensions(list(dpi=180, width=21, height=12, units='cm'))
 #' getPlotDimensions()
 #'
 #' @export
 setPlotDimensions <- function(dim) {
-  if (is.list(dim)) {
-    objName = "gg2dimensions"
-    keys <- c("dpi", "width", "height", "units")
-    if (length(which(!names(dim) %in% keys)) > 0) {
-      dim[which(!names(dim) %in% keys)] <- NULL
+    if (is.list(dim)) {
+        objName = "gg2dimensions"
+        keys <- c("dpi", "width", "height", "units")
+        if (length(which(!names(dim) %in% keys)) > 0) {
+            dim[which(!names(dim) %in% keys)] <- NULL
+        }
+        if (length(which(!keys %in% names(dim))) > 0) {
+            warning(paste0("Cannot update plot dimensions [", keys[which(!keys %in% names(dim))], "] missing"))
+            return()
+        }
+        
+        if (is.numeric(dim$dpi) && is.numeric(dim$width) && is.numeric(dim$height) && is.character(dim$units)) {
+            setCachedObject(objName, dim)
+        } else {
+            warning(paste0("Cannot update plot dimensions - ", "one or more keys of wrong type"))
+        }
     }
-    if (length(which(!keys %in% names(dim)))>0) {
-      warning(paste0("Cannot update plot dimensions [",keys[which(!keys %in% names(dim))],"] missing"))
-      return()
-    }
-
-    if (is.numeric(dim$dpi) && is.numeric(dim$width) && is.numeric(dim$height) && is.character(dim$units)) {
-      setCachedObject(objName, dim)
-    } else {
-      warning(paste0("Cannot update plot dimensions - ", "one or more keys of wrong type"))
-    }
-  }
 }

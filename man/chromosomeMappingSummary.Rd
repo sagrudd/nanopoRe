@@ -21,7 +21,7 @@ This method will return a data.frame of basic per chromosome mapping statistics
 }
 \examples{
 \dontrun{
-chromosomeMappingSummary(c("1","2"), bamFile)
+chromosomeMappingSummary(c('1','2'), bamFile)
 }
 
 }

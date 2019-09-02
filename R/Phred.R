@@ -14,7 +14,7 @@
 #'
 #' @export
 phredmean <- function(q) {
-  -10 * log10(mean(10^(q/-10),na.rm=TRUE))
+    -10 * log10(mean(10^(q/-10), na.rm = TRUE))
 }
 
 
@@ -30,12 +30,12 @@ phredmean <- function(q) {
 #'
 #' @examples
 #'  \dontrun{
-#' qualToMeanQ("ABCDEF")
+#' qualToMeanQ('ABCDEF')
 #' }
 #'
 #' @export
 qualToMeanQ <- function(qstr) {
-  baseq <- as.numeric(charToRaw(qstr))-33
-  meanerror <- mean(10^(baseq/-10))
-  -10*log10(meanerror)
+    baseq <- as.numeric(charToRaw(qstr)) - 33
+    meanerror <- mean(10^(baseq/-10))
+    -10 * log10(meanerror)
 }

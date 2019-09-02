@@ -17,7 +17,7 @@ This method will return a vector of named chromosome lengths
 }
 \examples{
 \dontrun{
-getSeqLengths(c("1","2"))
+getSeqLengths(c('1','2'))
 }
 
 }

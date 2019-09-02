@@ -13,7 +13,7 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
 Depends:
-  R (>= 3.1.0)
+  R (>= 3.6.0)
 Imports:
     Biostrings,
     data.table,
@@ -50,9 +50,15 @@ Imports:
     tibble,
     vcfR,
     writexl,
-    yaml
+    yaml,
+    grDevices, graphics, parallel, stats, utils
 LinkingTo: 
     Rcpp
 Suggests:
     devtools,
-    testthat
+    testthat,
+    BiocStyle, knitr, rmarkdown
+biocViews: Software,
+    Technology,
+    Sequencing
+VignetteBuilder: knitr

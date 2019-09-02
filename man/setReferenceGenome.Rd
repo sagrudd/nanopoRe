@@ -17,7 +17,7 @@ This method defines the path where reference genome is stored
 }
 \examples{
 \dontrun{
-setReferenceGenome(file.path("ReferenceData", "human_g1k_v37.fasta"))
+setReferenceGenome(file.path('ReferenceData', 'human_g1k_v37.fasta'))
 }
 
 }

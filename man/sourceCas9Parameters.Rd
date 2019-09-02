@@ -17,7 +17,7 @@ import the cas9 parameters from YAML file
 }
 \examples{
 \dontrun{
-myYaml <- yaml.load_file("config.yaml")
+myYaml <- yaml.load_file('config.yaml')
 sourceCas9Parameters(myYaml)
 }
 }

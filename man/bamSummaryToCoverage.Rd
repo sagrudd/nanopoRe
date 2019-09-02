@@ -24,7 +24,7 @@ This method will return a tiled Granges object containing mean depth of coverage
 }
 \examples{
 \dontrun{
-bamSummaryToCoverage(file.path("Analysis", "Minimap2", "MyBamFile.bam"))
+bamSummaryToCoverage(file.path('Analysis', 'Minimap2', 'MyBamFile.bam'))
 }
 
 }

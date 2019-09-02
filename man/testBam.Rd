@@ -17,7 +17,7 @@ This method will extract a block of BAM content from a given BAM file
 }
 \examples{
 \dontrun{
-testBam(file.path("Analysis", "Minimap2", "MyBamFile.bam"))
+testBam(file.path('Analysis', 'Minimap2', 'MyBamFile.bam'))
 }
 
 }

@@ -17,7 +17,7 @@ This method will return the numerical index for the named chromosome within the 
 }
 \examples{
 \dontrun{
-getStringSetId("1")
+getStringSetId('1')
 }
 
 }

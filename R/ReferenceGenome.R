@@ -8,12 +8,12 @@
 #'
 #' @examples
 #' \dontrun{
-#' setReferenceGenome(file.path("ReferenceData", "human_g1k_v37.fasta"))
+#' setReferenceGenome(file.path('ReferenceData', 'human_g1k_v37.fasta'))
 #' }
 #'
 #' @export
 setReferenceGenome <- function(reference.file) {
-  assign("reference.file", reference.file, envir=get(getEnvironment()))
+    assign("reference.file", reference.file, envir = get(getEnvironment()))
 }
 
 #' get path reference genome object
@@ -29,7 +29,7 @@ setReferenceGenome <- function(reference.file) {
 #'
 #' @export
 getReferenceGenome <- function() {
-  return(get("reference.file", envir=get(getEnvironment())))
+    return(get("reference.file", envir = get(getEnvironment())))
 }
 
 
@@ -39,7 +39,7 @@ getReferenceGenome <- function() {
 #' This method will parse the defined reference.file into a DNAStringSet object for handling in memory
 #'
 #' @importFrom Biostrings readDNAStringSet
-#' @return NULL
+#' @return None
 #'
 #' @examples
 #' \dontrun{
@@ -48,13 +48,14 @@ getReferenceGenome <- function() {
 #'
 #' @export
 loadReferenceGenome <- function() {
-  message(paste0("loading reference genome(",getReferenceGenome(),")"))
-  # derive a referenceGenome object from the named fasta elements in the provided fasta reference resource
-  referenceGenomeSequence <- readDNAStringSet(getReferenceGenome())
-  referenceGenome <- data.frame(id=gsub(" .+", "", names(referenceGenomeSequence)),sid=seq_along(names(referenceGenomeSequence)),stringsAsFactors = FALSE)
-  referenceGenome$sid <- seq(nrow(referenceGenome))
-  assign("referenceGenome", referenceGenome, envir=get(getEnvironment()))
-  assign("referenceGenomeSequence", referenceGenomeSequence, envir=get(getEnvironment()))
+    message(paste0("loading reference genome(", getReferenceGenome(), ")"))
+    # derive a referenceGenome object from the named fasta elements in the provided fasta reference resource
+    referenceGenomeSequence <- readDNAStringSet(getReferenceGenome())
+    referenceGenome <- data.frame(id = gsub(" .+", "", names(referenceGenomeSequence)), sid = seq_along(names(referenceGenomeSequence)),
+        stringsAsFactors = FALSE)
+    referenceGenome$sid <- seq(nrow(referenceGenome))
+    assign("referenceGenome", referenceGenome, envir = get(getEnvironment()))
+    assign("referenceGenomeSequence", referenceGenomeSequence, envir = get(getEnvironment()))
 }
 
 
@@ -73,16 +74,16 @@ loadReferenceGenome <- function() {
 #'
 #' @export
 cleanReferenceGenome <- function(delIds) {
-  referenceGenome <- get("referenceGenome", envir=get(getEnvironment()))
-  overlap <- match(delIds, referenceGenome[,1])
-  if (TRUE %in% is.na(overlap)) {
-    overlap <- overlap[-is.na(overlap)]
-  }
-  if (length(overlap)>0) {
-    referenceGenome <- referenceGenome[-overlap,]
-    assign("referenceGenome", referenceGenome, envir=get(getEnvironment()))
-  }
-  invisible()
+    referenceGenome <- get("referenceGenome", envir = get(getEnvironment()))
+    overlap <- match(delIds, referenceGenome[, 1])
+    if (TRUE %in% is.na(overlap)) {
+        overlap <- overlap[-is.na(overlap)]
+    }
+    if (length(overlap) > 0) {
+        referenceGenome <- referenceGenome[-overlap, ]
+        assign("referenceGenome", referenceGenome, envir = get(getEnvironment()))
+    }
+    invisible()
 }
 
 
@@ -95,16 +96,16 @@ cleanReferenceGenome <- function(delIds) {
 #'
 #' @examples
 #' \dontrun{
-#' getStringSetId("1")
+#' getStringSetId('1')
 #' }
 #'
 #' @export
 getStringSetId <- function(chrId) {
-  if (!(exists("referenceGenome", envir=get(getEnvironment())) & exists("referenceGenomeSequence", envir=get(getEnvironment())))) {
-    loadReferenceGenome()
-  }
-  referenceGenome <- get("referenceGenome", envir=get(getEnvironment()))
-  return(referenceGenome[match(as.character(chrId), as.character(referenceGenome[,1])),"sid"])
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", envir = get(getEnvironment())))) {
+        loadReferenceGenome()
+    }
+    referenceGenome <- get("referenceGenome", envir = get(getEnvironment()))
+    return(referenceGenome[match(as.character(chrId), as.character(referenceGenome[, 1])), "sid"])
 }
 
 
@@ -125,11 +126,11 @@ getStringSetId <- function(chrId) {
 #' @seealso [getStringSetId()] for method to prepare numeric pointer
 #' @export
 getChromosomeSequence <- function(dnaStringSetId) {
-  if (!(exists("referenceGenome", envir=get(getEnvironment())) & exists("referenceGenomeSequence", envir=get(getEnvironment())))) {
-    loadReferenceGenome()
-  }
-  referenceGenomeSequence <- get("referenceGenomeSequence", envir=get(getEnvironment()))
-  return(referenceGenomeSequence[[dnaStringSetId]])
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", envir = get(getEnvironment())))) {
+        loadReferenceGenome()
+    }
+    referenceGenomeSequence <- get("referenceGenomeSequence", envir = get(getEnvironment()))
+    return(referenceGenomeSequence[[dnaStringSetId]])
 }
 
 
@@ -143,15 +144,15 @@ getChromosomeSequence <- function(dnaStringSetId) {
 #'
 #' @examples
 #' \dontrun{
-#' getChromosomeIds("1")
+#' getChromosomeIds('1')
 #' }
 #'
 #' @export
 getChromosomeIds <- function() {
-  if (!(exists("referenceGenome", envir=get(getEnvironment())) & exists("referenceGenomeSequence", envir=get(getEnvironment())))) {
-    loadReferenceGenome()
-  }
-  return(get("referenceGenome", envir=get(getEnvironment()))[,1])
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", envir = get(getEnvironment())))) {
+        loadReferenceGenome()
+    }
+    return(get("referenceGenome", envir = get(getEnvironment()))[, 1])
 }
 
 
@@ -164,18 +165,18 @@ getChromosomeIds <- function() {
 #'
 #' @examples
 #' \dontrun{
-#' getSeqLengths(c("1","2"))
+#' getSeqLengths(c('1','2'))
 #' }
 #'
 #' @export
 getSeqLengths <- function(x) {
-  if (!(exists("referenceGenome", envir=get(getEnvironment())) & exists("referenceGenomeSequence", envir=get(getEnvironment())))) {
-    loadReferenceGenome()
-  }
-  keys <- gsub("\\s.+", "", names(get("referenceGenomeSequence", envir=get(getEnvironment()))))
-  wdata <- width(get("referenceGenomeSequence", envir=get(getEnvironment())))[match(x, keys)]
-  names(wdata) <- x
-  return(wdata)
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", envir = get(getEnvironment())))) {
+        loadReferenceGenome()
+    }
+    keys <- gsub("\\s.+", "", names(get("referenceGenomeSequence", envir = get(getEnvironment()))))
+    wdata <- width(get("referenceGenomeSequence", envir = get(getEnvironment())))[match(x, keys)]
+    names(wdata) <- x
+    return(wdata)
 }
 
 
@@ -205,45 +206,36 @@ getSeqLengths <- function(x) {
 #'
 #' @examples
 #' \dontrun{
-#' chromosomeMappingSummary(c("1","2"), bamFile)
+#' chromosomeMappingSummary(c('1','2'), bamFile)
 #' }
 #'
 #' @export
-chromosomeMappingSummary <- function(chrIds, bamFile, flag="Primary") {
+chromosomeMappingSummary <- function(chrIds, bamFile, flag = "Primary") {
 
-  bamSummary <- bamSummarise(bamFile, blockSize=10000)
+    bamSummary <- bamSummarise(bamFile, blockSize = 10000)
 
-  getChrData <- function(id, bamSummary, flag="Primary") {
-    dna <- getChromosomeSequence(getStringSetId(id))
-    letterFreq <- letterFrequency(dna, c("A", "C", "G", "T", "N"))
-    mapChr <- bamSummary %>% filter(.data$readFlag==flag & .data$rname==id)
+    getChrData <- function(id, bamSummary, flag = "Primary") {
+        dna <- getChromosomeSequence(getStringSetId(id))
+        letterFreq <- letterFrequency(dna, c("A", "C", "G", "T", "N"))
+        mapChr <- bamSummary %>% filter(.data$readFlag == flag & .data$rname == id)
 
-    # depending on the genome used there may be a load of warnings here
-    # this is likely due to reads mapping beyond segment boundaries -
-    # warnings are masked here since they are expected
-    suppressWarnings(
-      gr <- GRanges(seqnames=mapChr$rname,
-                    ranges=IRanges(start=mapChr$start, end=mapChr$end),
-                    strand=mapChr$strand,
-                    seqlengths=getSeqLengths(levels(mapChr$rname)))
-    )
-    mc <- coverage(gr)
-    bi <- tileGenome(seqlengths(gr), ntile=1)
-    cd <- binnedAverage(bi[[1]], mc, "binned_cov")
+        # depending on the genome used there may be a load of warnings here this is likely due to reads mapping beyond segment boundaries -
+        # warnings are masked here since they are expected
+        suppressWarnings(gr <- GRanges(seqnames = mapChr$rname, ranges = IRanges(start = mapChr$start, end = mapChr$end), strand = mapChr$strand,
+            seqlengths = getSeqLengths(levels(mapChr$rname))))
+        mc <- coverage(gr)
+        bi <- tileGenome(seqlengths(gr), ntile = 1)
+        cd <- binnedAverage(bi[[1]], mc, "binned_cov")
 
-    ke <- which(as.character(seqnames(cd)) == id)
-    co <- mcols(cd[ke,])$binned_cov
+        ke <- which(as.character(seqnames(cd)) == id)
+        co <- mcols(cd[ke, ])$binned_cov
 
-    return(c(chrId=id,
-             chrLength=scales::comma_format()(length(dna)),
-             "N (%)"=paste0(round(letterFreq['N']/length(dna)*100, digits=2)),
-             "GC (%)"=paste0(round((letterFreq['G']+letterFreq['G'])/length(dna)*100, digits=2)),
-             "Mapped Reads"=scales::comma_format()(nrow(mapChr)),
-             "Mapped Bases"=scales::comma_format()(sum(mapChr$coverage * mapChr$qwidth)),
-             "Mean Coverage"=paste0(round(co, digits=2))
-    ))
-  }
+        return(c(chrId = id, chrLength = (scales::comma_format())(length(dna)), `N (%)` = paste0(round(letterFreq["N"]/length(dna) * 100,
+            digits = 2)), `GC (%)` = paste0(round((letterFreq["G"] + letterFreq["G"])/length(dna) * 100, digits = 2)), `Mapped Reads` = (scales::comma_format())(nrow(mapChr)),
+            `Mapped Bases` = (scales::comma_format())(sum(mapChr$coverage * mapChr$qwidth)), `Mean Coverage` = paste0(round(co, digits = 2))))
+    }
 
-  chromosomeData <- data.frame(t(as.data.frame(lapply(gtools::mixedsort(unique(chrIds)), getChrData, bamSummary=bamSummary, flag=flag))), stringsAsFactors = FALSE, row.names = NULL)
-  return(chromosomeData)
+    chromosomeData <- data.frame(t(as.data.frame(lapply(gtools::mixedsort(unique(chrIds)), getChrData, bamSummary = bamSummary, flag = flag))),
+        stringsAsFactors = FALSE, row.names = NULL)
+    return(chromosomeData)
 }

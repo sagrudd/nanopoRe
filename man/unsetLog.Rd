@@ -14,7 +14,7 @@ this assumes that a log file has been written to and ends the sinking
 }
 \examples{
 \dontrun{
-setLogFile("demofile.log", append=FALSE)
+setLogFile('demofile.log', append=FALSE)
 unsetLog()
 }
 }

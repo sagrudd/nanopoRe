@@ -17,7 +17,7 @@ This method sets a path where default R results will be stored during an analysi
 }
 \examples{
 \dontrun{
-setRpath(file.path("Analysis", "R"))
+setRpath(file.path('Analysis', 'R'))
 }
 
 }

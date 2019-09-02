@@ -11,6 +11,9 @@ plotDepthOfCoverageMegablock(coverageData, colMax = 4)
 
 \item{colMax}{defines the number of columns}
 }
+\value{
+ggplot2 image
+}
 \description{
 This method will display depths-of-coverage for the chromosomes contained in the provided parsedBamFile
 container

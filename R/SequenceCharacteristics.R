@@ -13,8 +13,8 @@
 #'
 #' @export
 ncalc <- function(len.vector, n) {
-  len.sorted <- rev(sort(len.vector))
-  len.sorted[cumsum(len.sorted) >= sum(len.sorted)*n][1]
+    len.sorted <- rev(sort(len.vector))
+    len.sorted[cumsum(len.sorted) >= sum(len.sorted) * n][1]
 }
 
 
@@ -31,6 +31,6 @@ ncalc <- function(len.vector, n) {
 #'
 #' @export
 lcalc <- function(len.vector, n) {
-  len.sorted <- rev(sort(len.vector))
-  which(cumsum(len.sorted) >= sum(len.sorted)*n)[1]
+    len.sorted <- rev(sort(len.vector))
+    which(cumsum(len.sorted) >= sum(len.sorted) * n)[1]
 }

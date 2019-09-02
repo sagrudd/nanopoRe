@@ -17,7 +17,7 @@ plots the histogram of read lengths, weighted, and shaded by pass/fail status
 }
 \examples{
 \dontrun{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
+seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequencingSummaryWeightedReadLength(seqsum)
 }

@@ -19,7 +19,7 @@ creates a log file and writes R code and messages on STDERR to the log file
 }
 \examples{
 \dontrun{
-setLogFile("demofile.log", append=FALSE)
+setLogFile('demofile.log', append=FALSE)
 unsetLog()
 }
 }

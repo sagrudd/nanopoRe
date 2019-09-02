@@ -3,6 +3,6 @@
 
 
 .onAttach <- function(libname, pkgname) {
-  packageStartupMessage(paste0("nanopoRe package - v ", utils::packageVersion("nanopoRe")))
-  invisible()
+    packageStartupMessage(paste0("nanopoRe package - v ", utils::packageVersion("nanopoRe")))
+    invisible()
 }

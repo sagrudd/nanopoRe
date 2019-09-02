@@ -24,7 +24,7 @@ the nanopoRe package
 }
 \examples{
 \dontrun{
-parallelBamSummarise(file.path("Analysis", "Minimap2", "MyBamFile.bam"))
+parallelBamSummarise(file.path('Analysis', 'Minimap2', 'MyBamFile.bam'))
 }
 
 }

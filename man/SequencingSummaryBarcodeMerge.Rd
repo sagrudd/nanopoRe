@@ -19,9 +19,9 @@ an accessory method for various logicals; simple fractional base calculator
 }
 \examples{
 \dontrun{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
+seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
 seqsum <- importSequencingSummary(seqsumFile)
-barcodeFile <- system.file("extdata", "barcoding_summary.txt.bz2", package = "nanopoRe")
+barcodeFile <- system.file('extdata', 'barcoding_summary.txt.bz2', package = 'nanopoRe')
 seqsum <- SequencingSummaryBarcodeMerge(seqsum, barcodeFile)
 }
 

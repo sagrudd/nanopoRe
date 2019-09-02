@@ -16,7 +16,7 @@ list defining dpi, width, height and units
 This method sets and stores the list with the defined metrics for a ggplot2 presentation
 }
 \examples{
-setPlotDimensions(list(dpi=180, width=21, height=12, units="cm"))
+setPlotDimensions(list(dpi=180, width=21, height=12, units='cm'))
 getPlotDimensions()
 
 }

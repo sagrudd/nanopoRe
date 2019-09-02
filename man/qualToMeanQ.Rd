@@ -19,7 +19,7 @@ sum of the numeric encoded scores; this is not corrected for the log/linear so s
 }
 \examples{
  \dontrun{
-qualToMeanQ("ABCDEF")
+qualToMeanQ('ABCDEF')
 }
 
 }

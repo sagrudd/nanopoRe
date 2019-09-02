@@ -19,7 +19,7 @@ an accessory method for various logicals; simple fractional base calculator
 }
 \examples{
 \dontrun{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
+seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
 seqsum <- importSequencingSummary(seqsumFile)
 Base50 <- SequencingSummaryBase50(seqsum)
 }

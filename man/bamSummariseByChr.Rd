@@ -25,7 +25,7 @@ the nanopoRe package
 }
 \examples{
 \dontrun{
-bamSummariseByChr("MyBamFile.bam", chrId="1")
+bamSummariseByChr('MyBamFile.bam', chrId='1')
 }
 
 }
