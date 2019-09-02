@@ -4,7 +4,8 @@
 \alias{infoGraphicPlot3}
 \title{prepare an 3x infographic-styled summary plot}
 \usage{
-infoGraphicPlot3(identifier, panelA, panelB, panelC, reportDPI = 90)
+infoGraphicPlot3(identifier, panelA, panelB, panelC,
+    reportDPI = 90)
 }
 \arguments{
 \item{identifier}{a key for the plot}

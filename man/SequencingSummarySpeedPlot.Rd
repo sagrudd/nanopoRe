@@ -4,8 +4,11 @@
 \alias{SequencingSummarySpeedPlot}
 \title{plot speed of sequencing against time (bases per second distribution)}
 \usage{
-SequencingSummarySpeedPlot(seqsum, scaling = 1, sampleHours = 48,
-  sampleIntervalMinutes = 60)
+SequencingSummarySpeedPlot(seqsum,
+    scaling = 1,
+    sampleHours = 48,
+    sampleIntervalMinutes = 60
+)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}

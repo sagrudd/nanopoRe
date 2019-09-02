@@ -29,9 +29,7 @@ phredmean <- function(q) {
 #' @return mean phred scaled q-value
 #'
 #' @examples
-#'  \dontrun{
 #' qualToMeanQ('ABCDEF')
-#' }
 #'
 #' @export
 qualToMeanQ <- function(qstr) {

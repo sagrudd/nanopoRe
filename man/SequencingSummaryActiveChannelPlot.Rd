@@ -4,8 +4,11 @@
 \alias{SequencingSummaryActiveChannelPlot}
 \title{plot number of observed channels actively producing data against time}
 \usage{
-SequencingSummaryActiveChannelPlot(seqsum, scaling = 1,
-  sampleHours = 48, sampleIntervalMinutes = 60)
+SequencingSummaryActiveChannelPlot(seqsum,
+    scaling = 1,
+    sampleHours = 48,
+    sampleIntervalMinutes = 60
+)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}

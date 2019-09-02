@@ -82,6 +82,8 @@ bamSummariseByChr <- function(chrId, bamFile, force = FALSE, blockSize = 50000L)
 #'
 #' @importFrom parallel detectCores
 #' @importFrom pbmcapply pbmclapply
+#' @usage parallelBamSummarise(bamFile, force = FALSE,
+#'     mc.cores = min(parallel::detectCores() - 1, 24))
 #' @param bamFile is the location to the BAM file to parse
 #' @param force logical value describing whether the analysis should be force recalculated
 #' @param mc.cores number of threads to use for the process
@@ -215,6 +217,11 @@ processBamChunk <- function(bamChunk) {
 #'
 #' This method will return a tiled Granges object containing mean depth of coverage information
 #'
+#' @usage bamSummaryToCoverage(bamFile,
+#'     tilewidth = 1e+05,
+#'     blocksize = 10000,
+#'     flag = "Primary"
+#' )
 #' @param bamFile - path to the bamFile to use
 #' @param tilewidth - the size of the window to use for the tiling
 #' @param blocksize to use for parsing the BAM file

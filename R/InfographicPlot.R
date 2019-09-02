@@ -6,6 +6,8 @@
 #'
 #' @importFrom emojifont fontawesome
 #' @import emojifont
+#' @usage infoGraphicPlot3(identifier, panelA, panelB, panelC,
+#'     reportDPI = 90)
 #' @param identifier a key for the plot
 #' @param panelA information for panel1 in format of panelA=c(key='', value='', icon='')
 #' @param panelB see panelA
@@ -24,25 +26,25 @@
 infoGraphicPlot3 <- function(identifier, panelA, panelB, panelC, reportDPI = 90) {
     # panelA=c(key='', value='', icon='')
     figures <- 3
-    
+
     df <- data.frame(x = cumsum(c(2, rep(6.5, figures - 1))), y = rep(2, figures), h = rep(4, figures), w = rep(6, figures))
-    
+
     df$key <- c(panelA[["key"]], panelB[["key"]], panelC[["key"]])
     df$info <- c(panelA[["value"]], panelB[["value"]], panelC[["value"]])
     df$icon <- emojifont::fontawesome(c(panelA[["icon"]], panelB[["icon"]], panelC[["icon"]]))
-    
+
     df$colour <- rep("steelblue", figures)
-    
-    InfoGraphicValueBoxes <- ggplot(df, aes_string("x", "y", height = "h", width = "w", label = "key", fill = "colour")) + geom_tile(fill = brewer.pal(9, 
-        "Blues")[7]) + geom_text(color = brewer.pal(9, "Blues")[3], hjust = "left", nudge_y = -1.5, nudge_x = -2.6, size = 5) + geom_text(label = df$icon, 
-        family = "fontawesome-webfont", colour = brewer.pal(9, "Blues")[5], size = 23, hjust = "right", nudge_x = 2.85, nudge_y = 0.8) + 
-        geom_text(label = df$info, size = 10, color = brewer.pal(9, "Blues")[2], fontface = "bold", nudge_x = -2.6, hjust = "left") + coord_fixed() + 
+
+    InfoGraphicValueBoxes <- ggplot(df, aes_string("x", "y", height = "h", width = "w", label = "key", fill = "colour")) + geom_tile(fill = brewer.pal(9,
+        "Blues")[7]) + geom_text(color = brewer.pal(9, "Blues")[3], hjust = "left", nudge_y = -1.5, nudge_x = -2.6, size = 5) + geom_text(label = df$icon,
+        family = "fontawesome-webfont", colour = brewer.pal(9, "Blues")[5], size = 23, hjust = "right", nudge_x = 2.85, nudge_y = 0.8) +
+        geom_text(label = df$info, size = 10, color = brewer.pal(9, "Blues")[2], fontface = "bold", nudge_x = -2.6, hjust = "left") + coord_fixed() +
         scale_fill_brewer(type = "qual", palette = "Dark2") + theme_void() + guides(fill = FALSE)
-    
+
     infographicFile <- file.path(getRpath(), paste0(identifier, ".igraphic.png"))
-    
+
     ggplot2::ggsave(infographicFile, plot = InfoGraphicValueBoxes, device = "png", units = "cm", width = 25, height = 5, dpi = reportDPI)
-    
+
     # knitr::include_graphics(infographicFile)
     return(infographicFile)
 }
@@ -56,6 +58,8 @@ infoGraphicPlot3 <- function(identifier, panelA, panelB, panelC, reportDPI = 90)
 #'
 #' @importFrom emojifont fontawesome
 #' @import emojifont
+#' @usage infoGraphicPlot4(identifier, panelA, panelB, panelC,
+#'     panelD, reportDPI = 90)
 #' @param identifier a key for the plot
 #' @param panelA information for panel1 in format of panelA=c(key='', value='', icon='')
 #' @param panelB see panelA
@@ -76,25 +80,25 @@ infoGraphicPlot3 <- function(identifier, panelA, panelB, panelC, reportDPI = 90)
 infoGraphicPlot4 <- function(identifier, panelA, panelB, panelC, panelD, reportDPI = 90) {
     # panelA=c(key='', value='', icon='')
     figures <- 4
-    
+
     df <- data.frame(x = cumsum(c(2, rep(6.5, figures - 1))), y = rep(2, figures), h = rep(4, figures), w = rep(6, figures))
-    
+
     df$key <- c(panelA[["key"]], panelB[["key"]], panelC[["key"]], panelD[["key"]])
     df$info <- c(panelA[["value"]], panelB[["value"]], panelC[["value"]], panelD[["value"]])
     df$icon <- emojifont::fontawesome(c(panelA[["icon"]], panelB[["icon"]], panelC[["icon"]], panelD[["icon"]]))
-    
+
     df$colour <- rep("steelblue", figures)
-    
-    InfoGraphicValueBoxes <- ggplot(df, aes_string("x", "y", height = "h", width = "w", label = "key", fill = "colour")) + geom_tile(fill = brewer.pal(9, 
-        "Blues")[7]) + geom_text(color = brewer.pal(9, "Blues")[3], hjust = "left", nudge_y = -1.5, nudge_x = -2.6, size = 3.5) + geom_text(label = df$icon, 
-        family = "fontawesome-webfont", colour = brewer.pal(9, "Blues")[5], size = 14, hjust = "right", nudge_x = 2.85, nudge_y = 0.9) + 
-        geom_text(label = df$info, size = 9, color = brewer.pal(9, "Blues")[2], fontface = "bold", nudge_x = -2.6, hjust = "left") + coord_fixed() + 
+
+    InfoGraphicValueBoxes <- ggplot(df, aes_string("x", "y", height = "h", width = "w", label = "key", fill = "colour")) + geom_tile(fill = brewer.pal(9,
+        "Blues")[7]) + geom_text(color = brewer.pal(9, "Blues")[3], hjust = "left", nudge_y = -1.5, nudge_x = -2.6, size = 3.5) + geom_text(label = df$icon,
+        family = "fontawesome-webfont", colour = brewer.pal(9, "Blues")[5], size = 14, hjust = "right", nudge_x = 2.85, nudge_y = 0.9) +
+        geom_text(label = df$info, size = 9, color = brewer.pal(9, "Blues")[2], fontface = "bold", nudge_x = -2.6, hjust = "left") + coord_fixed() +
         scale_fill_brewer(type = "qual", palette = "Dark2") + theme_void() + guides(fill = FALSE)
-    
+
     infographicFile <- file.path(getRpath(), paste0(identifier, ".igraphic.png"))
-    
+
     ggplot2::ggsave(infographicFile, plot = InfoGraphicValueBoxes, device = "png", units = "cm", width = 25, height = 5, dpi = reportDPI)
-    
+
     # knitr::include_graphics(infographicFile)
     return(infographicFile)
 }
@@ -108,6 +112,8 @@ infoGraphicPlot4 <- function(identifier, panelA, panelB, panelC, panelD, reportD
 #'
 #' @importFrom emojifont fontawesome
 #' @import emojifont
+#' @usage infoGraphicPlot5(identifier, panelA, panelB, panelC,
+#'     panelD, panelE, reportDPI = 90)
 #' @param identifier a key for the plot
 #' @param panelA information for panel1 in format of panelA=c(key='', value='', icon='')
 #' @param panelB see panelA
@@ -130,25 +136,25 @@ infoGraphicPlot4 <- function(identifier, panelA, panelB, panelC, panelD, reportD
 infoGraphicPlot5 <- function(identifier, panelA, panelB, panelC, panelD, panelE, reportDPI = 90) {
     # panelA=c(key='', value='', icon='')
     figures <- 5
-    
+
     df <- data.frame(x = cumsum(c(2, rep(6.5, figures - 1))), y = rep(2, figures), h = rep(4, figures), w = rep(6, figures))
-    
+
     df$key <- c(panelA[["key"]], panelB[["key"]], panelC[["key"]], panelD[["key"]], panelE[["key"]])
     df$info <- c(panelA[["value"]], panelB[["value"]], panelC[["value"]], panelD[["value"]], panelE[["value"]])
     df$icon <- emojifont::fontawesome(c(panelA[["icon"]], panelB[["icon"]], panelC[["icon"]], panelD[["icon"]], panelE[["icon"]]))
-    
+
     df$colour <- rep("steelblue", figures)
-    
-    InfoGraphicValueBoxes <- ggplot(df, aes_string("x", "y", height = "h", width = "w", label = "key", fill = "colour")) + geom_tile(fill = brewer.pal(9, 
-        "Blues")[7]) + geom_text(color = brewer.pal(9, "Blues")[3], hjust = "left", nudge_y = -1.5, nudge_x = -2.6, size = 3.5) + geom_text(label = df$icon, 
-        family = "fontawesome-webfont", colour = brewer.pal(9, "Blues")[5], size = 13.3, hjust = "right", nudge_x = 2.85, nudge_y = 0.8) + 
-        geom_text(label = df$info, size = 9, color = brewer.pal(9, "Blues")[2], fontface = "bold", nudge_x = -2.6, hjust = "left") + coord_fixed() + 
+
+    InfoGraphicValueBoxes <- ggplot(df, aes_string("x", "y", height = "h", width = "w", label = "key", fill = "colour")) + geom_tile(fill = brewer.pal(9,
+        "Blues")[7]) + geom_text(color = brewer.pal(9, "Blues")[3], hjust = "left", nudge_y = -1.5, nudge_x = -2.6, size = 3.5) + geom_text(label = df$icon,
+        family = "fontawesome-webfont", colour = brewer.pal(9, "Blues")[5], size = 13.3, hjust = "right", nudge_x = 2.85, nudge_y = 0.8) +
+        geom_text(label = df$info, size = 9, color = brewer.pal(9, "Blues")[2], fontface = "bold", nudge_x = -2.6, hjust = "left") + coord_fixed() +
         scale_fill_brewer(type = "qual", palette = "Dark2") + theme_void() + guides(fill = FALSE)
-    
+
     infographicFile <- file.path(getRpath(), paste0(identifier, ".igraphic.png"))
-    
+
     ggplot2::ggsave(infographicFile, plot = InfoGraphicValueBoxes, device = "png", units = "cm", width = 25, height = 5, dpi = reportDPI)
-    
+
     # knitr::include_graphics(infographicFile)
     return(infographicFile)
 }

@@ -15,30 +15,30 @@
 #' }
 #' @export
 importCas9TutorialData <- function(reference, study) {
-    
+
     reference <- get("reference", envir = getCachedObject("cas9"))
     study <- get("study", envir = getCachedObject("cas9"))
-    
+
     referenceFile <- file.path("ReferenceData", basename(reference))
-    
+
     # load the general mapping results and analysis ...
     mappingResultsFile <- file.path(getRpath(), paste0(study, "_mapping_results", ".Rdata"))
     load(mappingResultsFile, envir = getCachedObject("cas9"))
-    
+
     # load the aggregated coverage file - used for plotting coverage at finer resolution for the pre-defined targets
     aggregatedCovFile <- file.path(getRpath(), paste0(study, "_aggregated_coverage", ".Rdata"))
     load(aggregatedCovFile, envir = getCachedObject("cas9"))
-    
+
     # load the sequence metadata for the unmapped sequence reads
     qualfilelocation = file.path("Analysis", "Minimap2", paste0(study, ".unmapped.quals"))
     chromosomeFile <- file.path(getRpath(), paste(sub("\\.[^.]*$", "", basename(qualfilelocation)), "rcounts", "Rdata", sep = "."))
-    
+
     assign("unmappedReads", readRDS(file = chromosomeFile), envir = getCachedObject("cas9"))
-    
+
     aggregatedGR <- get("aggregatedGR", envir = getCachedObject("cas9"))
     aggregatedGR$rev_cov <- aggregatedGR$binned_cov - aggregatedGR$fwd_cov
     assign("aggregatedGR", aggregatedGR, envir = getCachedObject("cas9"))
-    
+
 }
 
 
@@ -58,10 +58,10 @@ importCas9TutorialData <- function(reference, study) {
 #' @export
 
 sourceCas9Parameters <- function(yaml) {
-    
+
     setCachedObject("cas9", new.env())
     assign("config", yaml, envir = getCachedObject("cas9"))
-    
+
     assign("bed_src", yaml$target_regions, envir = getCachedObject("cas9"))
     assign("study", yaml$study_name, envir = getCachedObject("cas9"))
     assign("reference", yaml$reference_genome, envir = getCachedObject("cas9"))
@@ -69,7 +69,7 @@ sourceCas9Parameters <- function(yaml) {
     assign("offtarget_level", as.integer(yaml$offtarget_level), envir = getCachedObject("cas9"))
     assign("tutorialText", yaml$tutorialText, envir = getCachedObject("cas9"))
     assign("gstride", as.integer(yaml$gstride), envir = getCachedObject("cas9"))
-    
+
 }
 
 
@@ -88,30 +88,30 @@ sourceCas9Parameters <- function(yaml) {
 #' }
 #' @export
 cas9ExecutiveSummary <- function() {
-    
+
     backgroundUniverse <- get("backgroundUniverse", envir = getCachedObject("cas9"))
     unmappedReads <- get("unmappedReads", envir = getCachedObject("cas9"))
     offtargetUniverse <- get("offtargetUniverse", envir = getCachedObject("cas9"))
     targetproximalUniverse <- get("targetproximalUniverse", envir = getCachedObject("cas9"))
     ontargetUniverse <- get("ontargetUniverse", envir = getCachedObject("cas9"))
-    
+
     study <- get("study", envir = getCachedObject("cas9"))
-    
-    cas9Throughput <- sum(backgroundUniverse$basesstart) + sum(unmappedReads$width) + sum(offtargetUniverse$basesstart) + sum(targetproximalUniverse$basesstart) + 
+
+    cas9Throughput <- sum(backgroundUniverse$basesstart) + sum(unmappedReads$width) + sum(offtargetUniverse$basesstart) + sum(targetproximalUniverse$basesstart) +
         sum(ontargetUniverse$basesstart)
     cas9Throughput <- paste(round(cas9Throughput/1e+09, digits = 2), "Gb")
-    
-    ontargetLabel <- paste0(round(sum(ontargetUniverse$rstart)/(sum(ontargetUniverse$rstart) + length(unmappedReads) + sum(offtargetUniverse$rstart) + 
+
+    ontargetLabel <- paste0(round(sum(ontargetUniverse$rstart)/(sum(ontargetUniverse$rstart) + length(unmappedReads) + sum(offtargetUniverse$rstart) +
         sum(targetproximalUniverse$rstart) + sum(backgroundUniverse$rstart)) * 100, digits = 2), "%")
     meanCovLabel <- paste0(round(mean(rep(ontargetUniverse$dmean, IRanges::width(ontargetUniverse))), digits = 1), "X")
-    
-    depletionLabel = paste0(round(Hmisc::wtd.quantile(ontargetUniverse$dmean, probs = c(0.5), weight = IRanges::width(ontargetUniverse))/Hmisc::wtd.quantile(as.numeric(backgroundUniverse$dmean), 
+
+    depletionLabel = paste0(round(Hmisc::wtd.quantile(ontargetUniverse$dmean, probs = c(0.5), weight = IRanges::width(ontargetUniverse))/Hmisc::wtd.quantile(as.numeric(backgroundUniverse$dmean),
         probs = c(0.5), weight = as.numeric(IRanges::width(backgroundUniverse))), digits = 1), " X")
-    
-    execsummPlot <- infoGraphicPlot4(identifier = paste0(study, "_enrichment_info"), panelA = c(key = "Throughput", value = cas9Throughput, 
-        icon = "fa-calculator"), panelB = c(key = "reads on target", value = ontargetLabel, icon = "fa-cut"), panelC = c(key = "mean target coverage", 
+
+    execsummPlot <- infoGraphicPlot4(identifier = paste0(study, "_enrichment_info"), panelA = c(key = "Throughput", value = cas9Throughput,
+        icon = "fa-calculator"), panelB = c(key = "reads on target", value = ontargetLabel, icon = "fa-cut"), panelC = c(key = "mean target coverage",
         value = meanCovLabel, icon = "fa-map"), panelD = c(key = "non-target depletion", value = depletionLabel, icon = "fa-code-fork"))
-    
+
     return(execsummPlot)
 }
 
@@ -133,11 +133,11 @@ cas9ExecutiveSummary <- function() {
 #' }
 #' @export
 cas9MappingByGenomicSegment <- function() {
-    
+
     addRow <- function(df, metric, count, percentage = "") {
         return(df %>% add_row(metric = metric, count = count, percentage = percentage))
     }
-    
+
     collateMappingCharacteristics <- function(bamFile, unmappedBamFile = NA) {
         suppressWarnings(if (!methods::is(unmappedBamFile, "data.frame") && is.na(unmappedBamFile)) {
             unmappedBamFile <- data.frame(width = numeric(), quality = numeric())
@@ -151,12 +151,12 @@ cas9MappingByGenomicSegment <- function() {
         unmappedNts <- sum(unmappedBamFile$width)
         fastqNts <- mappedNts + unmappedNts
         mappedClippedNts <- sum(bamFile$cigarmapped)
-        
+
         # reference genome characteristics
         refSize <- paste0(round(sum(as.numeric(IRanges::width(bamFile)))/effectiveGenomeSize * 100, digits = 3), "%")
-        
+
         meanCov <- sum(bamFile$dmean * IRanges::width(bamFile), na.rm = TRUE)/sum(IRanges::width(bamFile), na.rm = TRUE)
-        
+
         summary.df <- data.frame(metric = character(), count = character(), percentage = character(), stringsAsFactors = FALSE)
         summary.df <- addRow(summary.df, "total sequence reads", (scales::comma_format())(totalReads))
         summary.df <- addRow(summary.df, "mapped reads (primary)", (scales::comma_format())(mappedSeqs))
@@ -164,42 +164,42 @@ cas9MappingByGenomicSegment <- function() {
         summary.df <- addRow(summary.df, "bases mapped", (scales::comma_format())(mappedNts))
         summary.df <- addRow(summary.df, "Fraction of genome (%)", refSize)
         summary.df <- addRow(summary.df, "Mean coverage (primary)", round(meanCov, digits = 2))
-        
+
         rownames(summary.df) <- summary.df[, 1]
         summary.df <- summary.df[, -1]
         return(summary.df)
     }
-    
+
     backgroundUniverse <- get("backgroundUniverse", envir = getCachedObject("cas9"))
     unmappedReads <- get("unmappedReads", envir = getCachedObject("cas9"))
     offtargetUniverse <- get("offtargetUniverse", envir = getCachedObject("cas9"))
     targetproximalUniverse <- get("targetproximalUniverse", envir = getCachedObject("cas9"))
     ontargetUniverse <- get("ontargetUniverse", envir = getCachedObject("cas9"))
-    
-    effectiveGenomeSize <- sum(IRanges::width(backgroundUniverse)) + sum(IRanges::width(offtargetUniverse)) + sum(IRanges::width(targetproximalUniverse)) + 
+
+    effectiveGenomeSize <- sum(IRanges::width(backgroundUniverse)) + sum(IRanges::width(offtargetUniverse)) + sum(IRanges::width(targetproximalUniverse)) +
         sum(IRanges::width(ontargetUniverse))
-    
-    summary.df <- as.data.frame(cbind(collateMappingCharacteristics(backgroundUniverse, unmappedReads), collateMappingCharacteristics(offtargetUniverse), 
+
+    summary.df <- as.data.frame(cbind(collateMappingCharacteristics(backgroundUniverse, unmappedReads), collateMappingCharacteristics(offtargetUniverse),
         collateMappingCharacteristics(targetproximalUniverse), collateMappingCharacteristics(ontargetUniverse)))
-    
+
     summary.df <- summary.df[, -c(2, 4, 6, 8)]
     summary.df[summary.df == "NaN"] <- ""
-    
-    
+
+
     row.names(summary.df)[1] <- paste0(row.names(summary.df)[1], footnote_marker_symbol(1, "html"))
     row.names(summary.df)[2] <- paste0(row.names(summary.df)[2], footnote_marker_symbol(2, "html"))
     row.names(summary.df)[6] <- paste0(row.names(summary.df)[6], footnote_marker_symbol(3, "html"))
     # row.names(summary.df)[16]<- paste0(row.names(summary.df)[16], footnote_marker_symbol(4, 'html')) row.names(summary.df)[17]<-
     # paste0(row.names(summary.df)[17], footnote_marker_symbol(5, 'html'))
-    
-    targettable <- kable(summary.df, format = "html", col.names = rep(" ", ncol(summary.df)), caption = "Table summarising global mapping characteristics ranked by on-target, target-flanking and off-target", 
-        booktabs = TRUE, table.envir = "table*", linesep = "", escape = FALSE) %>% add_header_above(c(" ", Background = 1, `Off-Target` = 1, 
-        `Target-flanking` = 1, `On-Target` = 1)) %>% kable_styling(c("striped", "condensed")) %>% footnote(symbol = c("fastq bases are calculated from the qwidth field of the mapped sequences and from the sequence length of unmapped sequences", 
-        "this table presents only primary sequence mappings", "depth of coverage based only on primary mapping reads"), symbol_title = "please note: ", 
+
+    targettable <- kable(summary.df, format = "html", col.names = rep(" ", ncol(summary.df)), caption = "Table summarising global mapping characteristics ranked by on-target, target-flanking and off-target",
+        booktabs = TRUE, table.envir = "table*", linesep = "", escape = FALSE) %>% add_header_above(c(" ", Background = 1, `Off-Target` = 1,
+        `Target-flanking` = 1, `On-Target` = 1)) %>% kable_styling(c("striped", "condensed")) %>% footnote(symbol = c("fastq bases are calculated from the qwidth field of the mapped sequences and from the sequence length of unmapped sequences",
+        "this table presents only primary sequence mappings", "depth of coverage based only on primary mapping reads"), symbol_title = "please note: ",
         footnote_as_chunk = TRUE)
-    
+
     return(targettable)
-    
+
 }
 
 
@@ -220,14 +220,14 @@ cas9MappingByGenomicSegment <- function() {
 #' @export
 cas9TargetPerformanceTable <- function() {
     ontargetUniverse <- get("ontargetUniverse", envir = getCachedObject("cas9"))
-    
-    bygene <- cbind(names(ontargetUniverse), (scales::comma_format())(IRanges::width(ontargetUniverse)), round(ontargetUniverse$dmean, digits = 2), 
-        (scales::comma_format())(ontargetUniverse$rstart), (scales::comma_format())(ontargetUniverse$basesstart), (scales::comma_format())(round(ontargetUniverse$meanreadlen, 
-            digits = 2)), round(ontargetUniverse$readq, digits = 2), round(ontargetUniverse$mapq, digits = 2), round(ontargetUniverse$strandp/ontargetUniverse$rstart * 
+
+    bygene <- cbind(names(ontargetUniverse), (scales::comma_format())(IRanges::width(ontargetUniverse)), round(ontargetUniverse$dmean, digits = 2),
+        (scales::comma_format())(ontargetUniverse$rstart), (scales::comma_format())(ontargetUniverse$basesstart), (scales::comma_format())(round(ontargetUniverse$meanreadlen,
+            digits = 2)), round(ontargetUniverse$readq, digits = 2), round(ontargetUniverse$mapq, digits = 2), round(ontargetUniverse$strandp/ontargetUniverse$rstart *
             100, digits = 2))
-    
+
     colnames(bygene) <- seq(1, ncol(bygene))
-    
+
     colnames(bygene)[1] <- paste0("Target Gene")
     colnames(bygene)[2] <- paste0("Target size (nt)")
     colnames(bygene)[3] <- paste0("Mean coverage")
@@ -237,13 +237,13 @@ cas9TargetPerformanceTable <- function() {
     colnames(bygene)[7] <- paste0("Mean readQuality")
     colnames(bygene)[8] <- paste0("Mean mapQuality")
     colnames(bygene)[9] <- paste0("Reads on FWD(%)", footnote_marker_symbol(3, "html"))
-    
-    candidate_table <- kable(bygene, format = "html", caption = "Table summarising target mapping for pre-defined regions of interest", 
-        booktabs = TRUE, table.envir = "table*", linesep = "", escape = FALSE) %>% kable_styling(c("striped", "condensed")) %>% footnote(symbol = c("Reads are counted as all sequence reads where the SAM start location is located within the target interval. This does not correct for sequences on the reverse strand.", 
-        "Bases are counted as the sum of nucleotides from all reads where the SAM start location is within target region; some of these bases will overlap the flanking region", 
-        "reads are assessed for strand of mapping; here reads on + strand are summarised as percentage of all"), symbol_title = "please note: ", 
+
+    candidate_table <- kable(bygene, format = "html", caption = "Table summarising target mapping for pre-defined regions of interest",
+        booktabs = TRUE, table.envir = "table*", linesep = "", escape = FALSE) %>% kable_styling(c("striped", "condensed")) %>% footnote(symbol = c("Reads are counted as all sequence reads where the SAM start location is located within the target interval. This does not correct for sequences on the reverse strand.",
+        "Bases are counted as the sum of nucleotides from all reads where the SAM start location is within target region; some of these bases will overlap the flanking region",
+        "reads are assessed for strand of mapping; here reads on + strand are summarised as percentage of all"), symbol_title = "please note: ",
         footnote_as_chunk = TRUE)
-    
+
     return(candidate_table)
 }
 
@@ -283,20 +283,20 @@ cas9GetTargetList <- function() {
 #' }
 #' @export
 cas9SingleTargetPlot <- function(geneName, delta = 0) {
-    
+
     aggregatedGR <- get("aggregatedGR", envir = getCachedObject("cas9"))
     target_proximity <- get("target_proximity", envir = getCachedObject("cas9"))
     wga.cov <- get("wga.cov", envir = getCachedObject("cas9"))
     offtarget_level <- get("offtarget_level", envir = getCachedObject("cas9"))
-    
+
     delta = min(delta, target_proximity)
     covData <- as.data.frame(aggregatedGR)
     covData <- covData[which(covData$gene == geneName), ]
     offset <- covData[covData$pos == 1, ]$start
-    suppressWarnings(plot <- ggplot(covData) + geom_hline(yintercept = (wga.cov * offtarget_level), colour = "#E69F00") + geom_line(aes_string(x = "start", 
-        y = "binned_cov"), size = 0.5, colour = brewer.pal(6, "Paired")[2]) + xlab(paste("Position on chromosome", unique(covData$seqnames))) + 
-        ylab("Depth of Coverage (X)") + labs(title = paste("Plot showing depth of coverage vs position for target", geneName)) + geom_vline(xintercept = (offset + 
-        target_proximity), colour = "red", alpha = 0.4) + geom_vline(xintercept = (offset + (max(covData$pos) - target_proximity)), colour = "red", 
+    suppressWarnings(plot <- ggplot(covData) + geom_hline(yintercept = (wga.cov * offtarget_level), colour = "#E69F00") + geom_line(aes_string(x = "start",
+        y = "binned_cov"), size = 0.5, colour = brewer.pal(6, "Paired")[2]) + xlab(paste("Position on chromosome", unique(covData$seqnames))) +
+        ylab("Depth of Coverage (X)") + labs(title = paste("Plot showing depth of coverage vs position for target", geneName)) + geom_vline(xintercept = (offset +
+        target_proximity), colour = "red", alpha = 0.4) + geom_vline(xintercept = (offset + (max(covData$pos) - target_proximity)), colour = "red",
         alpha = 0.4) + scale_x_continuous(limits = c(offset + delta, offset + max(covData$pos) - delta)))
     plot <- ggplot2handler(plot)
     return(plot)
@@ -321,22 +321,22 @@ cas9SingleTargetPlot <- function(geneName, delta = 0) {
 #' }
 #' @export
 cas9StrandedTargetPlot <- function(geneName, delta = 0) {
-    
+
     aggregatedGR <- get("aggregatedGR", envir = getCachedObject("cas9"))
     target_proximity <- get("target_proximity", envir = getCachedObject("cas9"))
     wga.cov <- get("wga.cov", envir = getCachedObject("cas9"))
     offtarget_level <- get("offtarget_level", envir = getCachedObject("cas9"))
-    
+
     delta = min(delta, target_proximity)
     covData <- as.data.frame(aggregatedGR)
     covData <- covData[which(covData$gene == geneName), ]
     offset <- covData[covData$pos == 1, ]$start
     mdata <- melt(covData[, c("gene", "start", "fwd_cov", "rev_cov")], id.vars = c("gene", "start"))
-    suppressWarnings(plot <- ggplot(mdata, aes_string("start", "value")) + geom_hline(yintercept = (wga.cov * offtarget_level), colour = "#E69F00") + 
-        geom_area(aes_string(fill = "variable")) + xlab(paste("Position on chromosome", unique(covData$seqnames))) + ylab("Depth of Coverage (X)") + 
-        labs(title = paste("Plot showing depth of coverage vs position for target", geneName)) + geom_vline(xintercept = (offset + target_proximity), 
-        colour = "red", alpha = 0.4) + geom_vline(xintercept = (offset + (max(covData$pos) - target_proximity)), colour = "red", alpha = 0.4) + 
-        scale_x_continuous(limits = c(offset + delta, offset + max(covData$pos) - delta)) + scale_fill_manual(values = c(brewer.pal(5, "Paired")[1], 
+    suppressWarnings(plot <- ggplot(mdata, aes_string("start", "value")) + geom_hline(yintercept = (wga.cov * offtarget_level), colour = "#E69F00") +
+        geom_area(aes_string(fill = "variable")) + xlab(paste("Position on chromosome", unique(covData$seqnames))) + ylab("Depth of Coverage (X)") +
+        labs(title = paste("Plot showing depth of coverage vs position for target", geneName)) + geom_vline(xintercept = (offset + target_proximity),
+        colour = "red", alpha = 0.4) + geom_vline(xintercept = (offset + (max(covData$pos) - target_proximity)), colour = "red", alpha = 0.4) +
+        scale_x_continuous(limits = c(offset + delta, offset + max(covData$pos) - delta)) + scale_fill_manual(values = c(brewer.pal(5, "Paired")[1],
         brewer.pal(5, "Paired")[2]), name = "Strand mapped", breaks = c("fwd_cov", "rev_cov"), labels = c("Forward", "Reverse")))
     plot <- ggplot2handler(plot)
     return(plot)
@@ -383,10 +383,10 @@ cas9WriteExcelOffTarget <- function() {
     offtargetUniverse <- get("offtargetUniverse", envir = getCachedObject("cas9"))
     study <- get("study", envir = getCachedObject("cas9"))
     offtarget.meta <- file.path("Analysis", "OffTarget", paste0(study, "_offtarget.xlsx"))
-    
+
     # small reporting issue - reads are not double counted that means we can have blocks of background where there is sufficient depth, but
     # no reads originate in the block - this leads to Na mean quality and mapq
-    
+
     writexl::write_xlsx(as.data.frame(offtargetUniverse)[, c(1, 2, 3, 4, 6, 8, 14, 16, 23)], path = offtarget.meta)
 }
 
@@ -407,25 +407,25 @@ cas9WriteExcelOffTarget <- function() {
 #' }
 #' @export
 cas9MultiGeneCoveragePanel <- function(colMax = 4) {
-    
+
     aggregatedGR <- get("aggregatedGR", envir = getCachedObject("cas9"))
     target_proximity <- get("target_proximity", envir = getCachedObject("cas9"))
     wga.cov <- get("wga.cov", envir = getCachedObject("cas9"))
     offtarget_level <- get("offtarget_level", envir = getCachedObject("cas9"))
     br <- get("br", envir = getCachedObject("cas9"))
-    
+
     covData <- as.data.frame(aggregatedGR)
-    
+
     suppressWarnings(posMatrix <- matrix(gtools::mixedsort(names(br)), ncol = colMax, byrow = TRUE))
     # data may be recycled ... remove duplicate values ...
     posMatrix[which(duplicated(posMatrix[seq(nrow(posMatrix) * ncol(posMatrix))]))] <- NA
-    
+
     plotLegend <- paste0("t::", gtools::mixedsort(names(br)))
     plotCols <- ceiling(length(plotLegend)/colMax)
-    legendDF <- data.frame(x = Inf, y = Inf, lab = plotLegend, row = unlist(lapply(seq_len(plotCols), rep, times = colMax))[seq_along(plotLegend)], 
+    legendDF <- data.frame(x = Inf, y = Inf, lab = plotLegend, row = unlist(lapply(seq_len(plotCols), rep, times = colMax))[seq_along(plotLegend)],
         col = rep(seq_len(colMax), length.out = length(plotLegend)))
-    
-    
+
+
     # add row and column data to covData
     covData$row <- 0
     covData$col <- 0
@@ -435,18 +435,18 @@ cas9MultiGeneCoveragePanel <- function(colMax = 4) {
         covData$row[matchrows] <- matrixpos[[1]]
         covData$col[matchrows] <- matrixpos[[2]]
     }
-    
+
     covData$start <- (as.numeric(covData$start))/1000
-    suppressWarnings(megadepthplot <- ggplot(covData, aes_string("pos", "binned_cov")) + geom_hline(yintercept = (wga.cov * offtarget_level), 
-        colour = "#E69F00") + geom_line(colour = brewer.pal(6, "Paired")[2]) + facet_grid(rows = vars(row), cols = vars(col)) + theme(axis.text.x = element_text(angle = 90, 
-        hjust = 1), strip.text.y = element_blank(), strip.text.x = element_blank()) + xlab("Position across target region (kb)") + ylab("Depth of Coverage (X)") + 
-        labs(title = "Plot showing depth of coverage vs position for target regions") + geom_text(aes_string("x", "y", label = "lab"), data = legendDF, 
+    suppressWarnings(megadepthplot <- ggplot(covData, aes_string("pos", "binned_cov")) + geom_hline(yintercept = (wga.cov * offtarget_level),
+        colour = "#E69F00") + geom_line(colour = brewer.pal(6, "Paired")[2]) + facet_grid(rows = vars(row), cols = vars(col)) + theme(axis.text.x = element_text(angle = 90,
+        hjust = 1), strip.text.y = element_blank(), strip.text.x = element_blank()) + xlab("Position across target region (kb)") + ylab("Depth of Coverage (X)") +
+        labs(title = "Plot showing depth of coverage vs position for target regions") + geom_text(aes_string("x", "y", label = "lab"), data = legendDF,
         vjust = 1, hjust = 1, size = 3.5) + theme(plot.title = element_text(size = 11)))
-    
+
     megadepthplot <- ggplot2handler(megadepthplot)
-    
+
     return(megadepthplot)
-    
+
 }
 
 
@@ -467,38 +467,38 @@ cas9MultiGeneCoveragePanel <- function(colMax = 4) {
 #' @export
 cas9CoverageTypeOverChromosomes <- function() {
     setLogFile()
-    
+
     backgroundUniverse <- get("backgroundUniverse", envir = getCachedObject("cas9"))
     offtargetUniverse <- get("offtargetUniverse", envir = getCachedObject("cas9"))
     targetproximalUniverse <- get("targetproximalUniverse", envir = getCachedObject("cas9"))
     ontargetUniverse <- get("ontargetUniverse", envir = getCachedObject("cas9"))
-    
+
     targetMap <- data.frame(chromosome = gtools::mixedsort(levels(GenomeInfoDb::seqnames(backgroundUniverse))), stringsAsFactors = FALSE)
     targetMap <- cbind(targetMap, offtarget = unlist(lapply(targetMap$chromosome, function(x) {
         sum(offtargetUniverse[which(levels(GenomeInfoDb::seqnames(offtargetUniverse)) == x)]$basesstart)
     })))
-    
+
     targetMap <- cbind(targetMap, background = unlist(lapply(targetMap$chromosome, function(x) {
         sum(backgroundUniverse[which(levels(GenomeInfoDb::seqnames(backgroundUniverse)) == x)]$basesstart)
     })))
-    
+
     targetMap <- cbind(targetMap, ontarget = unlist(lapply(targetMap$chromosome, function(x) {
         sum(ontargetUniverse[which(levels(GenomeInfoDb::seqnames(ontargetUniverse)) == x)]$basesstart)
     })))
-    
+
     targetMap[is.na(targetMap)] <- 0
     # targetMap
     targetMelt <- melt(targetMap)
     targetMelt$variable <- factor(as.character(targetMelt$variable), c("background", "ontarget", "offtarget"))
     targetMelt$chromosome <- factor(targetMelt$chromosome, gtools::mixedsort(unique(targetMelt$chromosome)))
-    
-    suppressWarnings(plot <- ggplot(targetMelt, aes_string("chromosome", "value")) + geom_col(aes_string(fill = "variable")) + scale_y_continuous(labels = scales::comma) + 
-        ylab("Number of bases (nt)") + labs(title = "Barchart showing number of references bases assigned as ontarget,\nofftarget or background") + 
+
+    suppressWarnings(plot <- ggplot(targetMelt, aes_string("chromosome", "value")) + geom_col(aes_string(fill = "variable")) + scale_y_continuous(labels = scales::comma) +
+        ylab("Number of bases (nt)") + labs(title = "Barchart showing number of references bases assigned as ontarget,\nofftarget or background") +
         scale_fill_brewer(direction = -1, palette = "Spectral"))
     unsetLog()
     plot <- ggplot2handler(plot)
     return(plot)
-    
+
 }
 
 
@@ -507,6 +507,10 @@ cas9CoverageTypeOverChromosomes <- function() {
 #' prepare a barchart showing number of bases per chromosome coloured by mapping-type;
 #' enables looking for unexpected distributions of off-target, background etc per chromosome
 #'
+#' @usage ggbiosave(filename,
+#'     plot = last_plot(), device = default_device(filename), path = NULL,
+#'     scale = 1, width = par("din")[1], height = par("din")[2],
+#'     units = c("in", "cm", "mm"), dpi = 300, limitsize = TRUE, ...)
 #' @importFrom grDevices dev.off
 #' @importFrom graphics par
 #' @importFrom utils capture.output
@@ -522,10 +526,10 @@ cas9CoverageTypeOverChromosomes <- function() {
 #' @param limitsize limitsize
 #' @param ... to downstream methods
 #' @return path to image
-ggbiosave <- function(filename, plot = last_plot(), device = default_device(filename), path = NULL, scale = 1, width = par("din")[1], height = par("din")[2], 
+ggbiosave <- function(filename, plot = last_plot(), device = default_device(filename), path = NULL, scale = 1, width = par("din")[1], height = par("din")[2],
     units = c("in", "cm", "mm"), dpi = 300, limitsize = TRUE, ...) {
     # if (!inherits(plot, 'ggplot') & !is(plot, 'Tracks')) stop('plot should be a ggplot2 plot or tracks object')
-    eps <- ps <- function(..., width, height) grDevices::postscript(..., width = width, height = height, onefile = FALSE, horizontal = FALSE, 
+    eps <- ps <- function(..., width, height) grDevices::postscript(..., width = width, height = height, onefile = FALSE, horizontal = FALSE,
         paper = "special")
     tex <- function(..., width, height) grDevices::pictex(..., width = width, height = height)
     pdf <- function(..., version = "1.4") grDevices::pdf(..., version = version)
@@ -555,7 +559,7 @@ ggbiosave <- function(filename, plot = last_plot(), device = default_device(file
         height <- convert_to_inches(height, units)
     }
     if (missing(width) || missing(height)) {
-        message("Saving ", prettyNum(convert_from_inches(width * scale, units), digits = 3), " x ", prettyNum(convert_from_inches(height * 
+        message("Saving ", prettyNum(convert_from_inches(width * scale, units), digits = 3), " x ", prettyNum(convert_from_inches(height *
             scale, units), digits = 3), " ", units, " image")
     }
     width <- width * scale
@@ -598,21 +602,21 @@ cas9OffTargetKaryogram <- function() {
         if (unique(gtools::mixedsort(as.character(GenomeInfoDb::seqnames(offtargetUniverse)))) == "4") {
             GenomeInfoDb::seqlevels(offtargetUniverse) <- append(seq(1, 22), c("X", "Y"))
             # width(referenceGenomeSequence[referenceGenome[match(seqlevels(offtargetUniverse), referenceGenome[,1]), 'sid']])
-            GenomeInfoDb::seqlengths(offtargetUniverse) <- c(248956422, 242193529, 198295559, 190214555, 181538259, 170805979, 159345973, 
-                145138636, 138394717, 133797422, 135086622, 133275309, 114364328, 107043718, 101991189, 90338345, 83257441, 80373285, 58617616, 
+            GenomeInfoDb::seqlengths(offtargetUniverse) <- c(248956422, 242193529, 198295559, 190214555, 181538259, 170805979, 159345973,
+                145138636, 138394717, 133797422, 135086622, 133275309, 114364328, 107043718, 101991189, 90338345, 83257441, 80373285, 58617616,
                 64444167, 46709983, 50818468, 156040895, 57227415)
         }
     }
-    
+
     plot <- ggbio::autoplot(offtargetUniverse, layout = "karyogram")
-    
+
     dest <- tempfile(pattern = "", tmpdir = getRpath(), fileext = ".png")
     dim <- getPlotDimensions()
     unsetLog()
     ggbiosave(filename = dest, plot, width = dim$width, height = dim$height, units = dim$units, dpi = dim$dpi)
-    
+
     return(dest)
-    
+
 }
 
 
@@ -635,10 +639,10 @@ cas9OffTargetKaryogram <- function() {
 #' @export
 cas9OffTargetTable <- function() {
     offtargetUniverse <- get("offtargetUniverse", envir = getCachedObject("cas9"))
-    offtargtop <- as.data.frame(offtargetUniverse[order(offtargetUniverse$dmean, decreasing = TRUE)[seq_len(10)]])[, c(1, 2, 3, 23, 6, 8, 
+    offtargtop <- as.data.frame(offtargetUniverse[order(offtargetUniverse$dmean, decreasing = TRUE)[seq_len(10)]])[, c(1, 2, 3, 23, 6, 8,
         10, 11, 16, 14)]
-    
-    offtargtop$strandp <- round(as.numeric(offtargtop$strandp)/(as.numeric(offtargtop$strandp) + as.numeric(offtargtop$strandn)) * 100, 
+
+    offtargtop$strandp <- round(as.numeric(offtargtop$strandp)/(as.numeric(offtargtop$strandp) + as.numeric(offtargtop$strandn)) * 100,
         digits = 2)
     offtargtop <- add_column(offtargtop, width = (offtargtop$end - offtargtop$start + 1), .after = 3)
     offtargtop$start <- (scales::comma_format())(offtargtop$start)
@@ -648,19 +652,19 @@ cas9OffTargetTable <- function() {
     offtargtop$mapq <- round(offtargtop$mapq, digits = 2)
     offtargtop$readq <- round(offtargtop$readq, digits = 2)
     offtargtop <- offtargtop[, -which(colnames(offtargtop) == "strandn")]
-    
-    
-    colnames(offtargtop) <- c("chrId", "start", "end", "width", "mean coverage", "reads in segment", "mean read length", "%FWD reads", "mean readQ", 
+
+
+    colnames(offtargtop) <- c("chrId", "start", "end", "width", "mean coverage", "reads in segment", "mean read length", "%FWD reads", "mean readQ",
         "mean MAPQ")
-    
-    offttable <- kable(offtargtop, format = "html", caption = "Table summarising the location and characteristics for the off-target regions with the highest depth-of-coverage", 
-        booktabs = TRUE, table.envir = "table*", linesep = "", escape = FALSE) %>% kable_styling(c("striped", "condensed")) %>% footnote(symbol = c("This table has been prepared using only read mapping information that corresponds to a primary map", 
-        "The reads in segment column describes the number of sequences that start within this genomic interval (using SAM start coordinate only)", 
-        "mean read length is the mean sequence read length for the mapping reads identified; their strandedness is summarised in %FWD reads (the number of sequences that appear on the forward strand) and the mapping quality is summarised in mapq"), 
+
+    offttable <- kable(offtargtop, format = "html", caption = "Table summarising the location and characteristics for the off-target regions with the highest depth-of-coverage",
+        booktabs = TRUE, table.envir = "table*", linesep = "", escape = FALSE) %>% kable_styling(c("striped", "condensed")) %>% footnote(symbol = c("This table has been prepared using only read mapping information that corresponds to a primary map",
+        "The reads in segment column describes the number of sequences that start within this genomic interval (using SAM start coordinate only)",
+        "mean read length is the mean sequence read length for the mapping reads identified; their strandedness is summarised in %FWD reads (the number of sequences that appear on the forward strand) and the mapping quality is summarised in mapq"),
         symbol_title = "please note: ", footnote_as_chunk = TRUE)
-    
-    
+
+
     return(offttable)
-    
+
 }
 

@@ -18,8 +18,6 @@ sum of the numeric encoded scores; this is not corrected for the log/linear so s
 - this simple method performs mean on the character level data ...
 }
 \examples{
- \dontrun{
 qualToMeanQ('ABCDEF')
-}
 
 }

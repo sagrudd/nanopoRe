@@ -5,7 +5,7 @@
 \title{plot a histogram of mapping accuracies}
 \usage{
 plotAlignmentAccuracy(bamFile, flag = "Primary", lower = 0.7,
-  upper = 1, segments = 50)
+    upper = 1, segments = 50)
 }
 \arguments{
 \item{bamFile}{is the path to the bamFile to plot}

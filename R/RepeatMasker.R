@@ -10,6 +10,8 @@
 #' object so that Genome Geometry analyses can be performed and genome coordinates can be used to quickly
 #' associate with repeat types
 #'
+#' @usage RepeatMaskerGR(RepeatMaskerFile = NULL, RepeatMaskerSRC = NULL,
+#'     force = FALSE)
 #' @importFrom RCurl getBinaryURL
 #' @importFrom data.table fread
 #' @param RepeatMaskerFile is a path to an already downloaded RepeatMasker results file
@@ -35,17 +37,17 @@ RepeatMaskerGR <- function(RepeatMaskerFile = NULL, RepeatMaskerSRC = NULL, forc
             writeBin(content, RepeatMaskerFile)
         }
     }
-    
+
     RepeatMaskerGRData <- file.path(getRpath(), paste0(sub("\\.[^.]*$", "", basename(RepeatMaskerFile)), ".GRanges", ".Rdata"))
     if (file.exists(RepeatMaskerGRData) & !force) {
         return(readRDS(file = RepeatMaskerGRData))
     }
-    
+
     repeatMaskData <- data.table::fread(RepeatMaskerFile, stringsAsFactors = FALSE, fill = TRUE, skip = 2)
-    GRdata <- GRanges(seqnames = gsub("chr", "", unlist(repeatMaskData[, 5])), ranges = IRanges(start = unlist(repeatMaskData[, 6]), end = unlist(repeatMaskData[, 
-        7])), strand = gsub("C", "-", unlist(repeatMaskData[, 9])), repeatClass = unlist(repeatMaskData[, 11]), repeatUnit = unlist(repeatMaskData[, 
+    GRdata <- GRanges(seqnames = gsub("chr", "", unlist(repeatMaskData[, 5])), ranges = IRanges(start = unlist(repeatMaskData[, 6]), end = unlist(repeatMaskData[,
+        7])), strand = gsub("C", "-", unlist(repeatMaskData[, 9])), repeatClass = unlist(repeatMaskData[, 11]), repeatUnit = unlist(repeatMaskData[,
         10]))
     saveRDS(GRdata, file = RepeatMaskerGRData)
     return(GRdata)
-    
+
 }

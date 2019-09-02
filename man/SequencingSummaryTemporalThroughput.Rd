@@ -4,8 +4,11 @@
 \alias{SequencingSummaryTemporalThroughput}
 \title{plot a sequence throughput against time for specified sequencing_summary run}
 \usage{
-SequencingSummaryTemporalThroughput(seqsum, scaling = 1,
-  sampleHours = 48, sampleIntervalMinutes = 60)
+SequencingSummaryTemporalThroughput(seqsum,
+    scaling = 1,
+    sampleHours = 48,
+    sampleIntervalMinutes = 60
+)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}

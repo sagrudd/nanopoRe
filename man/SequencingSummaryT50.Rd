@@ -4,8 +4,12 @@
 \alias{SequencingSummaryT50}
 \title{calculates the timepoint within a sequencing run where 50percent of the data is produced}
 \usage{
-SequencingSummaryT50(seqsum, t = 0.5, scaling = 1, sampleHours = 48,
-  sampleIntervalMinutes = 60)
+SequencingSummaryT50(seqsum,
+    t = 0.5,
+    scaling = 1,
+    sampleHours = 48,
+    sampleIntervalMinutes = 60
+)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}

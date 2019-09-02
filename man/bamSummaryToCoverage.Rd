@@ -4,8 +4,11 @@
 \alias{bamSummaryToCoverage}
 \title{get depth of coverage information from across the genome}
 \usage{
-bamSummaryToCoverage(bamFile, tilewidth = 1e+05, blocksize = 10000,
-  flag = "Primary")
+bamSummaryToCoverage(bamFile,
+    tilewidth = 1e+05,
+    blocksize = 10000,
+    flag = "Primary"
+)
 }
 \arguments{
 \item{bamFile}{- path to the bamFile to use}

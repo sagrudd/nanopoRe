@@ -5,7 +5,7 @@
 \title{summarise mapping observations from a BAM file using parallel chr-by-chr}
 \usage{
 parallelBamSummarise(bamFile, force = FALSE,
-  mc.cores = min(parallel::detectCores() - 1, 24))
+    mc.cores = min(parallel::detectCores() - 1, 24))
 }
 \arguments{
 \item{bamFile}{is the location to the BAM file to parse}

@@ -4,8 +4,11 @@
 \alias{SequencingSummaryCumulativeReads}
 \title{plot cumulative volumes of sequence reads}
 \usage{
-SequencingSummaryCumulativeReads(seqsum, scaling = 1, sampleHours = 48,
-  sampleIntervalMinutes = 60)
+SequencingSummaryCumulativeReads(seqsum,
+    scaling = 1,
+    sampleHours = 48,
+    sampleIntervalMinutes = 60
+)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}

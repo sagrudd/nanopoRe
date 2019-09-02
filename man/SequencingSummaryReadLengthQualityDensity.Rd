@@ -4,8 +4,10 @@
 \alias{SequencingSummaryReadLengthQualityDensity}
 \title{plot a density map of sequence lengths and quality scores}
 \usage{
-SequencingSummaryReadLengthQualityDensity(seqsum, binFilter = 5,
-  qcThreshold = 7)
+SequencingSummaryReadLengthQualityDensity(seqsum,
+    binFilter = 5,
+    qcThreshold = 7
+)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}

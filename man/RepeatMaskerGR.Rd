@@ -5,7 +5,7 @@
 \title{extract GRanges object corresponding to RepeatMasker annotation}
 \usage{
 RepeatMaskerGR(RepeatMaskerFile = NULL, RepeatMaskerSRC = NULL,
-  force = FALSE)
+    force = FALSE)
 }
 \arguments{
 \item{RepeatMaskerFile}{is a path to an already downloaded RepeatMasker results file}

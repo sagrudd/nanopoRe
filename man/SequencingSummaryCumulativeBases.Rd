@@ -4,8 +4,11 @@
 \alias{SequencingSummaryCumulativeBases}
 \title{plot cumulative volumes of sequence bases}
 \usage{
-SequencingSummaryCumulativeBases(seqsum, scaling = 1, sampleHours = 48,
-  sampleIntervalMinutes = 60)
+SequencingSummaryCumulativeBases(seqsum,
+    scaling = 1,
+    sampleHours = 48,
+    sampleIntervalMinutes = 60
+)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}

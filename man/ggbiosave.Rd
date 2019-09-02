@@ -4,10 +4,10 @@
 \alias{ggbiosave}
 \title{prepare a barchart showing number of bases per chromosome coloured by mapping-type}
 \usage{
-ggbiosave(filename, plot = last_plot(),
-  device = default_device(filename), path = NULL, scale = 1,
-  width = par("din")[1], height = par("din")[2], units = c("in",
-  "cm", "mm"), dpi = 300, limitsize = TRUE, ...)
+ggbiosave(filename,
+    plot = last_plot(), device = default_device(filename), path = NULL,
+    scale = 1, width = par("din")[1], height = par("din")[2],
+    units = c("in", "cm", "mm"), dpi = 300, limitsize = TRUE, ...)
 }
 \arguments{
 \item{filename}{filename}
