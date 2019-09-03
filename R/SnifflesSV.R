@@ -22,11 +22,11 @@
 #' @export
 Vcf2FilteredGranges <- function(vcfFile, svtype = "INS") {
     # DEL DUP INS
-    
+
     variants <- Vcf2GRanges(vcfFile)
     SVTYPE <- variants$SVTYPE
     keys <- which(SVTYPE == svtype)
-    
+
     return(variants[keys, ])
 }
 
@@ -51,21 +51,21 @@ Vcf2FilteredGranges <- function(vcfFile, svtype = "INS") {
 #'
 #' @export
 Vcf2GRanges <- function(vcfFile) {
-    
+
     vcf <- read.vcfR(vcfFile)
-    karyo <- GRanges(seqnames = as.factor(getFIX(vcf)[, "CHROM"]), ranges = IRanges(start = as.numeric(getFIX(vcf)[, 
+    karyo <- GRanges(seqnames = as.factor(getFIX(vcf)[, "CHROM"]), ranges = IRanges(start = as.numeric(getFIX(vcf)[,
         "POS"]), end = as.numeric(getFIX(vcf)[, "POS"])))
-    
+
     karyo$SVTYPE <- factor(extract.info(vcf, element = "SVTYPE"))
     karyo$SVLEN <- as.numeric(extract.info(vcf, element = "SVLEN"))
     karyo$RE <- as.numeric(extract.info(vcf, element = "RE"))
     karyo$SU <- as.character(extract.info(vcf, element = "SUPTYPE"))
-    
+
     # fix the negative values for deletions
     delets <- which(karyo$SVLEN < 0)
     karyo$SVLEN[delets] <- karyo$SVLEN[delets] * -1
     ranges(karyo)[delets] <- IRanges(start = start(karyo)[delets], end = start(karyo)[delets] + karyo$SVLEN[delets])
-    
+
     return(karyo)
 }
 
@@ -88,33 +88,33 @@ Vcf2GRanges <- function(vcfFile) {
 #'
 #' @export
 snifflesKaryogram <- function(vcfFile) {
-    
+
     karyo <- Vcf2GRanges(vcfFile)
-    
+
     karyo <- karyo[grep("(MT)|(\\..+)", as.character(seqnames(karyo)), invert = TRUE), ]
     factoids <- gtools::mixedsort(unique(as.character(seqnames(karyo))))
     seqlevels(karyo) <- factoids
     seqlengths(karyo) <- getSeqLengths(names(seqlengths(karyo)))
-    
+
     if (length(unique(as.character(seqnames(karyo)))) == 1) {
         # this is a tutorial workflow ... may require debugging depending on how script is used in real
         # workflows?
         if (unique(gtools:::mixedsort(as.character(seqnames(karyo)))) == "4") {
             seqlevels(karyo) <- append(seq(1, 22), c("X", "Y"))
-            seqlengths(karyo) <- c(248956422, 242193529, 198295559, 190214555, 181538259, 170805979, 
-                159345973, 145138636, 138394717, 133797422, 135086622, 133275309, 114364328, 107043718, 
-                101991189, 90338345, 83257441, 80373285, 58617616, 64444167, 46709983, 50818468, 156040895, 
+            seqlengths(karyo) <- c(248956422, 242193529, 198295559, 190214555, 181538259, 170805979,
+                159345973, 145138636, 138394717, 133797422, 135086622, 133275309, 114364328, 107043718,
+                101991189, 90338345, 83257441, 80373285, 58617616, 64444167, 46709983, 50818468, 156040895,
                 57227415)
         }
     }
-    
-    karyogram <- autoplot(karyo, layout = "karyogram", aes_string(color = "SVTYPE", fill = "SVTYPE"), 
-        main = "Karyogram showing location and type of structural variations") + scale_fill_brewer(palette = "Set1") + 
+
+    karyogram <- autoplot(karyo, layout = "karyogram", aes_string(color = "SVTYPE", fill = "SVTYPE"),
+        main = "Karyogram showing location and type of structural variations") + scale_fill_brewer(palette = "Set1") +
         scale_color_brewer(palette = "Set1")
-    
+
     return(karyogram)
-    
-    
+
+
 }
 
 
@@ -138,8 +138,8 @@ snifflesKaryogram <- function(vcfFile) {
 #' @export
 svLengthDistribution <- function(vcfFile) {
     sdata <- Vcf2GRanges(vcfFile)
-    plot <- ggplot(as.data.frame(mcols(sdata)), aes_string(x = "SVLEN", fill = "SVTYPE")) + geom_histogram(bins = 70) + 
-        scale_x_log10() + scale_fill_brewer(palette = "Set1") + labs(title = "Plot showing frequency of structural variant length against log10 length") + 
+    plot <- ggplot(as.data.frame(mcols(sdata)), aes_string(x = "SVLEN", fill = "SVTYPE")) + geom_histogram(bins = 70) +
+        scale_x_log10() + scale_fill_brewer(palette = "Set1") + labs(title = "Plot showing frequency of log10-scaled SV lengths") +
         xlab("log10 sequence length (bases)") + ylab("Frequency")
     return(plot)
 }
