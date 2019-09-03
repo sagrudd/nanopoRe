@@ -87,7 +87,7 @@ Vcf2GRanges <- function(vcfFile) {
 #' }
 #'
 #' @export
-snifflesKaryogram <- function(vcfFile) {
+snifflesKaryogram <- function(vcfFile, demoChr=NULL) {
 
     karyo <- Vcf2GRanges(vcfFile)
 
@@ -96,10 +96,10 @@ snifflesKaryogram <- function(vcfFile) {
     seqlevels(karyo) <- factoids
     seqlengths(karyo) <- getSeqLengths(names(seqlengths(karyo)))
 
-    if (length(unique(as.character(seqnames(karyo)))) == 1) {
+    if (length(unique(as.character(seqnames(karyo)))) == 1 && !is.null(demoChr)) {
         # this is a tutorial workflow ... may require debugging depending on how script is used in real
         # workflows?
-        if (unique(gtools:::mixedsort(as.character(seqnames(karyo)))) == "4") {
+        if (unique(gtools:::mixedsort(as.character(seqnames(karyo)))) == demoChr) {
             seqlevels(karyo) <- append(seq(1, 22), c("X", "Y"))
             seqlengths(karyo) <- c(248956422, 242193529, 198295559, 190214555, 181538259, 170805979,
                 159345973, 145138636, 138394717, 133797422, 135086622, 133275309, 114364328, 107043718,
