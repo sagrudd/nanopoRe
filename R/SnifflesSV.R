@@ -79,6 +79,7 @@ Vcf2GRanges <- function(vcfFile) {
 #' @importFrom ggplot2 scale_fill_brewer
 #' @importFrom ggplot2 scale_color_brewer
 #' @param vcfFile is the path to the vcfFile to plot
+#' @param demoChr defines a dummy chromosome for plotting
 #' @return a ggbio/ggplot2 graph
 #'
 #' @examples
