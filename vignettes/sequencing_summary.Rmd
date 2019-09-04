@@ -1,0 +1,101 @@
+---
+title: "nanopoRe: assessment of Oxford Nanopore run performance using sequencing_summary.txt"
+author: "Stephen Rudd"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+    %\VignetteIndexEntry{nanopoRe: assessment of Oxford Nanopore run performance using sequencing_summary.txt}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>"
+)
+library(nanopoRe)
+library(knitr)
+library(emojifont)
+init()
+setOutputFormat("file")
+```
+
+
+```{r loadFile}
+seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
+barcodeFile <- system.file("extdata", "barcoding_summary.txt.bz2", package = "nanopoRe")
+importSequencingSummary(seqsumFile)
+SequencingSummaryBarcodeMerge(barcodeFile=barcodeFile)
+```
+
+```{r}
+include_graphics( SequenceSummaryExecutiveSummary() )
+```
+
+```{r}
+include_graphics( SequencingSummaryPassGauge() )
+```
+
+```{r}
+include_graphics( SequencingSummaryChannelActivity() )
+```
+
+```{r}
+include_graphics( SequenceSummaryBasicInfoPlot() )
+```
+
+```{r}
+include_graphics( SequencingSummaryWeightedReadLength() )
+```
+
+```{r}
+include_graphics( SequencingSummaryReadLengthHistogram() )
+```
+
+```{r}
+include_graphics( SequencingSummaryReadQualityHistogram() )
+```
+
+# core parameters used for the presentation and configuration of report
+qcThreshold <- 7
+binFilter <- 5
+scaling <- 1
+reportDPI <- 90
+
+
+```{r}
+include_graphics( SequencingSummaryReadLengthQualityDensity() )
+```
+
+```{r}
+include_graphics( SequencingSummaryTemporalThroughput() )
+```
+
+```{r}
+include_graphics( SequencingSummaryCumulativeBases() )
+```
+
+```{r}
+include_graphics( SequencingSummaryCumulativeReads() )
+```
+
+```{r}
+include_graphics( SequencingSummarySpeedPlot() )
+```
+
+```{r}
+include_graphics( SequencingSummaryActiveChannelPlot() )
+```
+
+```{r}
+include_graphics( SequenceSummaryBarcodeInfoGraphic() )
+```
+
+```{r}
+SequenceSummaryBarcodeTable()
+```
+
+```{r}
+include_graphics( SequenceSummaryBarcodeHistogram() )
+```

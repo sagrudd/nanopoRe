@@ -4,7 +4,7 @@
 \alias{SequencingSummaryBarcodeMerge}
 \title{calculates the fractional number of bases according to supplied b parameter}
 \usage{
-SequencingSummaryBarcodeMerge(seqsum, barcodeFile)
+SequencingSummaryBarcodeMerge(seqsum = NA, barcodeFile = NULL)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}
@@ -12,17 +12,15 @@ SequencingSummaryBarcodeMerge(seqsum, barcodeFile)
 \item{barcodeFile}{pointer to a barcode file as produced by Guppy}
 }
 \value{
-a numeric value expressed in gigabases
+a data.frame with barcode information
 }
 \description{
 an accessory method for various logicals; simple fractional base calculator
 }
 \examples{
-\dontrun{
 seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
-seqsum <- importSequencingSummary(seqsumFile)
+importSequencingSummary(seqsumFile)
 barcodeFile <- system.file('extdata', 'barcoding_summary.txt.bz2', package = 'nanopoRe')
-seqsum <- SequencingSummaryBarcodeMerge(seqsum, barcodeFile)
-}
+SequencingSummaryBarcodeMerge(barcodeFile=barcodeFile)
 
 }

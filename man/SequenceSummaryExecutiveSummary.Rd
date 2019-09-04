@@ -4,7 +4,7 @@
 \alias{SequenceSummaryExecutiveSummary}
 \title{present an infographic styled executive summary of sequence_summary.txt content}
 \usage{
-SequenceSummaryExecutiveSummary(seqsum, flowcellId = "undefined")
+SequenceSummaryExecutiveSummary(seqsum = NA, flowcellId = "undefined")
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}

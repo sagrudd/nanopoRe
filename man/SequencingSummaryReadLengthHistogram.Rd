@@ -4,7 +4,7 @@
 \alias{SequencingSummaryReadLengthHistogram}
 \title{plot a histogram of sequence read lengths}
 \usage{
-SequencingSummaryReadLengthHistogram(seqsum)
+SequencingSummaryReadLengthHistogram(seqsum = NA)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}

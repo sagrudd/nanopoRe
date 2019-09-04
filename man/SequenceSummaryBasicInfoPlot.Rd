@@ -4,7 +4,7 @@
 \alias{SequenceSummaryBasicInfoPlot}
 \title{present an infographic styled basic characteristics plot of sequence_summary.txt content}
 \usage{
-SequenceSummaryBasicInfoPlot(seqsum)
+SequenceSummaryBasicInfoPlot(seqsum = NA)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}

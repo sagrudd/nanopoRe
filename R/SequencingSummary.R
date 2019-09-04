@@ -46,8 +46,7 @@ importSequencingSummary <- function(seqsum) {
     }
 
     setCachedObject("seqsumdata", seqsumdata)
-
-    return(seqsumdata)
+    return(invisible(seqsumdata))
 }
 
 
@@ -72,12 +71,7 @@ importSequencingSummary <- function(seqsum) {
 #' @export
 SequencingSummaryPassGauge <- function(seqsum = NA) {
 
-    if (!is.data.frame(seqsum) && is.na(seqsum)) {
-        oname <- "seqsumdata"
-        if (hasCachedObject(oname)) {
-            seqsum <- getCachedObject(oname)
-        }
-    }
+    seqsum <- handleSeqSumCache(seqsum)
 
     df <- data.frame(matrix(nrow = 1, ncol = 3))
 
@@ -126,12 +120,7 @@ SequencingSummaryPassGauge <- function(seqsum = NA) {
 #' @export
 SequencingSummaryChannelActivity <- function(seqsum = NA, platform = NA) {
 
-    if (!is.data.frame(seqsum) && is.na(seqsum)) {
-        oname <- "seqsumdata"
-        if (hasCachedObject(oname)) {
-            seqsum <- getCachedObject(oname)
-        }
-    }
+    seqsum <- handleSeqSumCache(seqsum)
 
     if (is.na(platform)) {
         platform <- SequencingSummaryGetPlatform(seqsum)
@@ -252,7 +241,9 @@ getBinBreaks <- function(seqsum) {
 #' plot <- SequencingSummaryWeightedReadLength(seqsum)
 #'
 #' @export
-SequencingSummaryWeightedReadLength <- function(seqsum) {
+SequencingSummaryWeightedReadLength <- function(seqsum=NA) {
+
+    seqsum <- handleSeqSumCache(seqsum)
 
     breaks <- getBinBreaks(seqsum)
     breakVal <- breaks[2]  # assuming that the range is 0 based
@@ -310,7 +301,9 @@ SequencingSummaryWeightedReadLength <- function(seqsum) {
 #' plot <- SequencingSummaryReadLengthHistogram(seqsum)
 #'
 #' @export
-SequencingSummaryReadLengthHistogram <- function(seqsum) {
+SequencingSummaryReadLengthHistogram <- function(seqsum=NA) {
+
+    seqsum <- handleSeqSumCache(seqsum)
 
     breaks <- getBinBreaks(seqsum)
     breakVal <- breaks[2]  # assuming that the range is 0 based
@@ -364,7 +357,10 @@ SequencingSummaryReadLengthHistogram <- function(seqsum) {
 #' plot <- SequencingSummaryReadQualityHistogram(seqsum)
 #'
 #' @export
-SequencingSummaryReadQualityHistogram <- function(seqsum) {
+SequencingSummaryReadQualityHistogram <- function(seqsum=NA) {
+
+    seqsum <- handleSeqSumCache(seqsum)
+
     qdist <- ggplot(seqsum, aes_string(x = "mean_qscore_template", fill = "passes_filtering")) + geom_histogram(breaks = seq(from = 0,
         to = 15, by = 0.1)) + scale_fill_manual(name = "QC", values = c(`TRUE` = brewer.pal(6, "Paired")[2],
         `FALSE` = brewer.pal(6, "Paired")[1]), labels = c("pass", "fail"), breaks = c("TRUE", "FALSE")) +
@@ -400,7 +396,10 @@ SequencingSummaryReadQualityHistogram <- function(seqsum) {
 #' plot <- SequencingSummaryReadLengthQualityDensity(seqsum)
 #'
 #' @export
-SequencingSummaryReadLengthQualityDensity <- function(seqsum, binFilter = 5, qcThreshold = 7) {
+SequencingSummaryReadLengthQualityDensity <- function(seqsum=NA, binFilter = 5, qcThreshold = 7) {
+
+    seqsum <- handleSeqSumCache(seqsum)
+
     # prepare the density plot, but do not render
     lq_dens <- ggplot(seqsum, aes(log10(seqsum$sequence_length_template), seqsum$mean_qscore_template)) +
         geom_bin2d(bins = 100)
@@ -468,7 +467,9 @@ getTemporalDataset <- function(seqsum, sampleIntervalMinutes, breaks, binass) {
 #' plot <- SequencingSummaryTemporalThroughput(seqsum)
 #'
 #' @export
-SequencingSummaryTemporalThroughput <- function(seqsum, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+SequencingSummaryTemporalThroughput <- function(seqsum=NA, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+
+    seqsum <- handleSeqSumCache(seqsum)
 
     seqsum$start_time <- seqsum$start_time - min(seqsum$start_time)
     seqsum$start_time <- seqsum$start_time/scaling
@@ -511,7 +512,9 @@ SequencingSummaryTemporalThroughput <- function(seqsum, scaling = 1, sampleHours
 #' plot <- SequencingSummaryCumulativeBases(seqsum)
 #'
 #' @export
-SequencingSummaryCumulativeBases <- function(seqsum, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+SequencingSummaryCumulativeBases <- function(seqsum=NA, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+
+    seqsum <- handleSeqSumCache(seqsum)
 
     seqsum$start_time <- seqsum$start_time - min(seqsum$start_time)
     seqsum$start_time <- seqsum$start_time/scaling
@@ -604,7 +607,9 @@ SequencingSummaryBase50 <- function(seqsum, b = 0.5) {
 #' T50
 #'
 #' @export
-SequencingSummaryT50 <- function(seqsum, t = 0.5, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+SequencingSummaryT50 <- function(seqsum=NA, t = 0.5, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+
+    seqsum <- handleSeqSumCache(seqsum)
 
     seqsum$start_time <- seqsum$start_time - min(seqsum$start_time)
     seqsum$start_time <- seqsum$start_time/scaling
@@ -656,7 +661,9 @@ SequencingSummaryT50 <- function(seqsum, t = 0.5, scaling = 1, sampleHours = 48,
 #' plot <- SequencingSummaryCumulativeReads(seqsum)
 #'
 #' @export
-SequencingSummaryCumulativeReads <- function(seqsum, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+SequencingSummaryCumulativeReads <- function(seqsum=NA, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+
+    seqsum <- handleSeqSumCache(seqsum)
 
     seqsum$start_time <- seqsum$start_time - min(seqsum$start_time)
     seqsum$start_time <- seqsum$start_time/scaling
@@ -721,7 +728,9 @@ SequencingSummaryCumulativeReads <- function(seqsum, scaling = 1, sampleHours = 
 #' plot <- SequencingSummarySpeedPlot(seqsum)
 #'
 #' @export
-SequencingSummarySpeedPlot <- function(seqsum, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+SequencingSummarySpeedPlot <- function(seqsum=NA, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+
+    seqsum <- handleSeqSumCache(seqsum)
 
     seqsum$start_time <- seqsum$start_time - min(seqsum$start_time)
     seqsum$start_time <- seqsum$start_time/scaling
@@ -764,7 +773,9 @@ SequencingSummarySpeedPlot <- function(seqsum, scaling = 1, sampleHours = 48, sa
 #' plot <- SequencingSummaryActiveChannelPlot(seqsum)
 #'
 #' @export
-SequencingSummaryActiveChannelPlot <- function(seqsum, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+SequencingSummaryActiveChannelPlot <- function(seqsum=NA, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+
+    seqsum <- handleSeqSumCache(seqsum)
 
     seqsum$start_time <- seqsum$start_time - min(seqsum$start_time)
     seqsum$start_time <- seqsum$start_time/scaling
@@ -815,8 +826,10 @@ SequencingSummaryActiveChannelPlot <- function(seqsum, scaling = 1, sampleHours 
 #' plot <- SequenceSummaryExecutiveSummary(seqsum)
 #'
 #' @export
-SequenceSummaryExecutiveSummary <- function(seqsum, flowcellId = "undefined") {
+SequenceSummaryExecutiveSummary <- function(seqsum=NA, flowcellId = "undefined") {
     # calculate some basic, but key, metrics
+
+    seqsum <- handleSeqSumCache(seqsum)
 
     passedSeqs <- seqsum[which(seqsum$passes_filtering), ]
 
@@ -852,7 +865,9 @@ SequenceSummaryExecutiveSummary <- function(seqsum, flowcellId = "undefined") {
 #' plot <- SequenceSummaryBasicInfoPlot(seqsum)
 #'
 #' @export
-SequenceSummaryBasicInfoPlot <- function(seqsum) {
+SequenceSummaryBasicInfoPlot <- function(seqsum=NA) {
+
+    seqsum <- handleSeqSumCache(seqsum)
 
     passedSeqs <- seqsum[which(seqsum$passes_filtering), ]
     failedSeqs <- seqsum[which(!seqsum$passes_filtering), ]
@@ -875,3 +890,18 @@ SequenceSummaryBasicInfoPlot <- function(seqsum) {
         panelE = c(value = longestRead, key = "Longest Read", icon = "fa-sort"))
     return(infoFile2)
 }
+
+
+
+
+handleSeqSumCache <- function(seqsum) {
+    if (!is.data.frame(seqsum) && is.na(seqsum)) {
+        oname <- "seqsumdata"
+        if (hasCachedObject(oname)) {
+            seqsum <- getCachedObject(oname)
+        }
+    }
+    return(seqsum)
+}
+
+

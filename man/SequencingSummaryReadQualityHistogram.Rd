@@ -4,7 +4,7 @@
 \alias{SequencingSummaryReadQualityHistogram}
 \title{plot a histogram of sequence quality scores}
 \usage{
-SequencingSummaryReadQualityHistogram(seqsum)
+SequencingSummaryReadQualityHistogram(seqsum = NA)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}

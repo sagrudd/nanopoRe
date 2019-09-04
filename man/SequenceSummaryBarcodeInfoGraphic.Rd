@@ -4,7 +4,7 @@
 \alias{SequenceSummaryBarcodeInfoGraphic}
 \title{presents an emojifont based infographic for barcode characteristics}
 \usage{
-SequenceSummaryBarcodeInfoGraphic(seqsum, bcthreshold = 150)
+SequenceSummaryBarcodeInfoGraphic(seqsum = NA, bcthreshold = 150)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}
@@ -18,12 +18,10 @@ a numeric value expressed in gigabases
 an accessory method for various logicals; simple fractional base calculator
 }
 \examples{
-\dontrun{
 seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
-seqsum <- importSequencingSummary(seqsumFile)
+importSequencingSummary(seqsumFile)
 barcodeFile <- system.file('extdata', 'barcoding_summary.txt.bz2', package = 'nanopoRe')
-barcodedSeqs <- SequencingSummaryBarcodeMerge(seqsum, barcodeFile)
-SequenceSummaryBarcodeInfoGraphic(barcodedSeqs)
-}
+SequencingSummaryBarcodeMerge(barcodeFile=barcodeFile)
+SequenceSummaryBarcodeInfoGraphic()
 
 }

@@ -4,7 +4,7 @@
 \alias{SequenceSummaryBarcodeTable}
 \title{tabulate information on the SequencingSummary barcode fields and status}
 \usage{
-SequenceSummaryBarcodeTable(seqsum, bcthreshold = 150)
+SequenceSummaryBarcodeTable(seqsum = NA, bcthreshold = 150)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}
@@ -18,12 +18,10 @@ a kable table or NULL
 tabulate information on the SequencingSummary barcode fields and status
 }
 \examples{
-\dontrun{
 seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
-seqsum <- importSequencingSummary(seqsumFile)
+importSequencingSummary(seqsumFile)
 barcodeFile <- system.file('extdata', 'barcoding_summary.txt.bz2', package = 'nanopoRe')
-barcodedSeqs <- SequencingSummaryBarcodeMerge(seqsum, barcodeFile)
-SequenceSummaryBarcodeTable(barcodedSeqs)
-}
+SequencingSummaryBarcodeMerge(barcodeFile=barcodeFile)
+SequenceSummaryBarcodeTable()
 
 }
