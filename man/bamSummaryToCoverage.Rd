@@ -7,7 +7,7 @@
 bamSummaryToCoverage(bamFile,
     tilewidth = 1e+05,
     blocksize = 10000,
-    flag = "Primary"
+    flag = 'Primary'
 )
 }
 \arguments{
@@ -26,8 +26,7 @@ GRanges object with mean depth of coverage data in binned_cov field
 This method will return a tiled Granges object containing mean depth of coverage information
 }
 \examples{
-\dontrun{
-bamSummaryToCoverage(file.path('Analysis', 'Minimap2', 'MyBamFile.bam'))
-}
+demoBam <- system.file("extdata", "Ecoli_zymo_R10_filt_subs.bam", package = "nanopoRe")
+bamGR <- bamSummaryToCoverage(demoBam)
 
 }

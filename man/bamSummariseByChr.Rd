@@ -4,7 +4,12 @@
 \alias{bamSummariseByChr}
 \title{summarise mapping observations from a BAM file by chromosome}
 \usage{
-bamSummariseByChr(chrId, bamFile, force = FALSE, blockSize = 50000L)
+bamSummariseByChr(chrId,
+    bamFile,
+    force = FALSE,
+    blockSize = 50000L,
+    index=NULL
+)
 }
 \arguments{
 \item{chrId}{is the chromosome to parse}
@@ -14,6 +19,8 @@ bamSummariseByChr(chrId, bamFile, force = FALSE, blockSize = 50000L)
 \item{force}{logical value describing whether the analysis should be force recalculated}
 
 \item{blockSize}{the number of reads to process at the time as iterating through}
+
+\item{index}{path to the BAI index file - should be automatic in most cases ...}
 }
 \value{
 data.frame of per read summary observations
@@ -24,8 +31,24 @@ way that can be used for preparation of figures and confidence plots by
 the nanopoRe package
 }
 \examples{
-\dontrun{
-bamSummariseByChr('MyBamFile.bam', chrId='1')
-}
+# load reference genome
+init()
+referenceFasta <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceFasta)
+# load reference BAM
+demoBam <- system.file("extdata",
+    "Ecoli_zymo_R10_filt_subs.bam",
+    package = "nanopoRe")
+# Rsamtools::BamFile has problems in picking up packaged .bam.bai
+# we will specify it here rather then automatic detection
+demoBamIdx <- system.file("extdata",
+    "Ecoli_zymo_R10_filt_subs.bam",
+    package = "nanopoRe")
+bamSummariseByChr(chrId=getChromosomeIds()[1],
+    bamFile=demoBam,
+    blockSize=100L,
+    index=demoBamIdx)
 
 }

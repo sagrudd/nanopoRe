@@ -4,7 +4,7 @@
 \alias{plotAlignmentIdentity}
 \title{plot a histogram of mapping identities}
 \usage{
-plotAlignmentIdentity(bamFile, flag = "Primary", lower = 0.7,
+plotAlignmentIdentity(bamFile, flag = 'Primary', lower = 0.7,
     upper = 1, segments = 50)
 }
 \arguments{

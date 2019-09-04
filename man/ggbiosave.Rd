@@ -2,12 +2,12 @@
 % Please edit documentation in R/Cas9_tutorial.R
 \name{ggbiosave}
 \alias{ggbiosave}
-\title{prepare a barchart showing number of bases per chromosome coloured by mapping-type}
+\title{save a ggbio plot to file}
 \usage{
 ggbiosave(filename,
     plot = last_plot(), device = default_device(filename), path = NULL,
-    scale = 1, width = par("din")[1], height = par("din")[2],
-    units = c("in", "cm", "mm"), dpi = 300, limitsize = TRUE, ...)
+    scale = 1, width = par('din')[1], height = par('din')[2],
+    units = c('in', 'cm', 'mm'), dpi = 300, limitsize = TRUE, ...)
 }
 \arguments{
 \item{filename}{filename}
@@ -36,6 +36,5 @@ ggbiosave(filename,
 path to image
 }
 \description{
-prepare a barchart showing number of bases per chromosome coloured by mapping-type;
-enables looking for unexpected distributions of off-target, background etc per chromosome
+save a ggbio plot to file
 }

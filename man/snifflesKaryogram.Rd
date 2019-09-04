@@ -4,10 +4,12 @@
 \alias{snifflesKaryogram}
 \title{prepare karyogram of annotated SVs}
 \usage{
-snifflesKaryogram(vcfFile)
+snifflesKaryogram(vcfFile, demoChr = NULL)
 }
 \arguments{
 \item{vcfFile}{is the path to the vcfFile to plot}
+
+\item{demoChr}{defines a dummy chromosome for plotting}
 }
 \value{
 a ggbio/ggplot2 graph

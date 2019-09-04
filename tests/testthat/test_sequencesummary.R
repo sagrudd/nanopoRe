@@ -1,6 +1,7 @@
 context("Oxford Nanopore sequence_summary.txt parsing")
 
 init()
+library(emojifont)
 
 
 test_that("sequencing_summary.txt.bz2 can be parsed", {

@@ -6,16 +6,19 @@
 #' This method will extract a block of BAM content from a given BAM file
 #'
 #' @param bamFile is the location to the BAM file to parse
+#' @param yieldSize is the number of mapping observations to extract
 #' @return list of summary observations
 #'
 #' @examples
-#' \dontrun{
-#' testBam(file.path('Analysis', 'Minimap2', 'MyBamFile.bam'))
-#' }
+#' # define the path to a BAM file
+#' demoBam <- system.file("extdata",
+#'     "Ecoli_zymo_R10_filt_subs.bam",
+#'     package = "nanopoRe")
+#' bamdata <- testBam(demoBam, 10)
 #'
 #' @export
-testBam <- function(bamFile) {
-    bam = open(BamFile(bamFile, yieldSize = 10000L))
+testBam <- function(bamFile, yieldSize = 100L) {
+    bam = open(BamFile(bamFile, yieldSize = yieldSize))
     what = c("qname", "flag", "rname", "strand", "pos", "qwidth", "mapq", "qual", "cigar")
     param = ScanBamParam(what = what, tag = c("NM", "MD"))
     reads = scanBam(bam, param = param)[[1L]]
@@ -31,6 +34,12 @@ testBam <- function(bamFile) {
 #' way that can be used for preparation of figures and confidence plots by
 #' the nanopoRe package
 #'
+#' @usage bamSummariseByChr(chrId,
+#'     bamFile,
+#'     force = FALSE,
+#'     blockSize = 50000L,
+#'     index=NULL
+#' )
 #' @importFrom Rsamtools ScanBamParam
 #' @importFrom Rsamtools BamFile
 #' @importFrom Rsamtools scanBam
@@ -38,15 +47,32 @@ testBam <- function(bamFile) {
 #' @param bamFile is the location to the BAM file to parse
 #' @param force logical value describing whether the analysis should be force recalculated
 #' @param blockSize the number of reads to process at the time as iterating through
+#' @param index path to the BAI index file - should be automatic in most cases ...
 #' @return data.frame of per read summary observations
 #'
 #' @examples
-#' \dontrun{
-#' bamSummariseByChr('MyBamFile.bam', chrId='1')
-#' }
+#' # load reference genome
+#' init()
+#' referenceFasta <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceFasta)
+#' # load reference BAM
+#' demoBam <- system.file("extdata",
+#'     "Ecoli_zymo_R10_filt_subs.bam",
+#'     package = "nanopoRe")
+#' # Rsamtools::BamFile has problems in picking up packaged .bam.bai
+#' # we will specify it here rather then automatic detection
+#' demoBamIdx <- system.file("extdata",
+#'     "Ecoli_zymo_R10_filt_subs.bam",
+#'     package = "nanopoRe")
+#' bamSummariseByChr(chrId=getChromosomeIds()[1],
+#'     bamFile=demoBam,
+#'     blockSize=100L,
+#'     index=demoBamIdx)
 #'
 #' @export
-bamSummariseByChr <- function(chrId, bamFile, force = FALSE, blockSize = 50000L) {
+bamSummariseByChr <- function(chrId, bamFile, force = FALSE, blockSize = 50000L, index=NULL) {
     bamSummaryResults <- file.path(getRpath(), paste0(sub("\\.[^.]*$", "", basename(bamFile)), ".bamMetrics.chr",
         chrId, ".Rdata"))
     message(paste0("targetRdata ", bamSummaryResults, "\n"))
@@ -55,7 +81,12 @@ bamSummariseByChr <- function(chrId, bamFile, force = FALSE, blockSize = 50000L)
     }
     count <- 0
     bamInfo <- data.frame()
-    bam = open(BamFile(bamFile, yieldSize = blockSize))
+    bam <- NULL
+    if (!is.null(index)) {
+        bam = open(BamFile(bamFile, yieldSize = blockSize, index=index))
+    } else {
+        bam = open(BamFile(bamFile, yieldSize = blockSize))
+    }
     what = c("qname", "flag", "rname", "strand", "pos", "qwidth", "mapq", "qual", "cigar")
     param = ScanBamParam(which = GRanges(seqnames = chrId, ranges = IRanges(start = 1, end = as.numeric(getSeqLengths(chrId)))),
         what = what, tag = c("NM", "MD"))
@@ -68,7 +99,6 @@ bamSummariseByChr <- function(chrId, bamFile, force = FALSE, blockSize = 50000L)
         bamInfo <- rbind(bamInfo, processBamChunk(reads))
     }
     close(bam)
-    cat(paste0(bamSummaryResults, " --> ", count, "\n"))
     saveRDS(bamInfo, file = bamSummaryResults)
     return(bamInfo)
 }
@@ -131,9 +161,11 @@ parallelBamSummarise <- function(bamFile, force = FALSE, mc.cores = min(parallel
 #' @return data.frame of per read summary observations
 #'
 #' @examples
-#' \dontrun{
-#' bamSummarise(file.path('Analysis', 'Minimap2', 'MyBamFile.bam'), force=FALSE, blockSize=1000L)
-#' }
+#' demoBam <- system.file("extdata",
+#'     "Ecoli_zymo_R10_filt_subs.bam",
+#'     package = "nanopoRe")
+#' bamSummary <- bamSummarise(demoBam, force=FALSE, blockSize=1000L)
+#'
 #'
 #' @export
 bamSummarise <- function(bamFile, force = FALSE, blockSize = 50000L) {
@@ -157,7 +189,6 @@ bamSummarise <- function(bamFile, force = FALSE, blockSize = 50000L) {
         bamInfo <- rbind(bamInfo, processBamChunk(reads))
     }
     close(bam)
-    cat(paste0(count, "\n"))
     saveRDS(bamInfo, file = bamSummaryResults)
     return(bamInfo)
 }
@@ -233,9 +264,8 @@ processBamChunk <- function(bamChunk) {
 #' @return GRanges object with mean depth of coverage data in binned_cov field
 #'
 #' @examples
-#' \dontrun{
-#' bamSummaryToCoverage(file.path('Analysis', 'Minimap2', 'MyBamFile.bam'))
-#' }
+#' demoBam <- system.file("extdata", "Ecoli_zymo_R10_filt_subs.bam", package = "nanopoRe")
+#' bamGR <- bamSummaryToCoverage(demoBam)
 #'
 #' @export
 bamSummaryToCoverage <- function(bamFile, tilewidth = 1e+05, blocksize = 10000, flag = "Primary") {
@@ -247,7 +277,7 @@ bamSummaryToCoverage <- function(bamFile, tilewidth = 1e+05, blocksize = 10000, 
     suppressWarnings(grdata <- GRanges(seqnames = primary$rname, ranges = IRanges(start = primary$start,
         end = primary$end), strand = primary$strand, seqlengths = getSeqLengths(levels(primary$rname))))
     mapCoverage <- coverage(grdata)
-    bins <- tileGenome(seqlengths(grdata), tilewidth = 1e+05, cut.last.tile.in.chrom = TRUE)
+    bins <- tileGenome(seqlengths(grdata), tilewidth=tilewidth, cut.last.tile.in.chrom = TRUE)
     return(binnedAverage(bins, mapCoverage, "binned_cov"))
 }
 

@@ -22,8 +22,10 @@ way that can be used for preparation of figures and confidence plots by
 the nanopoRe package
 }
 \examples{
-\dontrun{
-bamSummarise(file.path('Analysis', 'Minimap2', 'MyBamFile.bam'), force=FALSE, blockSize=1000L)
-}
+demoBam <- system.file("extdata",
+    "Ecoli_zymo_R10_filt_subs.bam",
+    package = "nanopoRe")
+bamSummary <- bamSummarise(demoBam, force=FALSE, blockSize=1000L)
+
 
 }

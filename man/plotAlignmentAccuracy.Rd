@@ -4,7 +4,7 @@
 \alias{plotAlignmentAccuracy}
 \title{plot a histogram of mapping accuracies}
 \usage{
-plotAlignmentAccuracy(bamFile, flag = "Primary", lower = 0.7,
+plotAlignmentAccuracy(bamFile, flag = 'Primary', lower = 0.7,
     upper = 1, segments = 50)
 }
 \arguments{
