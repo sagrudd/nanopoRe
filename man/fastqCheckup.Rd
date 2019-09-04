@@ -19,7 +19,7 @@ This method will prepare summary statistics on a fastq file and cache results (a
 }
 \examples{
 fastqFile <- system.file("extdata", "example.fastq.gz", package = "nanopoRe")
-fqcheck <- fastqCheckup(input_fastq)
+fqcheck <- fastqCheckup(fastqFile)
 names(fqcheck)
 fqcheck[['reads']]
 
