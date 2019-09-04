@@ -16,8 +16,12 @@ None
 This method will return the numerical index for the named chromosome within the referenceGenomeSequence
 }
 \examples{
-\dontrun{
-getStringSetId('1')
-}
+init()
+referenceFasta <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceFasta)
+getStringSetId(getChromosomeIds())
+getStringSetId("Escherichia_coli_chromosome")
 
 }

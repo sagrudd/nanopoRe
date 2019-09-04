@@ -20,8 +20,14 @@ data.frame of mapping characteristics
 This method will return a data.frame of basic per chromosome mapping statistics
 }
 \examples{
-\dontrun{
-chromosomeMappingSummary(c('1','2'), bamFile)
-}
+init()
+demoBam <- system.file("extdata",
+    "Ecoli_zymo_R10_filt_subs.bam",
+    package = "nanopoRe")
+referenceFasta <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceFasta)
+chromosomeMappingSummary(getChromosomeIds(), demoBam)
 
 }

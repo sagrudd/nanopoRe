@@ -13,8 +13,12 @@ character representation of path to stored fasta format file object
 This method returns the stored path for the reference genome object
 }
 \examples{
-\dontrun{
+init()
+referenceFasta <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceFasta)
+# and check that something has been stored ...
 getReferenceGenome()
-}
 
 }

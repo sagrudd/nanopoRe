@@ -17,8 +17,13 @@ This method will remove unwanted chromosomes from the reference genome collectio
 be linked to a set of core autosomes, for example.
 }
 \examples{
-\dontrun{
-cleanReferenceGenome(chrId)
-}
+init()
+referenceFasta <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceFasta)
+getChromosomeIds()
+cleanReferenceGenome(getChromosomeIds()[1])
+getChromosomeIds()
 
 }

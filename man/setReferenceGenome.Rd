@@ -16,8 +16,12 @@ None
 This method defines the path where reference genome is stored
 }
 \examples{
-\dontrun{
-setReferenceGenome(file.path('ReferenceData', 'human_g1k_v37.fasta'))
-}
+init()
+referenceFasta <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceFasta)
+# and check that something has been stored ...
+getReferenceGenome()
 
 }

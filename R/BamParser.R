@@ -95,7 +95,6 @@ bamSummariseByChr <- function(chrId, bamFile, force = FALSE, blockSize = 50000L,
         if (length(reads$qname) == 0L)
             break
         count = count + length(reads$qname)
-        cat(paste0(count, "\n"))
         bamInfo <- rbind(bamInfo, processBamChunk(reads))
     }
     close(bam)
@@ -171,7 +170,6 @@ parallelBamSummarise <- function(bamFile, force = FALSE, mc.cores = min(parallel
 bamSummarise <- function(bamFile, force = FALSE, blockSize = 50000L) {
     bamSummaryResults <- file.path(getRpath(), paste0(sub("\\.[^.]*$", "", basename(bamFile)), ".bamMetrics",
         ".Rdata"))
-    message(paste0("targetRdata ", bamSummaryResults, "\n"))
     if (file.exists(bamSummaryResults) & !force) {
         return(getCachedFileObject("BamTargetData", bamSummaryResults))
     }
@@ -185,7 +183,6 @@ bamSummarise <- function(bamFile, force = FALSE, blockSize = 50000L) {
         if (length(reads$qname) == 0L)
             break
         count = count + length(reads$qname)
-        cat(paste0(count, "\n"))
         bamInfo <- rbind(bamInfo, processBamChunk(reads))
     }
     close(bam)

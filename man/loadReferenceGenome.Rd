@@ -13,8 +13,11 @@ None
 This method will parse the defined reference.file into a DNAStringSet object for handling in memory
 }
 \examples{
-\dontrun{
-getReferenceGenome()
-}
+init()
+referenceFasta <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceFasta)
+loadReferenceGenome()
 
 }

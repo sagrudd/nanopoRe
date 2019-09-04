@@ -7,9 +7,13 @@
 #' @return None
 #'
 #' @examples
-#' \dontrun{
-#' setReferenceGenome(file.path('ReferenceData', 'human_g1k_v37.fasta'))
-#' }
+#' init()
+#' referenceFasta <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceFasta)
+#' # and check that something has been stored ...
+#' getReferenceGenome()
 #'
 #' @export
 setReferenceGenome <- function(reference.file) {
@@ -23,9 +27,13 @@ setReferenceGenome <- function(reference.file) {
 #' @return character representation of path to stored fasta format file object
 #'
 #' @examples
-#' \dontrun{
+#' init()
+#' referenceFasta <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceFasta)
+#' # and check that something has been stored ...
 #' getReferenceGenome()
-#' }
 #'
 #' @export
 getReferenceGenome <- function() {
@@ -42,17 +50,19 @@ getReferenceGenome <- function() {
 #' @return None
 #'
 #' @examples
-#' \dontrun{
-#' getReferenceGenome()
-#' }
+#' init()
+#' referenceFasta <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceFasta)
+#' loadReferenceGenome()
 #'
 #' @export
 loadReferenceGenome <- function() {
-    message(paste0("loading reference genome(", getReferenceGenome(), ")"))
     # derive a referenceGenome object from the named fasta elements in the provided fasta reference
     # resource
     referenceGenomeSequence <- readDNAStringSet(getReferenceGenome())
-    referenceGenome <- data.frame(id = gsub(" .+", "", names(referenceGenomeSequence)), sid = seq_along(names(referenceGenomeSequence)), 
+    referenceGenome <- data.frame(id = gsub(" .+", "", names(referenceGenomeSequence)), sid = seq_along(names(referenceGenomeSequence)),
         stringsAsFactors = FALSE)
     referenceGenome$sid <- seq(nrow(referenceGenome))
     assign("referenceGenome", referenceGenome, envir = get(getEnvironment()))
@@ -69,9 +79,14 @@ loadReferenceGenome <- function() {
 #' @return None
 #'
 #' @examples
-#' \dontrun{
-#' cleanReferenceGenome(chrId)
-#' }
+#' init()
+#' referenceFasta <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceFasta)
+#' getChromosomeIds()
+#' cleanReferenceGenome(getChromosomeIds()[1])
+#' getChromosomeIds()
 #'
 #' @export
 cleanReferenceGenome <- function(delIds) {
@@ -96,13 +111,17 @@ cleanReferenceGenome <- function(delIds) {
 #' @return None
 #'
 #' @examples
-#' \dontrun{
-#' getStringSetId('1')
-#' }
+#' init()
+#' referenceFasta <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceFasta)
+#' getStringSetId(getChromosomeIds())
+#' getStringSetId("Escherichia_coli_chromosome")
 #'
 #' @export
 getStringSetId <- function(chrId) {
-    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", 
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence",
         envir = get(getEnvironment())))) {
         loadReferenceGenome()
     }
@@ -121,14 +140,17 @@ getStringSetId <- function(chrId) {
 #' @return DNAStringSet corresponding to pointer provided
 #'
 #' @examples
-#' \dontrun{
-#' getChromosomeSequence(1)
-#' }
+#' init()
+#' referenceFasta <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceFasta)
+#' getChromosomeSequence(getStringSetId("Escherichia_coli_chromosome"))
 #'
 #' @seealso [getStringSetId()] for method to prepare numeric pointer
 #' @export
 getChromosomeSequence <- function(dnaStringSetId) {
-    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", 
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence",
         envir = get(getEnvironment())))) {
         loadReferenceGenome()
     }
@@ -146,13 +168,16 @@ getChromosomeSequence <- function(dnaStringSetId) {
 #' @return vector of names
 #'
 #' @examples
-#' \dontrun{
-#' getChromosomeIds('1')
-#' }
+#' init()
+#' referenceFasta <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceFasta)
+#' getChromosomeIds()
 #'
 #' @export
 getChromosomeIds <- function() {
-    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", 
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence",
         envir = get(getEnvironment())))) {
         loadReferenceGenome()
     }
@@ -168,13 +193,16 @@ getChromosomeIds <- function() {
 #' @return vector of names
 #'
 #' @examples
-#' \dontrun{
-#' getSeqLengths(c('1','2'))
-#' }
+#' init()
+#' referenceFasta <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceFasta)
+#' getSeqLengths(getChromosomeIds())
 #'
 #' @export
 getSeqLengths <- function(x) {
-    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence", 
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence",
         envir = get(getEnvironment())))) {
         loadReferenceGenome()
     }
@@ -210,38 +238,44 @@ getSeqLengths <- function(x) {
 #' @return data.frame of mapping characteristics
 #'
 #' @examples
-#' \dontrun{
-#' chromosomeMappingSummary(c('1','2'), bamFile)
-#' }
+#' init()
+#' demoBam <- system.file("extdata",
+#'     "Ecoli_zymo_R10_filt_subs.bam",
+#'     package = "nanopoRe")
+#' referenceFasta <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceFasta)
+#' chromosomeMappingSummary(getChromosomeIds(), demoBam)
 #'
 #' @export
 chromosomeMappingSummary <- function(chrIds, bamFile, flag = "Primary") {
-    
+
     bamSummary <- bamSummarise(bamFile, blockSize = 10000)
-    
+
     getChrData <- function(id, bamSummary, flag = "Primary") {
         dna <- getChromosomeSequence(getStringSetId(id))
         letterFreq <- letterFrequency(dna, c("A", "C", "G", "T", "N"))
         mapChr <- bamSummary %>% filter(.data$readFlag == flag & .data$rname == id)
-        
+
         # depending on the genome used there may be a load of warnings here this is likely due to reads
         # mapping beyond segment boundaries - warnings are masked here since they are expected
-        suppressWarnings(gr <- GRanges(seqnames = mapChr$rname, ranges = IRanges(start = mapChr$start, 
+        suppressWarnings(gr <- GRanges(seqnames = mapChr$rname, ranges = IRanges(start = mapChr$start,
             end = mapChr$end), strand = mapChr$strand, seqlengths = getSeqLengths(levels(mapChr$rname))))
         mc <- coverage(gr)
         bi <- tileGenome(seqlengths(gr), ntile = 1)
         cd <- binnedAverage(bi[[1]], mc, "binned_cov")
-        
+
         ke <- which(as.character(seqnames(cd)) == id)
         co <- mcols(cd[ke, ])$binned_cov
-        
-        return(c(chrId = id, chrLength = (scales::comma_format())(length(dna)), `N (%)` = paste0(round(letterFreq["N"]/length(dna) * 
-            100, digits = 2)), `GC (%)` = paste0(round((letterFreq["G"] + letterFreq["G"])/length(dna) * 
-            100, digits = 2)), `Mapped Reads` = (scales::comma_format())(nrow(mapChr)), `Mapped Bases` = (scales::comma_format())(sum(mapChr$coverage * 
+
+        return(c(chrId = id, chrLength = (scales::comma_format())(length(dna)), `N (%)` = paste0(round(letterFreq["N"]/length(dna) *
+            100, digits = 2)), `GC (%)` = paste0(round((letterFreq["G"] + letterFreq["G"])/length(dna) *
+            100, digits = 2)), `Mapped Reads` = (scales::comma_format())(nrow(mapChr)), `Mapped Bases` = (scales::comma_format())(sum(mapChr$coverage *
             mapChr$qwidth)), `Mean Coverage` = paste0(round(co, digits = 2))))
     }
-    
-    chromosomeData <- data.frame(t(as.data.frame(lapply(gtools::mixedsort(unique(chrIds)), getChrData, 
+
+    chromosomeData <- data.frame(t(as.data.frame(lapply(gtools::mixedsort(unique(chrIds)), getChrData,
         bamSummary = bamSummary, flag = flag))), stringsAsFactors = FALSE, row.names = NULL)
     return(chromosomeData)
 }

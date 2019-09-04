@@ -16,8 +16,11 @@ vector of names
 This method will return a vector of named chromosome lengths
 }
 \examples{
-\dontrun{
-getSeqLengths(c('1','2'))
-}
+init()
+referenceFasta <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceFasta)
+getSeqLengths(getChromosomeIds())
 
 }

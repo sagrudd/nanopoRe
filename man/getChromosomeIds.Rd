@@ -13,8 +13,11 @@ vector of names
 This method will return a vector of chromsome identifiers
 }
 \examples{
-\dontrun{
-getChromosomeIds('1')
-}
+init()
+referenceFasta <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceFasta)
+getChromosomeIds()
 
 }

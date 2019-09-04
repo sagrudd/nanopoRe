@@ -16,9 +16,12 @@ DNAStringSet corresponding to pointer provided
 This method will return a DNAStringSet object from the reference genome; requires a numeric pointer to the object
 }
 \examples{
-\dontrun{
-getChromosomeSequence(1)
-}
+init()
+referenceFasta <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceFasta)
+getChromosomeSequence(getStringSetId("Escherichia_coli_chromosome"))
 
 }
 \seealso{
