@@ -30,11 +30,11 @@ This method will prepare a 5x graphical plot summarising user data with an empha
 }
 \examples{
 library(emojifont)
-infoGraphicPlot4(identifier='mappingSummary',
+infoGraphicPlot5(identifier='mappingSummary',
     panelA=c(key='Alignments', value='123456', icon='fa-sliders'),
     panelB=c(key='Mapping Yield', value='680M', icon='fa-calculator'),
     panelC=c(key='Average Accuracy', value='89.0 \%', icon='fa-area-chart'),
-    panelD=c(key='Average Identity', value='96.2 \%', icon='fa-info'),
-    panelE=c(key='Average Identity', value='96.2 \%', icon='fa-info'))
+    panelD=c(key='Average IdentityX', value='96.2 \%', icon='fa-info'),
+    panelE=c(key='Average IdentityY', value='16.2 \%', icon='fa-info'))
 
 }
