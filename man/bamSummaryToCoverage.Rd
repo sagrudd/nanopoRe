@@ -26,7 +26,13 @@ GRanges object with mean depth of coverage data in binned_cov field
 This method will return a tiled Granges object containing mean depth of coverage information
 }
 \examples{
-demoBam <- system.file("extdata", "Ecoli_zymo_R10_filt_subs.bam", package = "nanopoRe")
+demoBam <- system.file("extdata",
+    "Ecoli_zymo_R10_filt_subs.bam",
+    package = "nanopoRe")
+referenceFasta <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceFasta)
 bamGR <- bamSummaryToCoverage(demoBam)
 
 }
