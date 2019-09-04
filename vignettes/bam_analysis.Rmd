@@ -1,10 +1,10 @@
 ---
-title: "Using the nanopoRe package for review and exploration of BAM mapping information"
+title: "nanopoRe: review and exploration of BAM mapping information"
 author: "Stephen Rudd"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-    %\VignetteIndexEntry{nanopoRe}
+    %\VignetteIndexEntry{nanopoRe: review and exploration of BAM mapping information}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 ---

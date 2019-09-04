@@ -1,10 +1,10 @@
 ---
-title: "using nanopoRe package for analysis of long read DNA sequence data"
+title: "An introduction to the nanopoRe package"
 author: "Stephen Rudd"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-    %\VignetteIndexEntry{nanopoRe}
+    %\VignetteIndexEntry{An introduction to the nanopoRe package}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 ---
