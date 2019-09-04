@@ -5,7 +5,7 @@ library(emojifont)
 
 
 test_that("sequencing_summary.txt.bz2 can be parsed", {
-  seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe", mustWork = TRUE)
+  seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
   seqsum <<- importSequencingSummary(seqsumFile)
 
   expect_equal(nrow(seqsum), 10000)

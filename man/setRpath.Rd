@@ -16,8 +16,7 @@ None
 This method sets a path where default R results will be stored during an analysis
 }
 \examples{
-\dontrun{
-setRpath(file.path('Analysis', 'R'))
-}
+setRpath(file.path(tempdir(), "nanopoRe"))
+getRpath()
 
 }

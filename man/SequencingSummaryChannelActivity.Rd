@@ -18,10 +18,10 @@ ggplot2 channel activity plot
 plots the basic eye-candy gauge channel activity plot of reads against channel of origin
 }
 \examples{
-\dontrun{
-seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
+init()
+seqsumFile <- system.file("extdata",
+    "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequencingSummaryChannelActivity(seqsum)
-}
 
 }

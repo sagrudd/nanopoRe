@@ -17,10 +17,11 @@ when provided with the seqsum object from a Sequencing_summary.txt file identify
 most likely sequencing platform used
 }
 \examples{
-\dontrun{
-seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
+init()
+seqsumFile <- system.file("extdata",
+    "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
 platform <- SequencingSummaryGetPlatform(seqsum)
-}
+platform
 
 }

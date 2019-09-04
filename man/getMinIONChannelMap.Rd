@@ -13,8 +13,6 @@ data.frame with channel, row and col columns
 prepares a data.frame of channelIds and their X, Y coordinates for a MinION flowcell
 }
 \examples{
-\dontrun{
-getMinIONChannelMap()
-}
+head(getMinIONChannelMap())
 
 }

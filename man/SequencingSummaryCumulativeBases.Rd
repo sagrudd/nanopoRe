@@ -27,10 +27,10 @@ plots a ggplot2 graph of accumulated sequenced bases against time for run and se
 from passed and failed sequence reads
 }
 \examples{
-\dontrun{
-seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
+init()
+seqsumFile <- system.file("extdata",
+    "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequencingSummaryCumulativeBases(seqsum)
-}
 
 }

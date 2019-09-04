@@ -13,8 +13,7 @@ character representation of path
 This method returns the path where default R results will be stored during an analysis
 }
 \examples{
-\dontrun{
+setRpath(file.path(tempdir(), "nanopoRe"))
 getRpath()
-}
 
 }

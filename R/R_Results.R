@@ -7,9 +7,8 @@
 #' @return None
 #'
 #' @examples
-#' \dontrun{
-#' setRpath(file.path('Analysis', 'R'))
-#' }
+#' setRpath(file.path(tempdir(), "nanopoRe"))
+#' getRpath()
 #'
 #' @export
 setRpath <- function(path) {
@@ -26,9 +25,8 @@ setRpath <- function(path) {
 #' @return character representation of path
 #'
 #' @examples
-#' \dontrun{
+#' setRpath(file.path(tempdir(), "nanopoRe"))
 #' getRpath()
-#' }
 #'
 #' @export
 getRpath <- function() {
@@ -164,7 +162,7 @@ setPlotDimensions <- function(dim) {
             warning(paste0("Cannot update plot dimensions [", keys[which(!keys %in% names(dim))], "] missing"))
             return()
         }
-        
+
         if (is.numeric(dim$dpi) && is.numeric(dim$width) && is.numeric(dim$height) && is.character(dim$units)) {
             setCachedObject(objName, dim)
         } else {

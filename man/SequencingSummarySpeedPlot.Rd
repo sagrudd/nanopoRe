@@ -26,10 +26,10 @@ ggplot2 showing temporal performance
 plots a ggplot2 box-and-whisker plot for the distribution of sequencing speeds against time
 }
 \examples{
-\dontrun{
-seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
+init()
+seqsumFile <- system.file("extdata",
+    "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequencingSummarySpeedPlot(seqsum)
-}
 
 }

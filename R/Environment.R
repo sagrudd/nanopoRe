@@ -7,9 +7,8 @@
 #' @return None
 #'
 #' @examples
-#' \dontrun{
 #' init()
-#' }
+#'
 #' @export
 init <- function() {
     eval(parse(text = paste0(nanopoRe.env.name, " <<- new.env(parent=emptyenv())")))
@@ -59,18 +58,18 @@ getCachedObject <- function(objectName) {
 }
 
 
-#' Initialise the NanopoRe environment
+#' list objects that are stored within the nanopoRe working space
 #'
-#' Creates a NanopoRe environment; package specific parameters and values will be stored within this
-#' environment; the name of the environment is defined internally
+#' The nanopoRe package makes use of R environments to store data in memory, but within
+#' an internally-named environment; this method dumps out (for reasons of QC and
+#' transparency) a complete listing of these stored objects
 #'
 #' @importFrom utils ls.str
-#' @return None
+#' @return character vector of objects stored in the nanopoRe environment
 #'
 #' @examples
-#' \dontrun{
-#' init()
-#' }
+#' cachedObjects <- listCachedObjects()
+#'
 #' @export
 listCachedObjects <- function() {
     ls.str(get(getEnvironment()))

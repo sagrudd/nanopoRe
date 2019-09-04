@@ -8,9 +8,8 @@
 #' @return character representation of md5sum
 #'
 #' @examples
-#' \dontrun{
-#' md5sum(file.path('DESCRIPTION'))
-#' }
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
+#' md5sum(seqsumFile)
 #'
 #' @export
 md5sum <- function(filename) {

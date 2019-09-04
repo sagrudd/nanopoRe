@@ -26,10 +26,10 @@ ggplot2 showing temporal performance
 plots a ggplot2 graph of performance against time for run and separates passed and failed sequence reads
 }
 \examples{
-\dontrun{
-seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
+init()
+seqsumFile <- system.file("extdata",
+    "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
 plot <- SequencingSummaryTemporalThroughput(seqsum)
-}
 
 }

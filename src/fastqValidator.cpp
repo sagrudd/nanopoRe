@@ -435,7 +435,7 @@ std::string fixFastq(std::string fastq, std::string newfastq)
 
 
     if (is_gzipped(dest_filename)==1) {
-      Rcout << "closing gz dest" << std::endl;
+      //Rcout << "closing gz dest" << std::endl;
       gzclose(gzDestfile);
     }
     else

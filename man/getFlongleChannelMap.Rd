@@ -13,8 +13,6 @@ data.frame with channel, row and col columns
 prepares a data.frame of channelIds and their X, Y coordinates for a flongle flowcell
 }
 \examples{
-\dontrun{
-getFlongleChannelMap()
-}
+head(getFlongleChannelMap())
 
 }

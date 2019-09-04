@@ -11,13 +11,14 @@
 #' @return vector of observations
 #'
 #' @examples
-#' \dontrun{
-#' fastqCheckup(input_fastq)
-#' }
+#' fastqFile <- system.file("extdata", "example.fastq.gz", package = "nanopoRe")
+#' fqcheck <- fastqCheckup(input_fastq)
+#' names(fqcheck)
+#' fqcheck[['reads']]
 #'
 #' @export
 fastqCheckup <- function(input_fastq, force = FALSE) {
-    fileResults <- file.path(getRpath(), paste0(sub("\\.[^.]*$", "", basename(input_fastq)), ".sanityfq", 
+    fileResults <- file.path(getRpath(), paste0(sub("\\.[^.]*$", "", basename(input_fastq)), ".sanityfq",
         ".Rdata"))
     if (file.exists(fileResults) & !force) {
         return(readRDS(file = fileResults))
@@ -27,14 +28,14 @@ fastqCheckup <- function(input_fastq, force = FALSE) {
         saveRDS(FALSE, file = fileResults)
         return(FALSE)
     }
-    
+
     bases <- gdata::humanReadable(getFastqBases(), standard = "SI")
     bases <- gsub("GB", "Gbases", bases)
     bases <- gsub("MB", "Mbases", bases)
     bases <- gsub("kB", "kbases", bases)
-    
-    fileinfo <- c(filename = basename(input_fastq), checksum = md5sum(input_fastq), reads = (scales::comma_format())(getFastqCount()), 
-        bases = bases, size = gdata::humanReadable(file.info(input_fastq)$size), nt = getFastqBases(), 
+
+    fileinfo <- c(filename = basename(input_fastq), checksum = md5sum(input_fastq), reads = (scales::comma_format())(getFastqCount()),
+        bases = bases, size = gdata::humanReadable(file.info(input_fastq)$size), nt = getFastqBases(),
         n = getFastqCount())
     saveRDS(fileinfo, file = fileResults)
     return(fileinfo)

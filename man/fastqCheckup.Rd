@@ -18,8 +18,9 @@ vector of observations
 This method will prepare summary statistics on a fastq file and cache results (assuming immutable nature)
 }
 \examples{
-\dontrun{
-fastqCheckup(input_fastq)
-}
+fastqFile <- system.file("extdata", "example.fastq.gz", package = "nanopoRe")
+fqcheck <- fastqCheckup(input_fastq)
+names(fqcheck)
+fqcheck[['reads']]
 
 }

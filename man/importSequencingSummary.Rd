@@ -18,9 +18,9 @@ memory and performs basic sanity checking to ensure that the file
 is cleaned of potential duplicate headers from aggregation
 }
 \examples{
-\dontrun{
-seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
+init()
+seqsumFile <- system.file("extdata",
+    "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
-}
 
 }
