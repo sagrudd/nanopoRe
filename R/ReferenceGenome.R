@@ -159,6 +159,32 @@ getChromosomeSequence <- function(dnaStringSetId) {
 }
 
 
+#' returns a GRanges object corresponding to the currently loaded refgenome
+#'
+#' This method will return a DNAStringSet object from the reference genome;
+#' requires a numeric pointer to the object
+#'
+#' @return DNAStringSet corresponding to pointer provided
+#'
+#' @examples
+#' referenceFasta <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceFasta)
+#' getReferenceGenomeGR()
+#'
+#' @export
+getReferenceGenomeGR <- function() {
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) &&
+        exists("referenceGenomeSequence", envir = get(getEnvironment())))) {
+            loadReferenceGenome()
+    }
+    referenceGenome <- get("referenceGenome", envir = get(getEnvironment()))
+    referenceGenomeSequence <- get("referenceGenomeSequence", envir = get(getEnvironment()))
+    return(GRanges(seqnames=referenceGenome[,1],
+        IRanges(start=1, end=width(referenceGenomeSequence)[referenceGenome[,2]])))
+}
+
 
 
 #' get chromosome identifiers from reference genome
@@ -202,7 +228,7 @@ getChromosomeIds <- function() {
 #'
 #' @export
 getSeqLengths <- function(x) {
-    if (!(exists("referenceGenome", envir = get(getEnvironment())) & exists("referenceGenomeSequence",
+    if (!(exists("referenceGenome", envir = get(getEnvironment())) && exists("referenceGenomeSequence",
         envir = get(getEnvironment())))) {
         loadReferenceGenome()
     }

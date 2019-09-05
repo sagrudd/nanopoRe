@@ -4,10 +4,10 @@
 \alias{sourceCas9Parameters}
 \title{import the cas9 parameters from YAML file}
 \usage{
-sourceCas9Parameters(yaml)
+sourceCas9Parameters(yamlFile)
 }
 \arguments{
-\item{yaml}{is a yaml object as prepared by loading from file}
+\item{yamlFile}{is a path to a stored YAML config file}
 }
 \value{
 None
@@ -16,8 +16,8 @@ None
 import the cas9 parameters from YAML file
 }
 \examples{
-\dontrun{
-myYaml <- yaml.load_file('config.yaml')
-sourceCas9Parameters(myYaml)
-}
+init()
+yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
+sourceCas9Parameters(yamlFile)
+
 }

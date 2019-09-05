@@ -4,7 +4,10 @@
 \alias{cas9OffTargetTable}
 \title{prepare a table of cas9 off-target mapping locations}
 \usage{
-cas9OffTargetTable()
+cas9OffTargetTable(maxRows = 10)
+}
+\arguments{
+\item{maxRows}{the maximum number of rows to display in the table}
 }
 \value{
 table table

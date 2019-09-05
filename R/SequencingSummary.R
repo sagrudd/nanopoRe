@@ -8,7 +8,8 @@
 #' @importFrom R.utils bunzip2
 #' @importFrom R.utils gunzip
 #' @param seqsum is a path to a file
-#' @return data.frame of observations from the sequencing_summary.txt file provided
+#' @return data.frame of observations from the sequencing_summary.txt file
+#' provided
 #'
 #' @examples
 #' init()
@@ -18,7 +19,8 @@
 #'
 #' @export
 importSequencingSummary <- function(seqsum) {
-    # downsample performed with cat lambda_sequencing_summary.txt | awk ' BEGIN {srand()} {print rand()
+    # downsample performed with cat lambda_sequencing_summary.txt |
+    # awk ' BEGIN {srand()} {print rand()
     # ' ' $0}' | sort | head -5 | sed 's/[^ ]* //'
     seqsumdata <- data.table::fread(seqsum, stringsAsFactors = FALSE)
 
@@ -32,10 +34,13 @@ importSequencingSummary <- function(seqsum) {
     seqsumdata$start_time <- as.numeric(seqsumdata$start_time)
     seqsumdata$duration <- as.numeric(seqsumdata$duration)
     seqsumdata$num_events <- as.numeric(seqsumdata$num_events)
-    seqsumdata$sequence_length_template <- as.numeric(seqsumdata$sequence_length_template)
-    seqsumdata$mean_qscore_template <- as.numeric(seqsumdata$mean_qscore_template)
+    seqsumdata$sequence_length_template <-
+        as.numeric(seqsumdata$sequence_length_template)
+    seqsumdata$mean_qscore_template <-
+        as.numeric(seqsumdata$mean_qscore_template)
 
-    # passes_filtering is a useful flag; but there are examples of sequencing_summary.txt where this is
+    # passes_filtering is a useful flag; but there are examples of
+    # sequencing_summary.txt where this is
     # not present -
     # https://github.com/a-slide/pycoQC/blob/master/pycoQC/data/sequencing_summary_1D_DNA_Albacore_1.2.1.txt
     if (!"passes_filtering" %in% colnames(seqsumdata)) {
@@ -77,14 +82,18 @@ SequencingSummaryPassGauge <- function(seqsum = NA) {
 
     names(df) <- c("variable", "percentage", "label")
     df$variable <- c("pass")
-    df$percentage <- c(round(length(which(seqsum$passes_filtering == TRUE))/nrow(seqsum), 3))
+    df$percentage <- c(round(
+        length(which(seqsum$passes_filtering == TRUE))/nrow(seqsum), 3))
 
-    df <- df %>% dplyr::mutate(group = ifelse(df$percentage < 0.6, "red", ifelse(df$percentage >= 0.6 &
-        df$percentage < 0.8, "orange", "green")), label = paste0(df$percentage * 100, "%"))
+    df <- df %>% dplyr::mutate(
+        group = ifelse(df$percentage < 0.6, "red", ifelse(df$percentage >= 0.6 &
+        df$percentage < 0.8, "orange", "green")),
+        label = paste0(df$percentage * 100, "%"))
 
     title = "Percentage of reads\npassing QC filter"
 
-    gaugePlot <- ggplot(df, aes_string(fill = "group", ymax = "percentage", ymin = 0, xmax = 2, xmin = 1)) +
+    gaugePlot <- ggplot(
+        df, aes_string(fill = "group", ymax = "percentage", ymin = 0, xmax = 2, xmin = 1)) +
         geom_rect(aes(ymax = 1, ymin = 0, xmax = 2, xmin = 1), fill = "#ece8bd") + geom_rect() + coord_polar(theta = "y",
         start = -pi/2) + xlim(c(0, 2)) + ylim(c(0, 2)) + guides(fill = FALSE) + guides(colour = FALSE) +
         theme_void() + theme(strip.background = element_blank(), strip.text.x = element_blank()) + geom_text(aes_string(x = 0,
@@ -102,7 +111,8 @@ SequencingSummaryPassGauge <- function(seqsum = NA) {
 
 #' prepare a channel activity plot from sequencing_summary reads file
 #'
-#' plots the basic eye-candy gauge channel activity plot of reads against channel of origin
+#' plots the basic eye-candy gauge channel activity plot of reads against
+#' channel of origin
 #'
 #' @importFrom reshape2 acast
 #' @importFrom grDevices colorRamp colorRampPalette
@@ -128,15 +138,19 @@ SequencingSummaryChannelActivity <- function(seqsum = NA, platform = NA) {
 
     channelMap <- SequencingSummaryGetChannelMap(platform)
 
-    hm.palette <- colorRampPalette(brewer.pal(9, "Blues"), space = "Lab")  #RdPu, Oranges, Greens, YlOrRd, Purples
+    hm.palette <- colorRampPalette(brewer.pal(9, "Blues"), space = "Lab")
+    #RdPu, Oranges, Greens, YlOrRd, Purples
 
-    channelCounts <- as.data.frame(matrix(rep(0, max(channelMap$channel)), ncol = 1))
-    channelCountRaw <- as.data.frame(table(unlist(seqsum[, "channel"])), row.names = 1)
+    channelCounts <-
+        as.data.frame(matrix(rep(0, max(channelMap$channel)), ncol = 1))
+    channelCountRaw <-
+        as.data.frame(table(unlist(seqsum[, "channel"])), row.names = 1)
     channelCounts[row.names(channelCountRaw), ] <- channelCountRaw[, 1]
 
     channelMap <- merge(channelMap, channelCounts, by.x = "channel", by.y = 0)
     colnames(channelMap)[4] <- "count"
-    channelMapMatrix <- reshape2::acast(channelMap, col ~ row, value.var = "count")
+    channelMapMatrix <-
+        reshape2::acast(channelMap, col ~ row, value.var = "count")
 
     theme_update(plot.title = element_text(hjust = 0.5))
 
@@ -155,7 +169,8 @@ SequencingSummaryChannelActivity <- function(seqsum = NA, platform = NA) {
 
 #' identify the most likely sequencing platform used to create the summary data
 #'
-#' when provided with the seqsum object from a Sequencing_summary.txt file identify the
+#' when provided with the seqsum object from a Sequencing_summary.txt file
+#' identify the
 #' most likely sequencing platform used
 #'
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary

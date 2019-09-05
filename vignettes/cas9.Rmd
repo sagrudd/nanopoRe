@@ -1,0 +1,117 @@
+---
+title: "nanopoRe: analysis of enrichment performance from targeted sequencing studies"
+author: "Stephen Rudd"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+    %\VignetteIndexEntry{nanopoRe: analysis of enrichment performance from targeted sequencing studies}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>"
+)
+library(nanopoRe)
+library(knitr)
+library(emojifont)
+library(GenomicRanges)
+init()
+setOutputFormat("file")
+```
+
+## Parsing of configuration file
+
+The cas9-mediated target enrichment workflow is configured by a YAML format file that provides paths to the required files, and parameters specific to the workflow. The YAML file should be loaded and evaluated
+
+```{r loadFile}
+yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
+sourceCas9Parameters(yamlFile)
+```
+
+Since we are operating within a vignette - or out of the expected CONDA/Snakemake environment a manual update for a couple of fields makes sense
+
+```{r, results='hide'}
+bamFile <- system.file("extdata", "cas9_FAK76554.bam", package = "nanopoRe")
+unmappedQ <- system.file("extdata", "cas9_FAK76554.unmapped.quals", package = "nanopoRe")
+referenceGenome <- system.file("extdata", "cas9_demo_ref.fasta", package = "nanopoRe")
+bedTargets <- system.file("extdata", "cas9_demo_target.bed", package = "nanopoRe")
+
+setCas9ParameterValue("reference_genome", referenceGenome)
+setCas9ParameterValue("target_regions", bedTargets)
+addCas9ParameterValue("bam_file", bamFile)
+addCas9ParameterValue("unmapped_quals", unmappedQ)
+```
+
+```{r}
+cas9ParametersToYAML("Kable")
+```
+
+Our ducks should now be lined up for further analysis and exploration ...
+
+Ensure that the enrichment analysis has been run
+
+```{r, results='hide'}
+RunEnrichmentAnalysis()
+```
+
+This can also be validated with the **`is_casDataRun()`** command
+
+```{r}
+is_casDataRun()
+```
+
+
+```{r}
+importCas9TutorialData()
+```
+
+
+```{r}
+include_graphics( cas9ExecutiveSummary() )
+```
+
+```{r}
+cas9MappingByGenomicSegment()
+```
+
+```{r}
+cas9TargetPerformanceTable()
+```
+
+```{r}
+cas9WriteExcelOnTarget()
+```
+
+```{r}
+targets <- cas9GetTargetList()
+include_graphics( cas9SingleTargetPlot(targets[[1]]) )
+```
+
+```{r}
+include_graphics( cas9StrandedTargetPlot(targets[[1]]) )
+```
+
+
+```{r}
+include_graphics( cas9MultiGeneCoveragePanel() )
+```
+
+```{r}
+include_graphics( cas9CoverageTypeOverChromosomes() )
+```
+
+
+```{r}
+include_graphics( cas9OffTargetKaryogram() )
+```
+
+```{r}
+cas9OffTargetTable()
+```
+
+```{r}
+cas9WriteExcelOffTarget()
+```

@@ -1,7 +1,8 @@
 
 #' set path for R results
 #'
-#' This method sets a path where default R results will be stored during an analysis
+#' This method sets a path where default R results will be stored during an
+#' analysis
 #'
 #' @param path is the location to the directory for storing results
 #' @return None
@@ -20,7 +21,8 @@ setRpath <- function(path) {
 
 #' get path for R results
 #'
-#' This method returns the path where default R results will be stored during an analysis
+#' This method returns the path where default R results will be stored
+#' during an analysis
 #'
 #' @return character representation of path
 #'
@@ -74,7 +76,8 @@ setOutputFormat <- function(gg2out) {
     if (gg2out %in% listOutputFormat()) {
         setCachedObject(objName, gg2out)
     } else {
-        warning(paste0(gg2out, "is not a valid outputformat - see listOutputFormat()"))
+        warning(paste0(gg2out,
+            "is not a valid outputformat - see listOutputFormat()"))
     }
 }
 
@@ -99,7 +102,9 @@ listOutputFormat <- function() {
 ggplot2save <- function(plot) {
     dim <- getPlotDimensions()
     dest <- tempfile(pattern = "", tmpdir = getRpath(), fileext = ".png")
-    ggplot2::ggsave(dest, plot = plot, width = dim$width, height = dim$height, units = dim$units, dpi = dim$dpi)
+    ggplot2::ggsave(
+        dest, plot = plot, width = dim$width, height = dim$height,
+        units = dim$units, dpi = dim$dpi)
     return(dest)
 }
 
@@ -114,14 +119,17 @@ ggplot2handler <- function(plot) {
     } else if (getOutputFormat() == "jupyter") {
         return(IRdisplay::display_png(file = ggplot2save(plot)))
     }
-    message(paste0("ggplot2 output format { ", getOutputFormat(), "} not known - returning *raw*\n"))
+    message(paste0(
+        "ggplot2 output format { ",
+        getOutputFormat(), "} not known - returning *raw*\n"))
     return(plot)
 }
 
 
 #' return defined dimensions for an allowed ggplot2 object
 #'
-#' This method presents the list with the defined metrics for a ggplot2 presentation
+#' This method presents the list with the defined metrics for a
+#' ggplot2 presentation
 #'
 #' @return list defining dpi, width, height and units
 #'
@@ -141,7 +149,8 @@ getPlotDimensions <- function() {
 
 #' set dimension definitions for an allowed ggplot2 object
 #'
-#' This method sets and stores the list with the defined metrics for a ggplot2 presentation
+#' This method sets and stores the list with the defined metrics for a
+#' ggplot2 presentation
 #'
 #' @param dim list of properties
 #' @return list defining dpi, width, height and units
@@ -159,14 +168,18 @@ setPlotDimensions <- function(dim) {
             dim[which(!names(dim) %in% keys)] <- NULL
         }
         if (length(which(!keys %in% names(dim))) > 0) {
-            warning(paste0("Cannot update plot dimensions [", keys[which(!keys %in% names(dim))], "] missing"))
+            warning(paste0(
+                "Cannot update plot dimensions [",
+                keys[which(!keys %in% names(dim))], "] missing"))
             return()
         }
 
-        if (is.numeric(dim$dpi) && is.numeric(dim$width) && is.numeric(dim$height) && is.character(dim$units)) {
+        if (is.numeric(dim$dpi) && is.numeric(dim$width) &&
+            is.numeric(dim$height) && is.character(dim$units)) {
             setCachedObject(objName, dim)
         } else {
-            warning(paste0("Cannot update plot dimensions - ", "one or more keys of wrong type"))
+            warning(paste0("Cannot update plot dimensions - ",
+                "one or more keys of wrong type"))
         }
     }
 }
