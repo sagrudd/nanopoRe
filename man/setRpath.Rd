@@ -13,7 +13,8 @@ setRpath(path)
 None
 }
 \description{
-This method sets a path where default R results will be stored during an analysis
+This method sets a path where default R results will be stored during an
+analysis
 }
 \examples{
 setRpath(file.path(tempdir(), "nanopoRe"))

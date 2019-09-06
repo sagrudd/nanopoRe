@@ -10,7 +10,8 @@ getRpath()
 character representation of path
 }
 \description{
-This method returns the path where default R results will be stored during an analysis
+This method returns the path where default R results will be stored
+during an analysis
 }
 \examples{
 setRpath(file.path(tempdir(), "nanopoRe"))

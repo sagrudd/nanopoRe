@@ -2,6 +2,19 @@
 \title{nanopoRe NEWS}
 \encoding{UTF-8}
 
+\section{Version 0.2.10}{\itemize{
+\item inclusion of functional vignettes for Cas9 and BasicQC
+\item Cas9 BAM parsing moved into the package - crazy dependencies solved
+\item removed a load more warnings and updated method documentation examples
+}}
+
+
+\section{Version 0.2.9}{\itemize{
+\item Conda release
+\item fewer BiocCheck warnings and notes
+\item ongoing method documentation
+}}
+
 \section{Version 0.2.8}{\itemize{
 \item functionality to support new ont_tutorial_sv structural variation tutorial
 \item some exploration with Jupyter interactions (IRdisplay dependency)

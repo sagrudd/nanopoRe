@@ -13,7 +13,8 @@ SequencingSummaryGetPlatform(seqsum = NA)
 platform is the nanopore platform [MinION/Flongle/PromethION]
 }
 \description{
-when provided with the seqsum object from a Sequencing_summary.txt file identify the
+when provided with the seqsum object from a Sequencing_summary.txt file
+identify the
 most likely sequencing platform used
 }
 \examples{

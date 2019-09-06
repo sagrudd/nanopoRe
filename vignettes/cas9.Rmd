@@ -34,8 +34,8 @@ sourceCas9Parameters(yamlFile)
 Since we are operating within a vignette - or out of the expected CONDA/Snakemake environment a manual update for a couple of fields makes sense
 
 ```{r, results='hide'}
-bamFile <- system.file("extdata", "cas9_FAK76554.bam", package = "nanopoRe")
 unmappedQ <- system.file("extdata", "cas9_FAK76554.unmapped.quals", package = "nanopoRe")
+bamFile <- system.file("extdata", "cas9_FAK76554.bam", package = "nanopoRe")
 referenceGenome <- system.file("extdata", "cas9_demo_ref.fasta", package = "nanopoRe")
 bedTargets <- system.file("extdata", "cas9_demo_target.bed", package = "nanopoRe")
 

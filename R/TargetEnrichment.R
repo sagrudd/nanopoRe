@@ -7,16 +7,28 @@
 #'
 #' @param force defines whether a reanalysis of the data should be forced
 #' if results already existing
+#' @param ... - who knows - I'm using this for mc.cores
 #' @return TRUE or FALSE depending
 #'
 #' @examples
 #' yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
 #' sourceCas9Parameters(yamlFile)
 #' is_casDataRun()
-#' RunEnrichmentAnalysis()
+#' # this is a header to a document - not a live Snakemake workspace - demo
+#' # how to actually run ad-hoc the code
+#' bamFile <- system.file("extdata", "cas9_FAK76554.bam", package = "nanopoRe")
+#' referenceGenome <- system.file("extdata", "cas9_demo_ref.fasta", package = "nanopoRe")
+#' bedTargets <- system.file("extdata", "cas9_demo_target.bed", package = "nanopoRe")
+#' unmappedQ <- system.file("extdata", "cas9_FAK76554.unmapped.quals", package = "nanopoRe")
+#' setCas9ParameterValue("reference_genome", referenceGenome)
+#' setCas9ParameterValue("target_regions", bedTargets)
+#' addCas9ParameterValue("bam_file", bamFile)
+#' addCas9ParameterValue("unmapped_quals", unmappedQ)
+#' # lines between the previous comment and here are typically not required
+#' RunEnrichmentAnalysis(mc.cores=1)
 #'
 #' @export
-RunEnrichmentAnalysis <- function(force=FALSE) {
+RunEnrichmentAnalysis <- function(force=FALSE, ...) {
 
     if (!is_casDataRun() || force) {
         message(paste0("loading reference genome: ",
@@ -46,25 +58,24 @@ RunEnrichmentAnalysis <- function(force=FALSE) {
             getCas9ParameterValue("gstride"),
             getCas9ParameterValue("offtarget_level"))
         message(paste0("preparing mapping characteristics", "\n"))
-        mapUniverseTypes()
+        mapUniverseTypes(...)
 
         dir.create(file.path(getRpath(), "..", "OnTarget"), showWarnings = FALSE, recursive=TRUE)
-        aggregatedOntarget()
+        aggregatedOntarget(...)
 
         dir.create(file.path(getRpath(), "..", "OffTarget"), showWarnings = FALSE, recursive=TRUE)
-        aggregatedOfftarget()
+        aggregatedOfftarget(...)
     }
 
 }
 
 
-
-aggregatedOntarget <- function() {
+aggregatedOntarget <- function(mc.cores=min(parallel::detectCores()-1, max_threads)) {
     message(paste0("scoring data per target region", "\n"))
     ontargetUniverse <- get("ontargetUniverse", envir = getCachedObject("GRanges"))
     max_threads <- getCas9ParameterValue("threads")
     suppressWarnings({
-        aggregatedCov <- dplyr::bind_rows(pbmclapply(seq_along(ontargetUniverse), aggregateDepthInfo, xr=ontargetUniverse, ontarget=TRUE, mc.cores=min(detectCores()-1, max_threads)), .id = "column_label")
+        aggregatedCov <- dplyr::bind_rows(pbmclapply(seq_along(ontargetUniverse), aggregateDepthInfo, xr=ontargetUniverse, ontarget=TRUE, mc.cores=mc.cores), .id = "column_label")
         aggregatedCovFile <- file.path(getRpath(), paste0(getCas9ParameterValue("study_name"), "_aggregated_coverage", ".Rdata"))
         aggregatedGR <- GenomicRanges::makeGRangesFromDataFrame(aggregatedCov[,-1], keep.extra.columns = TRUE)
         save(aggregatedGR, file=aggregatedCovFile)
@@ -72,12 +83,12 @@ aggregatedOntarget <- function() {
 }
 
 
-aggregatedOfftarget <- function() {
+aggregatedOfftarget <- function(mc.cores=min(parallel::detectCores()-1, max_threads)) {
     message(paste0("parsing off-target/background coverage - please be patient ...", "\n"))
     offtargetUniverse <- get("offtargetUniverse", envir = getCachedObject("GRanges"))
     max_threads <- getCas9ParameterValue("threads")
     suppressWarnings({
-        offtCov <- pbmclapply(seq_along(offtargetUniverse), aggregateDepthInfo, xr=offtargetUniverse, geneId="OffTarget", mc.cores=min(detectCores()-1,max_threads))
+        offtCov <- pbmclapply(seq_along(offtargetUniverse), aggregateDepthInfo, xr=offtargetUniverse, geneId="OffTarget", mc.cores=mc.cores)
         aggregatedOff <- dplyr::bind_rows(offtCov, .id = "column_label")
         aggregatedOffFile <- file.path(getRpath(), paste0(getCas9ParameterValue("study_name"), "_aggregated_offt_coverage", ".Rdata"))
         save(aggregatedOff, file=aggregatedOffFile)
@@ -95,41 +106,35 @@ aggregateDepthInfo <- function(x, xr, ontarget=FALSE, geneId=NA) {
     proximalRegion <- targetRegion
     target_proximity <- getCas9ParameterValue("target_proximity")
     if (ontarget) {
-        start(proximalRegion) <- max(start(proximalRegion) - target_proximity, 1)
-        end(proximalRegion) <- end(proximalRegion) + target_proximity
+        start(proximalRegion) <- max(IRanges::start(proximalRegion) - target_proximity, 1)
+        end(proximalRegion) <- IRanges::end(proximalRegion) + target_proximity
     }
     if (is.na(geneId)) {
         geneId <- names(targetRegion)
     }
-    if (geneId != "OffTarget") {
-        cat(paste0("geneId:", geneId, "\n"))
-    }
     wga <- get("wga", envir = getCachedObject("GRanges"))
-    referenceGenome <- get("referenceGenome", envir = get(nanopoRe:::getEnvironment()))
-    referenceGenomeSequence <- get("referenceGenomeSequence", envir = get(nanopoRe:::getEnvironment()))
-
+    referenceGenome <- get("referenceGenome", envir = get(getEnvironment()))
+    referenceGenomeSequence <- get("referenceGenomeSequence", envir = get(getEnvironment()))
     c0 <- wga[seqnames(wga)==as.character(seqnames(targetRegion))]
     c1 <- c0[S4Vectors::subjectHits(GenomicRanges::findOverlaps(proximalRegion, GenomicRanges::granges(c0)))]
     c2 <- c0[S4Vectors::subjectHits(GenomicRanges::findOverlaps(targetRegion, GenomicRanges::granges(c0)))]
     seqlevels(c1) <- unique(as.character(seqnames(c1)))
     seqnames(c1) <- factor(seqnames(c1))
-    cov <- GenomicAlignments::coverage(c1, shift=-start(proximalRegion), width=width(proximalRegion))
-
-    seqlen <- width(proximalRegion)
+    cov <- GenomicAlignments::coverage(c1, shift=-IRanges::start(proximalRegion), width=IRanges::width(proximalRegion))
+    seqlen <- IRanges::width(proximalRegion)
     names(seqlen)<-as.character(seqnames(targetRegion))
     bins <- GenomicRanges::tileGenome(seqlengths=seqlen, tilewidth=10, cut.last.tile.in.chrom=TRUE)
     ba <- binnedAverage(bins, cov, "binned_cov")
-    slen <- width(referenceGenomeSequence[getStringSetId(unique(seqnames(ba)))])
+    slen <- IRanges::width(referenceGenomeSequence[getStringSetId(unique(seqnames(ba)))])
     names(slen) <- unique(seqnames(ba))
     seqlengths(ba) <- slen
-
-    ba$pos <- start(ba)
-    end(ba) <- end(ba)+start(targetRegion)
-    start(ba) <- start(ba)+start(targetRegion)
+    ba$pos <- IRanges::start(ba)
+    IRanges::end(ba) <- IRanges::end(ba)+IRanges::start(targetRegion)
+    IRanges::start(ba) <- IRanges::start(ba)+IRanges::start(targetRegion)
     ba$gene <- geneId
 
     # calculate the coverage of reads on fwd strand for directionality plotting
-    fcov <- GenomicAlignments::coverage(c1[which(as.character(strand(c1))=="+")], shift=-start(proximalRegion), width=width(proximalRegion))
+    fcov <- GenomicAlignments::coverage(c1[which(as.character(strand(c1))=="+")], shift=-IRanges::start(proximalRegion), width=IRanges::width(proximalRegion))
     ba$fwd_cov <- mcols(binnedAverage(bins, fcov, "fwd_cov"))$fwd_cov
     # write the target sequences to file ...
     if (ontarget) {
@@ -145,18 +150,18 @@ aggregateDepthInfo <- function(x, xr, ontarget=FALSE, geneId=NA) {
 
 
 
-mapUniverseTypes <- function() {
+mapUniverseTypes <- function(...) {
     message(paste0("background", "\n"))
-    backgroundUniverse <- bamMineUniverse(get("backgroundUniverse", envir = getCachedObject("GRanges")))
+    backgroundUniverse <- bamMineUniverse(get("backgroundUniverse", envir = getCachedObject("GRanges")), ...)
     message(paste0("offtarget", "\n"))
-    offtargetUniverse <- bamMineUniverse(get("offtargetUniverse", envir = getCachedObject("GRanges")))
+    offtargetUniverse <- bamMineUniverse(get("offtargetUniverse", envir = getCachedObject("GRanges")), ...)
     message(paste0("ontarget", "\n"))
-    ontargetUniverse <-bamMineUniverse(get("ontargetUniverse", envir = getCachedObject("GRanges")))
+    ontargetUniverse <-bamMineUniverse(get("ontargetUniverse", envir = getCachedObject("GRanges")), ...)
     message(paste0("target proximal", "\n"))
-    targetproximalUniverse <-bamMineUniverse(get("targetproximalUniverse", envir = getCachedObject("GRanges")))
+    targetproximalUniverse <-bamMineUniverse(get("targetproximalUniverse", envir = getCachedObject("GRanges")), ...)
 
-    br <- get("br", envir = nanopoRe:::getCachedObject("GRanges"))
-    wga.cov <- get("wga.cov", envir = nanopoRe:::getCachedObject("GRanges"))
+    br <- get("br", envir = getCachedObject("GRanges"))
+    wga.cov <- get("wga.cov", envir = getCachedObject("GRanges"))
 
     mappingResultsFile <- file.path(getRpath(), paste0(getCas9ParameterValue("study_name"), "_mapping_results", ".Rdata"))
     message(paste0("writing result to:", mappingResultsFile))
@@ -177,13 +182,13 @@ parseEnrichmentBam <- function(mappedBam, gstride, offtarget_level) {
         exists("referenceGenomeSequence", envir = get(getEnvironment())))) {
             loadReferenceGenome()
     }
-    referenceGenome <- get("referenceGenome", envir = get(nanopoRe:::getEnvironment()))
-    referenceGenomeSequence <- get("referenceGenomeSequence", envir = get(nanopoRe:::getEnvironment()))
+    referenceGenome <- get("referenceGenome", envir = get(getEnvironment()))
+    referenceGenomeSequence <- get("referenceGenomeSequence", envir = get(getEnvironment()))
 
     # set GRanges sequence lengths
-    gr <- get("gr", envir = nanopoRe:::getCachedObject("GRanges"))
-    br <- get("br", envir = nanopoRe:::getCachedObject("GRanges"))
-    fr <- get("fr", envir = nanopoRe:::getCachedObject("GRanges"))
+    gr <- get("gr", envir = getCachedObject("GRanges"))
+    br <- get("br", envir = getCachedObject("GRanges"))
+    fr <- get("fr", envir = getCachedObject("GRanges"))
     seqlengths(gr) <- width(
         referenceGenomeSequence[getStringSetId(names(seqlengths(gr)))])
 
@@ -221,10 +226,11 @@ parseEnrichmentBam <- function(mappedBam, gstride, offtarget_level) {
 
 
 #' @importFrom stats end
+#' @importFrom XVector subseq
 getStartStrand <- function(x, gdata) {
     wga <- get("wga", envir = getCachedObject("GRanges"))
-    referenceGenome <- get("referenceGenome", envir = get(nanopoRe:::getEnvironment()))
-    referenceGenomeSequence <- get("referenceGenomeSequence", envir = get(nanopoRe:::getEnvironment()))
+    referenceGenome <- get("referenceGenome", envir = get(getEnvironment()))
+    referenceGenomeSequence <- get("referenceGenomeSequence", envir = get(getEnvironment()))
     nd <- gdata[x]
     # how to perform a fast reduction on data size - filter by chromosome
     c0 <- wga[seqnames(wga)==as.character(seqnames(nd))]
@@ -240,7 +246,12 @@ getStartStrand <- function(x, gdata) {
     depths <- rep(as.integer(unlist(S4Vectors::runValue(cov))), as.integer(unlist(S4Vectors::runLength(cov))))
 
     qdata <- quantile(depths)
-    lf <- Biostrings::letterFrequency(Biostrings::subseq(referenceGenomeSequence[[getStringSetId(seqnames(nd))]], start(nd), end(nd)), c("G", "C", "N"))
+    seqnm <- as.character(seqnames(nd))
+    seqnmssid <- getStringSetId(seqnm)
+    seqnmseq <- referenceGenomeSequence[[seqnmssid]]
+
+    bss <- XVector::subseq(seqnmseq, start=IRanges::start(nd), end=IRanges::end(nd))
+    lf <- Biostrings::letterFrequency(bss, c("G", "C", "N"))
     rstart <- length(c2)                                       # this is equiv. to earlier readStarts
     basesstart <- sum(GenomicAlignments::qwidth(c2))                              # earlier basesReadsStarted
     meanreadlen <- mean(GenomicAlignments::qwidth(c1))                            # see previous *readLen* - now mean for *any* overlapping read
@@ -249,7 +260,6 @@ getStartStrand <- function(x, gdata) {
     strandn <- length(which(as.character(GenomicAlignments::strand(c1))=="-"))
     gccount <- lf[1]+lf[2]
     ncount <- lf[3]
-
     # discussion with Olle on how Qvalues are best summarised and prepared ... ShortRead alphabetScore is not ideal
     # while alphabetScore(mcols(c2)$qual) / width(mcols(c2)$qual)) gives a number this is not scaled appropriately
     mapq <- phredmean(mcols(c2)$mapq)
@@ -271,12 +281,11 @@ getStartStrand <- function(x, gdata) {
 }
 
 
-
-bamMineUniverse <- function(universe) {
+bamMineUniverse <- function(universe, mc.cores=min(parallel::detectCores()-1, max_threads)) {
 
     max_threads <- getCas9ParameterValue("threads")
 
-    startStrand <-matrix(unlist(pbmclapply(seq_along(seqnames(universe)), getStartStrand, gdata=universe, mc.cores=min(detectCores()-1, max_threads))), ncol=22, byrow=TRUE)
+    startStrand <-matrix(unlist(pbmclapply(seq_along(seqnames(universe)), getStartStrand, gdata=universe, mc.cores=mc.cores)), ncol=22, byrow=TRUE)
     universe$rstart <- startStrand[,1]
     universe$basesstart <- startStrand[,2]
     universe$meanreadlen <- startStrand[,3]

@@ -15,7 +15,8 @@ SequencingSummaryChannelActivity(seqsum = NA, platform = NA)
 ggplot2 channel activity plot
 }
 \description{
-plots the basic eye-candy gauge channel activity plot of reads against channel of origin
+plots the basic eye-candy gauge channel activity plot of reads against
+channel of origin
 }
 \examples{
 init()

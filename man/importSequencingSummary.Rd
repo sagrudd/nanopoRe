@@ -10,7 +10,8 @@ importSequencingSummary(seqsum)
 \item{seqsum}{is a path to a file}
 }
 \value{
-data.frame of observations from the sequencing_summary.txt file provided
+data.frame of observations from the sequencing_summary.txt file
+provided
 }
 \description{
 importSequencingSummary loads a sequencing_summary.txt file into

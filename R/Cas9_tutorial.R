@@ -15,6 +15,10 @@
 #' @export
 importCas9TutorialData <- function() {
 
+    # target 1 : <study>_mapping_results.Rdata
+    # target 2 : <study>_aggregated_coverage.Rdata
+    # target 3 : <study>.unmapped.rcounts.Rdata
+
     referenceGenome <- getCas9ParameterValue("reference_genome")
     study <- getCas9ParameterValue("study_name")
 

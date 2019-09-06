@@ -4,11 +4,13 @@
 \alias{RunEnrichmentAnalysis}
 \title{perform an R-based enrichment analysis for a target region of the genome}
 \usage{
-RunEnrichmentAnalysis(force = FALSE)
+RunEnrichmentAnalysis(force = FALSE, ...)
 }
 \arguments{
 \item{force}{defines whether a reanalysis of the data should be forced
 if results already existing}
+
+\item{...}{- who knows - I'm using this for mc.cores}
 }
 \value{
 TRUE or FALSE depending
@@ -21,6 +23,17 @@ target regions ...
 yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
 sourceCas9Parameters(yamlFile)
 is_casDataRun()
-RunEnrichmentAnalysis()
+# this is a header to a document - not a live Snakemake workspace - demo
+# how to actually run ad-hoc the code
+bamFile <- system.file("extdata", "cas9_FAK76554.bam", package = "nanopoRe")
+referenceGenome <- system.file("extdata", "cas9_demo_ref.fasta", package = "nanopoRe")
+bedTargets <- system.file("extdata", "cas9_demo_target.bed", package = "nanopoRe")
+unmappedQ <- system.file("extdata", "cas9_FAK76554.unmapped.quals", package = "nanopoRe")
+setCas9ParameterValue("reference_genome", referenceGenome)
+setCas9ParameterValue("target_regions", bedTargets)
+addCas9ParameterValue("bam_file", bamFile)
+addCas9ParameterValue("unmapped_quals", unmappedQ)
+# lines between the previous comment and here are typically not required
+RunEnrichmentAnalysis(mc.cores=1)
 
 }

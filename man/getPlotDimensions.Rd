@@ -10,7 +10,8 @@ getPlotDimensions()
 list defining dpi, width, height and units
 }
 \description{
-This method presents the list with the defined metrics for a ggplot2 presentation
+This method presents the list with the defined metrics for a
+ggplot2 presentation
 }
 \examples{
 getPlotDimensions()
