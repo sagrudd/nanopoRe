@@ -18,6 +18,7 @@ Imports:
     Biostrings,
     data.table,
     digest,
+    devtools,
     dplyr,
     emojifont,
     fastmatch,
@@ -55,7 +56,6 @@ Imports:
 LinkingTo: 
     Rcpp
 Suggests:
-    devtools,
     testthat,
     BiocStyle, rmarkdown
 biocViews: Software,
