@@ -4,12 +4,14 @@
 \alias{plotDepthOfCoverageMegablock}
 \title{plot a tiled panel of chromosomal depths-of-coverage}
 \usage{
-plotDepthOfCoverageMegablock(coverageData, colMax = 4)
+plotDepthOfCoverageMegablock(coverageData = NULL, colMax = 4, ...)
 }
 \arguments{
 \item{coverageData}{data.frame of coverage data}
 
 \item{colMax}{defines the number of columns}
+
+\item{...}{for downstream tuning}
 }
 \value{
 ggplot2 image
@@ -19,9 +21,14 @@ This method will display depths-of-coverage for the chromosomes contained in the
 container
 }
 \examples{
-\dontrun{
-coverageData <- bamSummaryToCoverage(bamFile, tilewidth=250000)
-plotDepthOfCoverageMegablock(parsedBamFile)
-}
+demoBam <- system.file("extdata",
+    "Ecoli_zymo_R10_filt_subs.bam",
+    package = "nanopoRe")
+referenceFasta <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceFasta)
+bamSummarise(demoBam, blockSize=1000L)
+plotDepthOfCoverageMegablock()
 
 }

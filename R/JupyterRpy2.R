@@ -10,10 +10,9 @@
 #' @return None
 #'
 #' @examples
-#' \dontrun{
 #' setLogFile('demofile.log', append=FALSE)
 #' unsetLog()
-#' }
+#'
 #' @export
 setLogFile <- function(filename = NULL, append = TRUE) {
     if (is.null(filename)) {
@@ -37,10 +36,9 @@ setLogFile <- function(filename = NULL, append = TRUE) {
 #' @return None
 #'
 #' @examples
-#' \dontrun{
 #' setLogFile('demofile.log', append=FALSE)
 #' unsetLog()
-#' }
+#'
 #' @export
 unsetLog <- function() {
     sink()

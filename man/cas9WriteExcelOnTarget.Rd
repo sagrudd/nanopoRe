@@ -7,13 +7,14 @@
 cas9WriteExcelOnTarget()
 }
 \value{
-None
+path to file created
 }
 \description{
 write summary of on-target mapping results to an excel format result file
 }
 \examples{
-\dontrun{
+sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 cas9WriteExcelOnTarget()
-}
+
 }

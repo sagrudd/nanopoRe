@@ -19,13 +19,13 @@ data.frame of per read summary observations
 \description{
 This method will parse a BAM file and summarise the mapping observations in a
 way that can be used for preparation of figures and confidence plots by
-the nanopoRe package
+the nanopoRe package. This is single threaded and DOES NOT require access to the
+reference genome.
 }
 \examples{
 demoBam <- system.file("extdata",
     "Ecoli_zymo_R10_filt_subs.bam",
     package = "nanopoRe")
 bamSummary <- bamSummarise(demoBam, force=FALSE, blockSize=1000L)
-
 
 }

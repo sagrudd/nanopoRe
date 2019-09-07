@@ -17,7 +17,8 @@ prepares a plot of depth-of-coverage across each of the cas9-enrichment targets 
 as a multi-tile plot; simple for quick visualisation of the target regions
 }
 \examples{
-\dontrun{
+sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 cas9MultiGeneCoveragePanel()
-}
+
 }

@@ -18,7 +18,8 @@ ggplot2 figure
 prepare a plot of depth-of-coverage over and around a specified target region
 }
 \examples{
-\dontrun{
-cas9SingleTargetPlot('HTT')
-}
+sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+importCas9TutorialData(system.file("extdata", package="nanopoRe"))
+cas9SingleTargetPlot(cas9GetTargetList()[[1]])
+
 }

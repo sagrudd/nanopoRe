@@ -16,7 +16,8 @@ table table
 prepare a table of cas9 off-target mapping locations
 }
 \examples{
-\dontrun{
+sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 cas9OffTargetTable()
-}
+
 }

@@ -5,52 +5,44 @@
 #' generated within the ont_tutorial_cas9 workflow. This is an accessory method to abstract some
 #' of the code that looks out-of-control
 #'
+#' @param resultsDir the location of the folder where files should be pulled from - this should
+#' be determined automatically from config.yaml in most cases
 #' @return None
 #'
 #' @examples
-#' yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
-#' sourceCas9Parameters(yamlFile)
-#' importCas9TutorialData()
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' # some demo data is stored with the package - import the data by supply the non-standard
+#' # path
+#' importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 #'
 #' @export
-importCas9TutorialData <- function() {
+importCas9TutorialData <- function(resultsDir=NULL) {
 
     # target 1 : <study>_mapping_results.Rdata
     # target 2 : <study>_aggregated_coverage.Rdata
     # target 3 : <study>.unmapped.rcounts.Rdata
 
-    referenceGenome <- getCas9ParameterValue("reference_genome")
     study <- getCas9ParameterValue("study_name")
-
-    # is reference a file that already exists?
-    referenceFile <- NULL
-    if (file.exists(referenceGenome)) {
-        referenceFile <- referenceGenome
-    } else {
-        referenceFile <- file.path("ReferenceData", basename(referenceGenome))
+    if (is.null(resultsDir)) {
+        resultsDir <- getRpath()
     }
 
     # load the general mapping results and analysis ...
-    mappingResultsFile <- file.path(getRpath(), paste0(study, "_mapping_results", ".Rdata"))
+    mappingResultsFile <- file.path(resultsDir, paste0(study, "_mapping_results", ".Rdata"))
     load(mappingResultsFile, envir = getCachedObject("cas9"))
 
     # load the aggregated coverage file - used for plotting coverage at finer resolution for the
     # pre-defined targets
-    aggregatedCovFile <- file.path(getRpath(), paste0(study, "_aggregated_coverage", ".Rdata"))
+    aggregatedCovFile <- file.path(resultsDir, paste0(study, "_aggregated_coverage", ".Rdata"))
     load(aggregatedCovFile, envir = getCachedObject("cas9"))
 
     # load the sequence metadata for the unmapped sequence reads
-    qualfilelocation = file.path("Analysis", "Minimap2", paste0(study, ".unmapped.quals"))
-    chromosomeFile <- file.path(getRpath(), paste(sub("\\.[^.]*$", "", basename(qualfilelocation)),
-        "rcounts", "Rdata", sep = "."))
-
+    chromosomeFile <- file.path(resultsDir, paste0(study, ".unmapped.rcounts", ".Rdata"))
     assign("unmappedReads", readRDS(file = chromosomeFile), envir = getCachedObject("cas9"))
-
-    aggregatedGR <- get("aggregatedGR", envir = getCachedObject("cas9"))
-    aggregatedGR$rev_cov <- aggregatedGR$binned_cov - aggregatedGR$fwd_cov
-    assign("aggregatedGR", aggregatedGR, envir = getCachedObject("cas9"))
-
 }
+
+
+
 
 
 
@@ -61,18 +53,26 @@ importCas9TutorialData <- function() {
 #' relating to on-target, off-target and other effects. This method tests whether
 #' the analysis has been performed
 #'
+#' @param resultsDir the location of the folder where files should be pulled from - this should
+#' be determined automatically from config.yaml in most cases
 #' @return TRUE or FALSE depending
 #'
 #' @examples
-#' yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
-#' sourceCas9Parameters(yamlFile)
-#' is_casDataRun()
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' # some demo data is stored with the package - import the data by supply the non-standard
+#' # path
+#' is_casDataRun(system.file("extdata", package="nanopoRe"))
 #'
 #' @export
-is_casDataRun <- function() {
+is_casDataRun <- function(resultsDir=NULL) {
     study <- getCas9ParameterValue("study")
-    mappingResultsFile <- file.path(getRpath(), paste0(getCas9ParameterValue("study_name"), "_mapping_results", ".Rdata"))
-    aggregatedCovFile <- file.path(getRpath(), paste0(getCas9ParameterValue("study_name"), "_aggregated_coverage", ".Rdata"))
+
+    if (is.null(resultsDir)) {
+        resultsDir <- getRpath()
+    }
+
+    mappingResultsFile <- file.path(resultsDir, paste0(getCas9ParameterValue("study_name"), "_mapping_results", ".Rdata"))
+    aggregatedCovFile <- file.path(resultsDir, paste0(getCas9ParameterValue("study_name"), "_aggregated_coverage", ".Rdata"))
 
     return (file.exists(mappingResultsFile) && file.exists(aggregatedCovFile))
 }
@@ -98,13 +98,6 @@ sourceCas9Parameters <- function(yamlFile) {
     setCachedObject("cas9", new.env())
     yamlData <- yaml.load_file(yamlFile)
     assign("config", yamlData, envir = getCachedObject("cas9"))
-    #assign("bed_src", yaml$target_regions, envir = getCachedObject("cas9"))
-    #assign("study", yaml$study_name, envir = getCachedObject("cas9"))
-    #assign("reference", yaml$reference_genome, envir = getCachedObject("cas9"))
-    #assign("target_proximity", as.integer(yaml$target_proximity), envir = getCachedObject("cas9"))
-    #assign("offtarget_level", as.integer(yaml$offtarget_level), envir = getCachedObject("cas9"))
-    #assign("tutorialText", yaml$tutorialText, envir = getCachedObject("cas9"))
-    #assign("gstride", as.integer(yaml$gstride), envir = getCachedObject("cas9"))
 }
 
 
@@ -271,12 +264,13 @@ addCas9ParameterValue <- function(field, value) {
 #' @return path to a file that has been created
 #'
 #' @examples
-#' \dontrun{
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' importCas9TutorialData(system.file("extdata", package="nanopoRe"))
+#' library(emojifont)
 #' cas9ExecutiveSummary()
-#' }
+#'
 #' @export
 cas9ExecutiveSummary <- function() {
-
 
     study <- getCas9ParameterValue("study_name")
 
@@ -361,9 +355,10 @@ collateMappingCharacteristics <- function(bamFile, effectiveGenomeSize, unmapped
 #' @return kable table in html format
 #'
 #' @examples
-#' \dontrun{
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 #' cas9MappingByGenomicSegment()
-#' }
+#'
 #' @export
 cas9MappingByGenomicSegment <- function() {
 
@@ -413,9 +408,10 @@ cas9MappingByGenomicSegment <- function() {
 #' @return kable table in html format
 #'
 #' @examples
-#' \dontrun{
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 #' cas9TargetPerformanceTable()
-#' }
+#'
 #' @export
 cas9TargetPerformanceTable <- function() {
     ontargetUniverse <- get("ontargetUniverse", envir = getCachedObject("cas9"))
@@ -457,9 +453,10 @@ cas9TargetPerformanceTable <- function() {
 #' @return vector of target ids
 #'
 #' @examples
-#' \dontrun{
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 #' cas9GetTargetList()
-#' }
+#'
 #' @export
 cas9GetTargetList <- function() {
     aggregatedGR <- get("aggregatedGR", envir = getCachedObject("cas9"))
@@ -479,9 +476,10 @@ cas9GetTargetList <- function() {
 #' @return ggplot2 figure
 #'
 #' @examples
-#' \dontrun{
-#' cas9SingleTargetPlot('HTT')
-#' }
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' importCas9TutorialData(system.file("extdata", package="nanopoRe"))
+#' cas9SingleTargetPlot(cas9GetTargetList()[[1]])
+#'
 #' @export
 cas9SingleTargetPlot <- function(geneName, delta = 0) {
 
@@ -520,9 +518,10 @@ cas9SingleTargetPlot <- function(geneName, delta = 0) {
 #' @return ggplot2 figure
 #'
 #' @examples
-#' \dontrun{
-#' cas9StrandedTargetPlot('HTT')
-#' }
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' importCas9TutorialData(system.file("extdata", package="nanopoRe"))
+#' cas9StrandedTargetPlot(cas9GetTargetList()[[1]])
+#'
 #' @export
 cas9StrandedTargetPlot <- function(geneName, delta = 0) {
 
@@ -556,18 +555,20 @@ cas9StrandedTargetPlot <- function(geneName, delta = 0) {
 #' write summary of on-target mapping results to an excel format result file
 #'
 #' @importFrom writexl write_xlsx
-#' @return None
+#' @return path to file created
 #'
 #' @examples
-#' \dontrun{
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 #' cas9WriteExcelOnTarget()
-#' }
+#'
 #' @export
 cas9WriteExcelOnTarget <- function() {
     ontargetUniverse <- get("ontargetUniverse", envir = getCachedObject("cas9"))
     study <- getCas9ParameterValue("study_name")
     ontarget.meta <- file.path("Analysis", "OnTarget", paste0(study, "_ontarget.xlsx"))
     writexl::write_xlsx(as.data.frame(ontargetUniverse)[, c(1, 2, 3, 4, 6, 8, 14, 16, 23)], path = ontarget.meta)
+    return(ontarget.meta)
 }
 
 
@@ -578,12 +579,13 @@ cas9WriteExcelOnTarget <- function() {
 #' write summary of off-target mapping results to an excel format result file
 #'
 #' @importFrom writexl write_xlsx
-#' @return None
+#' @return path to file created
 #'
 #' @examples
-#' \dontrun{
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 #' cas9WriteExcelOffTarget()
-#' }
+#'
 #' @export
 cas9WriteExcelOffTarget <- function() {
     offtargetUniverse <- get("offtargetUniverse", envir = getCachedObject("cas9"))
@@ -595,6 +597,7 @@ cas9WriteExcelOffTarget <- function() {
     # quality and mapq
 
     writexl::write_xlsx(as.data.frame(offtargetUniverse)[, c(1, 2, 3, 4, 6, 8, 14, 16, 23)], path = offtarget.meta)
+    return(offtarget.meta)
 }
 
 
@@ -609,9 +612,10 @@ cas9WriteExcelOffTarget <- function() {
 #' @return ggplot2 format graph
 #'
 #' @examples
-#' \dontrun{
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 #' cas9MultiGeneCoveragePanel()
-#' }
+#'
 #' @export
 cas9MultiGeneCoveragePanel <- function(colMax = 4) {
 
@@ -669,9 +673,10 @@ cas9MultiGeneCoveragePanel <- function(colMax = 4) {
 #' @return ggplot2 format barchart showing fraction of mapping types per chromosome
 #'
 #' @examples
-#' \dontrun{
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 #' cas9CoverageTypeOverChromosomes()
-#' }
+#'
 #' @export
 cas9CoverageTypeOverChromosomes <- function() {
     setLogFile()
@@ -805,9 +810,10 @@ ggbiosave <- function(filename, plot = last_plot(), device = default_device(file
 #' @return path to png format figure of plot
 #'
 #' @examples
-#' \dontrun{
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 #' cas9OffTargetKaryogram()
-#' }
+#'
 #' @export
 cas9OffTargetKaryogram <- function() {
     setLogFile()
@@ -853,9 +859,10 @@ cas9OffTargetKaryogram <- function() {
 #' @return table table
 #'
 #' @examples
-#' \dontrun{
+#' sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+#' importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 #' cas9OffTargetTable()
-#' }
+#'
 #' @export
 cas9OffTargetTable <- function(maxRows=10) {
     offtargetUniverse <- get("offtargetUniverse", envir = getCachedObject("cas9"))

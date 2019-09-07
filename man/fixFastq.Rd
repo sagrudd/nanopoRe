@@ -18,3 +18,11 @@ path to new fastq file (same as newfastq provided)
 fixFastq parses a fastq (or fastq.gz) file for compliant fastq entries and writes these to
 the file specified in newfastq parameter. Any non-compliant reads are dropped
 }
+\examples{
+badFastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+fastqValidator(badFastq)
+tempFile <- tempfile(pattern="fastq", fileext=".fq")
+fixFastq(badFastq, tempFile)
+fastqValidator(tempFile)
+
+}

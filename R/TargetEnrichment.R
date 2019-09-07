@@ -16,14 +16,14 @@
 #' is_casDataRun()
 #' # this is a header to a document - not a live Snakemake workspace - demo
 #' # how to actually run ad-hoc the code
-#' bamFile <- system.file("extdata", "cas9_FAK76554.bam", package = "nanopoRe")
-#' referenceGenome <- system.file("extdata", "cas9_demo_ref.fasta", package = "nanopoRe")
-#' bedTargets <- system.file("extdata", "cas9_demo_target.bed", package = "nanopoRe")
-#' unmappedQ <- system.file("extdata", "cas9_FAK76554.unmapped.quals", package = "nanopoRe")
-#' setCas9ParameterValue("reference_genome", referenceGenome)
-#' setCas9ParameterValue("target_regions", bedTargets)
-#' addCas9ParameterValue("bam_file", bamFile)
-#' addCas9ParameterValue("unmapped_quals", unmappedQ)
+#' setCas9ParameterValue(
+#'     "reference_genome", system.file("extdata", "cas9_demo_ref.fasta", package = "nanopoRe"))
+#' setCas9ParameterValue(
+#'     "target_regions", system.file("extdata", "cas9_demo_target.bed", package = "nanopoRe"))
+#' addCas9ParameterValue(
+#'     "bam_file", system.file("extdata", "cas9_FAK76554.bam", package = "nanopoRe"))
+#' addCas9ParameterValue(
+#'     "unmapped_quals", system.file("extdata", "cas9_FAK76554.unmapped.quals", package = "nanopoRe"))
 #' # lines between the previous comment and here are typically not required
 #' RunEnrichmentAnalysis(mc.cores=1)
 #'
@@ -78,6 +78,8 @@ aggregatedOntarget <- function(mc.cores=min(parallel::detectCores()-1, max_threa
         aggregatedCov <- dplyr::bind_rows(pbmclapply(seq_along(ontargetUniverse), aggregateDepthInfo, xr=ontargetUniverse, ontarget=TRUE, mc.cores=mc.cores), .id = "column_label")
         aggregatedCovFile <- file.path(getRpath(), paste0(getCas9ParameterValue("study_name"), "_aggregated_coverage", ".Rdata"))
         aggregatedGR <- GenomicRanges::makeGRangesFromDataFrame(aggregatedCov[,-1], keep.extra.columns = TRUE)
+        # quick update to add coverage for the reverse strand as explicit column
+        aggregatedGR$rev_cov <- aggregatedGR$binned_cov - aggregatedGR$fwd_cov
         save(aggregatedGR, file=aggregatedCovFile)
     })
 }
@@ -238,10 +240,8 @@ getStartStrand <- function(x, gdata) {
 
     starts <- which(start(c1)>=start(nd))
     c2 <- c1[starts]
-
     seqlevels(c1) <- unique(as.character(seqnames(c1)))
     seqnames(c1) <- factor(seqnames(c1))
-
     cov <- GenomicAlignments::coverage(c1, shift=-start(nd), width=width(nd))
     depths <- rep(as.integer(unlist(S4Vectors::runValue(cov))), as.integer(unlist(S4Vectors::runLength(cov))))
 

@@ -22,8 +22,12 @@ a ggplot2 object
 This method will plot 2 figures in a single plot space
 }
 \examples{
-\dontrun{
+demoBam <- system.file("extdata",
+    "cas9_FAK76554.bam",
+    package = "nanopoRe")
+bamSummary <- bamSummarise(demoBam, blockSize=1000L)
+p1 <- plotAlignmentAccuracy()
+p2 <- plotAlignmentIdentity()
 LeftRightPlot(p1, p2)
-}
 
 }

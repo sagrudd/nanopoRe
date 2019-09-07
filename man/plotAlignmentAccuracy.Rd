@@ -25,8 +25,10 @@ a ggplot2 object
 This method will plot a histogram of mapping accuracies
 }
 \examples{
-\dontrun{
-plotAlignmentAccuracy(bamFile)
-}
+demoBam <- system.file("extdata",
+    "cas9_FAK76554.bam",
+    package = "nanopoRe")
+bamSummary <- bamSummarise(demoBam, blockSize=1000L)
+plotAlignmentAccuracy()
 
 }

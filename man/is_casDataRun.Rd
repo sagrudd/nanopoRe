@@ -4,7 +4,11 @@
 \alias{is_casDataRun}
 \title{accessory method to test whether the cas9 data indexing has been performed}
 \usage{
-is_casDataRun()
+is_casDataRun(resultsDir = NULL)
+}
+\arguments{
+\item{resultsDir}{the location of the folder where files should be pulled from - this should
+be determined automatically from config.yaml in most cases}
 }
 \value{
 TRUE or FALSE depending
@@ -16,8 +20,9 @@ relating to on-target, off-target and other effects. This method tests whether
 the analysis has been performed
 }
 \examples{
-yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
-sourceCas9Parameters(yamlFile)
-is_casDataRun()
+sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+# some demo data is stored with the package - import the data by supply the non-standard
+# path
+is_casDataRun(system.file("extdata", package="nanopoRe"))
 
 }

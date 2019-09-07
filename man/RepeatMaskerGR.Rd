@@ -23,9 +23,8 @@ object so that Genome Geometry analyses can be performed and genome coordinates 
 associate with repeat types
 }
 \examples{
-\dontrun{
-src = 'http://www.repeatmasker.org/genomes/hg19/RepeatMasker-rm405-db20140131/hg19.fa.out.gz'
-RepeatMaskerGR(RepeatMaskerSRC=src, force=TRUE)
-}
+# Using C.elegans repeats as demo; small file with only 90k repeats = easy demo ...
+src <- "http://www.repeatmasker.org/genomes/ce10/RepeatMasker-rm405-db20140131/ce10.fa.out.gz"
+repeats <- RepeatMaskerGR(RepeatMaskerSRC=src)
 
 }

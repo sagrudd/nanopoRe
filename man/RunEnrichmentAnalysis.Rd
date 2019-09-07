@@ -25,14 +25,14 @@ sourceCas9Parameters(yamlFile)
 is_casDataRun()
 # this is a header to a document - not a live Snakemake workspace - demo
 # how to actually run ad-hoc the code
-bamFile <- system.file("extdata", "cas9_FAK76554.bam", package = "nanopoRe")
-referenceGenome <- system.file("extdata", "cas9_demo_ref.fasta", package = "nanopoRe")
-bedTargets <- system.file("extdata", "cas9_demo_target.bed", package = "nanopoRe")
-unmappedQ <- system.file("extdata", "cas9_FAK76554.unmapped.quals", package = "nanopoRe")
-setCas9ParameterValue("reference_genome", referenceGenome)
-setCas9ParameterValue("target_regions", bedTargets)
-addCas9ParameterValue("bam_file", bamFile)
-addCas9ParameterValue("unmapped_quals", unmappedQ)
+setCas9ParameterValue(
+    "reference_genome", system.file("extdata", "cas9_demo_ref.fasta", package = "nanopoRe"))
+setCas9ParameterValue(
+    "target_regions", system.file("extdata", "cas9_demo_target.bed", package = "nanopoRe"))
+addCas9ParameterValue(
+    "bam_file", system.file("extdata", "cas9_FAK76554.bam", package = "nanopoRe"))
+addCas9ParameterValue(
+    "unmapped_quals", system.file("extdata", "cas9_FAK76554.unmapped.quals", package = "nanopoRe"))
 # lines between the previous comment and here are typically not required
 RunEnrichmentAnalysis(mc.cores=1)
 

@@ -14,7 +14,8 @@ the method prepares a table that defines the mapping characteristics by on-targe
 background - parses the content produced within the broader on_tutorial_cas9 workflow
 }
 \examples{
-\dontrun{
+sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 cas9MappingByGenomicSegment()
-}
+
 }

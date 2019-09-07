@@ -1,5 +1,14 @@
-#' @useDynLib nanopoRe, .registration = TRUE
+#' nanopoRe
+#'
+#' methods for supporting the Oxford Nanopore Technologies Bioinformatics Tutorials
+#'
+#' @docType package
+#' @author Stephen Rudd
+#' @import Rcpp
 #' @importFrom Rcpp sourceCpp
+#' @useDynLib nanopoRe, .registration = TRUE
+#' @name nanopoRe
+NULL
 
 
 .onLoad <- function(libname, pkgname) {

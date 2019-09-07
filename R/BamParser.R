@@ -37,7 +37,7 @@ testBam <- function(bamFile, yieldSize = 100L) {
 #' @usage bamSummariseByChr(chrId,
 #'     bamFile,
 #'     force = FALSE,
-#'     blockSize = 50000L,
+#'     blockSize = 10000L,
 #'     index=NULL
 #' )
 #' @importFrom Rsamtools ScanBamParam
@@ -72,7 +72,7 @@ testBam <- function(bamFile, yieldSize = 100L) {
 #'     index=demoBamIdx)
 #'
 #' @export
-bamSummariseByChr <- function(chrId, bamFile, force = FALSE, blockSize = 50000L, index=NULL) {
+bamSummariseByChr <- function(chrId, bamFile, force = FALSE, blockSize = 10000L, index=NULL) {
     bamSummaryResults <- file.path(getRpath(), paste0(sub("\\.[^.]*$", "", basename(bamFile)), ".bamMetrics.chr",
         chrId, ".Rdata"))
     message(paste0("targetRdata ", bamSummaryResults, "\n"))
@@ -108,39 +108,55 @@ bamSummariseByChr <- function(chrId, bamFile, force = FALSE, blockSize = 50000L,
 #'
 #' This method will parse a BAM file and summarise the mapping observations in a
 #' way that can be used for preparation of figures and confidence plots by
-#' the nanopoRe package
+#' the nanopoRe package. This method is multithreaded and REQUIRES access to the
+#' reference genome.
 #'
 #' @importFrom parallel detectCores
 #' @importFrom pbmcapply pbmclapply
-#' @usage parallelBamSummarise(bamFile, force = FALSE,
+#' @usage parallelBamSummarise(bamFile, force = FALSE, blockSize=10000L,
 #'     mc.cores = min(parallel::detectCores() - 1, 24))
 #' @param bamFile is the location to the BAM file to parse
 #' @param force logical value describing whether the analysis should be force recalculated
+#' @param blockSize describes the size of BAM chunk to parse
 #' @param mc.cores number of threads to use for the process
 #' @return data.frame of per read summary observations
 #'
 #' @examples
-#' \dontrun{
-#' parallelBamSummarise(file.path('Analysis', 'Minimap2', 'MyBamFile.bam'))
-#' }
+#' demoBam <- system.file("extdata",
+#'     "Ecoli_zymo_R10_filt_subs.bam",
+#'     package = "nanopoRe")
+#' referenceGenome <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceGenome)
+#' loadReferenceGenome()
+#' bamSummary <- parallelBamSummarise(demoBam, force=FALSE, blockSize=10000L, mc.cores=2)
 #'
 #' @export
-parallelBamSummarise <- function(bamFile, force = FALSE, mc.cores = min(parallel::detectCores() - 1,
+parallelBamSummarise <- function(bamFile, force = FALSE, blockSize = 10000L, mc.cores = min(parallel::detectCores() - 1,
     24)) {
     bamSummaryResults <- file.path(getRpath(), paste0(sub("\\.[^.]*$", "", basename(bamFile)), ".bamMetrics",
         ".Rdata"))
-    message(paste0("targetRdata ", bamSummaryResults, "\n"))
-    if (file.exists(bamSummaryResults) & !force) {
-        return(readRDS(file = bamSummaryResults))
+
+    bamInfo <- NULL  # the result container ...
+
+    if (file.exists(bamSummaryResults) && !force) {
+        #return(getCachedFileObject("BamTargetData", bamSummaryResults))
+        bamInfo <- readRDS(file = bamSummaryResults)
+    } else {
+        message(paste0("targetRdata ", bamSummaryResults, "\n"))
+
+        mcharv <- pbmclapply(getChromosomeIds(), bamSummariseByChr, bamFile=bamFile, force=force, blockSize=blockSize, mc.cores = mc.cores,
+            mc.preschedule = FALSE, mc.silent = FALSE)
+        bamInfo <- data.frame()
+        for (chr in getChromosomeIds()) {
+            bamInfo <- rbind(bamInfo, bamSummariseByChr(chr, bamFile))
+        }
+        saveRDS(bamInfo, file = bamSummaryResults)
     }
-    mcharv <- pbmclapply(getChromosomeIds(), bamSummariseByChr, bamFile = bamFile, force = force, mc.cores = mc.cores,
-        mc.preschedule = FALSE, mc.silent = FALSE)
-    result <- data.frame()
-    for (chr in getChromosomeIds()) {
-        result <- rbind(result, bamSummariseByChr(chr, bamFile))
-    }
-    saveRDS(result, file = bamSummaryResults)
-    return(result)
+    setCachedObject("bamfile", new.env())
+    assign("bamInfo", bamInfo, envir = getCachedObject("bamfile"))
+    return(invisible(bamInfo))
 }
 
 
@@ -149,7 +165,8 @@ parallelBamSummarise <- function(bamFile, force = FALSE, mc.cores = min(parallel
 #'
 #' This method will parse a BAM file and summarise the mapping observations in a
 #' way that can be used for preparation of figures and confidence plots by
-#' the nanopoRe package
+#' the nanopoRe package. This is single threaded and DOES NOT require access to the
+#' reference genome.
 #'
 #' @importFrom Rsamtools ScanBamParam
 #' @importFrom Rsamtools BamFile
@@ -165,29 +182,37 @@ parallelBamSummarise <- function(bamFile, force = FALSE, mc.cores = min(parallel
 #'     package = "nanopoRe")
 #' bamSummary <- bamSummarise(demoBam, force=FALSE, blockSize=1000L)
 #'
-#'
 #' @export
 bamSummarise <- function(bamFile, force = FALSE, blockSize = 50000L) {
     bamSummaryResults <- file.path(getRpath(), paste0(sub("\\.[^.]*$", "", basename(bamFile)), ".bamMetrics",
         ".Rdata"))
-    if (file.exists(bamSummaryResults) & !force) {
-        return(getCachedFileObject("BamTargetData", bamSummaryResults))
+
+    bamInfo <- NULL  # the result container ...
+
+    if (file.exists(bamSummaryResults) && !force) {
+        #return(getCachedFileObject("BamTargetData", bamSummaryResults))
+        bamInfo <- readRDS(file = bamSummaryResults)
+    } else {
+        count <- 0
+        bamInfo <- data.frame()
+        bam = open(BamFile(bamFile, yieldSize = blockSize))
+        what = c("qname", "flag", "rname", "strand", "pos", "qwidth", "mapq", "qual", "cigar")
+        param = ScanBamParam(what = what, tag = c("NM", "MD"))
+        repeat {
+            reads = scanBam(bam, param = param)[[1L]]
+            if (length(reads$qname) == 0L)
+                break
+            count = count + length(reads$qname)
+            bamInfo <- rbind(bamInfo, processBamChunk(reads))
+        }
+        close(bam)
+        saveRDS(bamInfo, file = bamSummaryResults)
     }
-    count <- 0
-    bamInfo <- data.frame()
-    bam = open(BamFile(bamFile, yieldSize = blockSize))
-    what = c("qname", "flag", "rname", "strand", "pos", "qwidth", "mapq", "qual", "cigar")
-    param = ScanBamParam(what = what, tag = c("NM", "MD"))
-    repeat {
-        reads = scanBam(bam, param = param)[[1L]]
-        if (length(reads$qname) == 0L)
-            break
-        count = count + length(reads$qname)
-        bamInfo <- rbind(bamInfo, processBamChunk(reads))
-    }
-    close(bam)
-    saveRDS(bamInfo, file = bamSummaryResults)
-    return(bamInfo)
+    # and save the object into memory
+    setCachedObject("bamfile", new.env())
+    assign("bamInfo", bamInfo, envir = getCachedObject("bamfile"))
+
+    return(invisible(bamInfo))
 }
 
 
@@ -249,15 +274,17 @@ processBamChunk <- function(bamChunk) {
 #'
 #' This method will return a tiled Granges object containing mean depth of coverage information
 #'
-#' @usage bamSummaryToCoverage(bamFile,
+#' @usage bamSummaryToCoverage(bamFile=NULL,
 #'     tilewidth = 1e+05,
 #'     blocksize = 10000,
-#'     flag = 'Primary'
+#'     flag = 'Primary',
+#'     ...
 #' )
 #' @param bamFile - path to the bamFile to use
 #' @param tilewidth - the size of the window to use for the tiling
 #' @param blocksize to use for parsing the BAM file
 #' @param flag the mapping type to filter reads for (Primary/Secondary/Supplementary)
+#' @param ... such as FORCE=TRUE
 #' @return GRanges object with mean depth of coverage data in binned_cov field
 #'
 #' @examples
@@ -268,11 +295,17 @@ processBamChunk <- function(bamChunk) {
 #'     "Escherichia_coli_complete_genome.fasta",
 #'     package = "nanopoRe")
 #' setReferenceGenome(referenceFasta)
-#' bamGR <- bamSummaryToCoverage(demoBam)
+#' bamSummarise(demoBam, blockSize=1000L)
+#' bamSummaryToCoverage()
 #'
 #' @export
-bamSummaryToCoverage <- function(bamFile, tilewidth = 1e+05, blocksize = 10000, flag = "Primary") {
-    bamSummary <- bamSummarise(bamFile, blockSize = 10000)
+bamSummaryToCoverage <- function(bamFile=NULL, tilewidth = 1e+05, blocksize = 10000, flag = "Primary", ...) {
+    bamSummary <- NULL
+    if (is.null(bamFile)) {
+        bamSummary <- get("bamInfo", envir = getCachedObject("bamfile"))
+    } else {
+        bamSummary <- bamSummarise(bamFile, blockSize=blocksize, ...)
+    }
     primary <- bamSummary[which(bamSummary$readFlag == flag), ]
 
     # depending on the genome used there may be a load of warnings here this is likely due to reads

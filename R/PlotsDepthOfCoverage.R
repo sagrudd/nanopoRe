@@ -10,15 +10,25 @@
 #' @return ggplot2 image
 #' @param coverageData data.frame of coverage data
 #' @param colMax defines the number of columns
+#' @param ... for downstream tuning
 #'
 #' @examples
-#' \dontrun{
-#' coverageData <- bamSummaryToCoverage(bamFile, tilewidth=250000)
-#' plotDepthOfCoverageMegablock(parsedBamFile)
-#' }
+#' demoBam <- system.file("extdata",
+#'     "Ecoli_zymo_R10_filt_subs.bam",
+#'     package = "nanopoRe")
+#' referenceFasta <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceFasta)
+#' bamSummarise(demoBam, blockSize=1000L)
+#' plotDepthOfCoverageMegablock()
 #'
 #' @export
-plotDepthOfCoverageMegablock <- function(coverageData, colMax = 4) {
+plotDepthOfCoverageMegablock <- function(coverageData=NULL, colMax = 4, ...) {
+
+    if (is.null(coverageData)) {
+        coverageData <- bamSummaryToCoverage(...)
+    }
 
     coverageDF <- as.data.frame(coverageData, stringsAsFactors = FALSE)
     coverageDF$seqnames <- as.character(coverageDF$seqnames)
@@ -63,17 +73,24 @@ plotDepthOfCoverageMegablock <- function(coverageData, colMax = 4) {
 #' @importFrom utils head
 #' @param bamFile is the path to the bamFile to plot
 #' @param segments number of segments to split data into
+#' @param ... such as FORCE=TRUE
 #' @return ggplot2 plot
 #'
 #' @examples
-#' \dontrun{
-#' plotDepthOfCoverageMegablock(bamFile)
-#' }
+#' demoBam <- system.file("extdata",
+#'     "Ecoli_zymo_R10_filt_subs.bam",
+#'     package = "nanopoRe")
+#' referenceFasta <- system.file("extdata",
+#'     "Escherichia_coli_complete_genome.fasta",
+#'     package = "nanopoRe")
+#' setReferenceGenome(referenceFasta)
+#' bamSummarise(demoBam, blockSize=1000L)
+#' plotOverallCovHistogram()
 #'
 #' @export
-plotOverallCovHistogram <- function(bamFile, segments = 50) {
+plotOverallCovHistogram <- function(bamFile=NULL, segments = 50, ...) {
 
-    coverage <- bamSummaryToCoverage(bamFile)
+    coverage <- bamSummaryToCoverage(bamFile, ...)
 
     meanCov <- mean(coverage$binned_cov, na.rm = TRUE)
 

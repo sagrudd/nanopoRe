@@ -4,10 +4,11 @@
 \alias{bamSummaryToCoverage}
 \title{get depth of coverage information from across the genome}
 \usage{
-bamSummaryToCoverage(bamFile,
+bamSummaryToCoverage(bamFile=NULL,
     tilewidth = 1e+05,
     blocksize = 10000,
-    flag = 'Primary'
+    flag = 'Primary',
+    ...
 )
 }
 \arguments{
@@ -18,6 +19,8 @@ bamSummaryToCoverage(bamFile,
 \item{blocksize}{to use for parsing the BAM file}
 
 \item{flag}{the mapping type to filter reads for (Primary/Secondary/Supplementary)}
+
+\item{...}{such as FORCE=TRUE}
 }
 \value{
 GRanges object with mean depth of coverage data in binned_cov field
@@ -33,6 +36,7 @@ referenceFasta <- system.file("extdata",
     "Escherichia_coli_complete_genome.fasta",
     package = "nanopoRe")
 setReferenceGenome(referenceFasta)
-bamGR <- bamSummaryToCoverage(demoBam)
+bamSummarise(demoBam, blockSize=1000L)
+bamSummaryToCoverage()
 
 }

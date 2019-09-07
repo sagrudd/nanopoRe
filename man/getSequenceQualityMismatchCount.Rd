@@ -12,3 +12,9 @@ integer count of fastq entries with seq/qual length challenges
 \description{
 count of fastq elements rejected due to mismatch between sequence and quality field lengths
 }
+\examples{
+fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+fastqValidator(fastq)
+getSequenceQualityMismatchCount()
+
+}

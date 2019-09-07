@@ -13,7 +13,8 @@ path to png format figure of plot
 prepare a karyogram shaded with regions of off-target mapping
 }
 \examples{
-\dontrun{
+sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 cas9OffTargetKaryogram()
-}
+
 }

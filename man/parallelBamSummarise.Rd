@@ -4,13 +4,15 @@
 \alias{parallelBamSummarise}
 \title{summarise mapping observations from a BAM file using parallel chr-by-chr}
 \usage{
-parallelBamSummarise(bamFile, force = FALSE,
+parallelBamSummarise(bamFile, force = FALSE, blockSize=10000L,
     mc.cores = min(parallel::detectCores() - 1, 24))
 }
 \arguments{
 \item{bamFile}{is the location to the BAM file to parse}
 
 \item{force}{logical value describing whether the analysis should be force recalculated}
+
+\item{blockSize}{describes the size of BAM chunk to parse}
 
 \item{mc.cores}{number of threads to use for the process}
 }
@@ -20,11 +22,18 @@ data.frame of per read summary observations
 \description{
 This method will parse a BAM file and summarise the mapping observations in a
 way that can be used for preparation of figures and confidence plots by
-the nanopoRe package
+the nanopoRe package. This method is multithreaded and REQUIRES access to the
+reference genome.
 }
 \examples{
-\dontrun{
-parallelBamSummarise(file.path('Analysis', 'Minimap2', 'MyBamFile.bam'))
-}
+demoBam <- system.file("extdata",
+    "Ecoli_zymo_R10_filt_subs.bam",
+    package = "nanopoRe")
+referenceGenome <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceGenome)
+loadReferenceGenome()
+bamSummary <- parallelBamSummarise(demoBam, force=FALSE, blockSize=10000L, mc.cores=2)
 
 }

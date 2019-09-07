@@ -12,3 +12,9 @@ integer count of fastq entries with zero sequence length
 \description{
 count of fastq elements rejected due to zero length sequence
 }
+\examples{
+fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+fastqValidator(fastq)
+getZeroLengthSequenceCount()
+
+}

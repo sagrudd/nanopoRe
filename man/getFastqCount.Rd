@@ -12,3 +12,9 @@ long integer of read fastq elements
 \description{
 return the number of fastq entries previously parsed from provided Fastq file
 }
+\examples{
+fastq <- system.file("extdata", "example.fastq.gz", package = "nanopoRe")
+fastqValidator(fastq)
+getFastqCount()
+
+}

@@ -4,12 +4,14 @@
 \alias{plotOverallCovHistogram}
 \title{plot a histogram of whole genome depth-of-coverage}
 \usage{
-plotOverallCovHistogram(bamFile, segments = 50)
+plotOverallCovHistogram(bamFile = NULL, segments = 50, ...)
 }
 \arguments{
 \item{bamFile}{is the path to the bamFile to plot}
 
 \item{segments}{number of segments to split data into}
+
+\item{...}{such as FORCE=TRUE}
 }
 \value{
 ggplot2 plot
@@ -18,8 +20,14 @@ ggplot2 plot
 This method will plot a histogram of whole genome depth-of-coverage
 }
 \examples{
-\dontrun{
-plotDepthOfCoverageMegablock(bamFile)
-}
+demoBam <- system.file("extdata",
+    "Ecoli_zymo_R10_filt_subs.bam",
+    package = "nanopoRe")
+referenceFasta <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceFasta)
+bamSummarise(demoBam, blockSize=1000L)
+plotOverallCovHistogram()
 
 }

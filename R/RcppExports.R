@@ -4,6 +4,12 @@
 #' return the number of fastq entries previously parsed from provided Fastq file
 #'
 #' @return long integer of read fastq elements
+#'
+#' @examples
+#' fastq <- system.file("extdata", "example.fastq.gz", package = "nanopoRe")
+#' fastqValidator(fastq)
+#' getFastqCount()
+#'
 #' @export
 getFastqCount <- function() {
     .Call(`_nanopoRe_getFastqCount`)
@@ -12,6 +18,12 @@ getFastqCount <- function() {
 #' return the number of fastq bases previously parsed from provided Fastq file
 #'
 #' @return long long integer of read fastq bases
+#'
+#' @examples
+#' fastq <- system.file("extdata", "example.fastq.gz", package = "nanopoRe")
+#' fastqValidator(fastq)
+#' getFastqBases()
+#'
 #' @export
 getFastqBases <- function() {
     .Call(`_nanopoRe_getFastqBases`)
@@ -20,6 +32,12 @@ getFastqBases <- function() {
 #' count of fastq elements rejected due to malformed fastq header
 #'
 #' @return integer count of malformed fastq header entries
+#'
+#' @examples
+#' fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+#' fastqValidator(fastq)
+#' getMalformedFastqHeaderCount()
+#'
 #' @export
 getMalformedFastqHeaderCount <- function() {
     .Call(`_nanopoRe_getMalformedFastqHeaderCount`)
@@ -28,6 +46,12 @@ getMalformedFastqHeaderCount <- function() {
 #' count of fastq elements rejected due to line 3 plus separator
 #'
 #' @return integer count of malformed fastq '+' separator entries
+#'
+#' @examples
+#' fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+#' fastqValidator(fastq)
+#' getFastqPlusErrorCount()
+#'
 #' @export
 getFastqPlusErrorCount <- function() {
     .Call(`_nanopoRe_getFastqPlusErrorCount`)
@@ -36,6 +60,12 @@ getFastqPlusErrorCount <- function() {
 #' count of fastq elements rejected due to zero length sequence
 #'
 #' @return integer count of fastq entries with zero sequence length
+#'
+#' @examples
+#' fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+#' fastqValidator(fastq)
+#' getZeroLengthSequenceCount()
+#'
 #' @export
 getZeroLengthSequenceCount <- function() {
     .Call(`_nanopoRe_getZeroLengthSequenceCount`)
@@ -44,6 +74,12 @@ getZeroLengthSequenceCount <- function() {
 #' count of fastq elements rejected due to mismatch between sequence and quality field lengths
 #'
 #' @return integer count of fastq entries with seq/qual length challenges
+#'
+#' @examples
+#' fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+#' fastqValidator(fastq)
+#' getSequenceQualityMismatchCount()
+#'
 #' @export
 getSequenceQualityMismatchCount <- function() {
     .Call(`_nanopoRe_getSequenceQualityMismatchCount`)
@@ -52,6 +88,12 @@ getSequenceQualityMismatchCount <- function() {
 #' count of lines of fastq file skipped to enable fastq entry parsing
 #'
 #' @return integer count of lines skipped
+#'
+#' @examples
+#' fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+#' fastqValidator(fastq)
+#' getSkippedLineCount()
+#'
 #' @export
 getSkippedLineCount <- function() {
     .Call(`_nanopoRe_getSkippedLineCount`)
@@ -63,10 +105,15 @@ getSkippedLineCount <- function() {
 #' entry compliance. A boolean value of overall file compliance will be returned. Additional
 #' summary counts describing the reason for rejection are also made available
 #'
-#' @seealso \code{\link{getFastqPlusErrorCount}}, \code{\link{getMalformedFastqHeaderCount}}, \code{\link{getZeroLengthSequenceCount}}, \code{\link{getSequenceQualityMismatchCount}} and \code{\link{getSkippedLineCount}}
-#'
 #' @param fastq A fastq format DNA/RNA sequence file
 #' @return logical defining if fastq provided is indeed valid fastq
+#'
+#' @examples
+#' fastq <- system.file("extdata", "example.fastq.gz", package = "nanopoRe")
+#' fastqValidator(fastq)
+#' badFastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+#' fastqValidator(badFastq)
+#'
 #' @export
 fastqValidator <- function(fastq) {
     .Call(`_nanopoRe_fastqValidator`, fastq)
@@ -80,6 +127,13 @@ fastqValidator <- function(fastq) {
 #' @param fastq file location of fastq source
 #' @param newfastq location of file to write content to
 #' @return path to new fastq file (same as newfastq provided)
+#'
+#' @examples
+#' badFastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+#' fastqValidator(badFastq)
+#' tempFile <- tempfile(pattern="fastq", fileext=".fq")
+#' fixFastq(badFastq, tempFile)
+#' fastqValidator(tempFile)
 #'
 #' @export
 fixFastq <- function(fastq, newfastq) {

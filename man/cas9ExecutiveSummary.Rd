@@ -13,7 +13,9 @@ path to a file that has been created
 prepare an infographic style executive summary for key cas9 enrichment measurements
 }
 \examples{
-\dontrun{
+sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+importCas9TutorialData(system.file("extdata", package="nanopoRe"))
+library(emojifont)
 cas9ExecutiveSummary()
-}
+
 }

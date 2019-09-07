@@ -17,6 +17,10 @@ fastqValidator will parse the specified fastq (or fastq.gz) file looking for fas
 entry compliance. A boolean value of overall file compliance will be returned. Additional
 summary counts describing the reason for rejection are also made available
 }
-\seealso{
-\code{\link{getFastqPlusErrorCount}}, \code{\link{getMalformedFastqHeaderCount}}, \code{\link{getZeroLengthSequenceCount}}, \code{\link{getSequenceQualityMismatchCount}} and \code{\link{getSkippedLineCount}}
+\examples{
+fastq <- system.file("extdata", "example.fastq.gz", package = "nanopoRe")
+fastqValidator(fastq)
+badFastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+fastqValidator(badFastq)
+
 }

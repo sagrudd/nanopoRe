@@ -13,7 +13,8 @@ kable table in html format
 prepare tabular data showing the enrichment performance for the cas9 targets included within an enrichment study
 }
 \examples{
-\dontrun{
+sourceCas9Parameters(system.file("extdata", "cas9_demo.yaml", package = "nanopoRe"))
+importCas9TutorialData(system.file("extdata", package="nanopoRe"))
 cas9TargetPerformanceTable()
-}
+
 }

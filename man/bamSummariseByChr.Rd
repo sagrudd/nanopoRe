@@ -7,7 +7,7 @@
 bamSummariseByChr(chrId,
     bamFile,
     force = FALSE,
-    blockSize = 50000L,
+    blockSize = 10000L,
     index=NULL
 )
 }

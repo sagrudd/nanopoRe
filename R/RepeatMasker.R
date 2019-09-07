@@ -21,10 +21,9 @@
 #' @return GRanges object of annotated repeats
 #'
 #' @examples
-#' \dontrun{
-#' src = 'http://www.repeatmasker.org/genomes/hg19/RepeatMasker-rm405-db20140131/hg19.fa.out.gz'
-#' RepeatMaskerGR(RepeatMaskerSRC=src, force=TRUE)
-#' }
+#' # Using C.elegans repeats as demo; small file with only 90k repeats = easy demo ...
+#' src <- "http://www.repeatmasker.org/genomes/ce10/RepeatMasker-rm405-db20140131/ce10.fa.out.gz"
+#' repeats <- RepeatMaskerGR(RepeatMaskerSRC=src)
 #'
 #' @export
 RepeatMaskerGR <- function(RepeatMaskerFile = NULL, RepeatMaskerSRC = NULL, force = FALSE) {
@@ -38,18 +37,18 @@ RepeatMaskerGR <- function(RepeatMaskerFile = NULL, RepeatMaskerSRC = NULL, forc
             writeBin(content, RepeatMaskerFile)
         }
     }
-    
-    RepeatMaskerGRData <- file.path(getRpath(), paste0(sub("\\.[^.]*$", "", basename(RepeatMaskerFile)), 
+
+    RepeatMaskerGRData <- file.path(getRpath(), paste0(sub("\\.[^.]*$", "", basename(RepeatMaskerFile)),
         ".GRanges", ".Rdata"))
     if (file.exists(RepeatMaskerGRData) & !force) {
         return(readRDS(file = RepeatMaskerGRData))
     }
-    
+
     repeatMaskData <- data.table::fread(RepeatMaskerFile, stringsAsFactors = FALSE, fill = TRUE, skip = 2)
-    GRdata <- GRanges(seqnames = gsub("chr", "", unlist(repeatMaskData[, 5])), ranges = IRanges(start = unlist(repeatMaskData[, 
-        6]), end = unlist(repeatMaskData[, 7])), strand = gsub("C", "-", unlist(repeatMaskData[, 9])), 
+    GRdata <- GRanges(seqnames = gsub("chr", "", unlist(repeatMaskData[, 5])), ranges = IRanges(start = unlist(repeatMaskData[,
+        6]), end = unlist(repeatMaskData[, 7])), strand = gsub("C", "-", unlist(repeatMaskData[, 9])),
         repeatClass = unlist(repeatMaskData[, 11]), repeatUnit = unlist(repeatMaskData[, 10]))
     saveRDS(GRdata, file = RepeatMaskerGRData)
     return(GRdata)
-    
+
 }
