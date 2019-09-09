@@ -56,7 +56,24 @@ getFlongleChannelMap <- function() {
 }
 
 
+#' produce the channelMap for a PromethION flowcell for spatial plots
+#'
+#' prepares a data.frame of channelIds and their X, Y coordinates for a PromethION flowcell
+#'
+#' @return data.frame with channel, row and col columns
+#'
+#' @examples
+#' head(getPromethIONChannelMap())
+#'
+#' @export
 getPromethIONChannelMap <- function() {
-
+    chunk <- function(i) {
+        m <- matrix(seq_len(250), ncol=10, byrow=TRUE)
+        m + i
+    }
+    layout <- do.call(cbind, lapply(seq(from=0, to=2750, by=250), chunk))
+    channelMap <- as.data.frame(cbind(channel = as.vector(t(layout)), which(layout == as.vector(layout),
+                                                                            arr.ind = TRUE)))
+    return(channelMap)
 }
 
