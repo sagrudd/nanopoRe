@@ -4,18 +4,15 @@
 \alias{SequencingSummarySpeedPlot}
 \title{plot speed of sequencing against time (bases per second distribution)}
 \usage{
-SequencingSummarySpeedPlot(seqsum,
-    scaling = 1,
-    sampleHours = 48,
+SequencingSummarySpeedPlot(seqsum = NA,
+    sampleHours = NA,
     sampleIntervalMinutes = 60
 )
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}
 
-\item{scaling}{scale factor for the data}
-
-\item{sampleHours}{is the number of hours to plot data for (default is 48)}
+\item{sampleHours}{is the number of hours to plot data for}
 
 \item{sampleIntervalMinutes}{is the resolution to plot data at}
 }
@@ -30,6 +27,6 @@ init()
 seqsumFile <- system.file("extdata",
     "sequencing_summary.txt.bz2", package = "nanopoRe")
 seqsum <- importSequencingSummary(seqsumFile)
-plot <- SequencingSummarySpeedPlot(seqsum)
+plot <- SequencingSummarySpeedPlot()
 
 }

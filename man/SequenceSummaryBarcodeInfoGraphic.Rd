@@ -9,7 +9,8 @@ SequenceSummaryBarcodeInfoGraphic(seqsum = NA, bcthreshold = 150)
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}
 
-\item{bcthreshold}{the threshold number of reads for a barcode to be considered (150)}
+\item{bcthreshold}{the threshold number of reads for a barcode to be
+considered (150)}
 }
 \value{
 a numeric value expressed in gigabases
@@ -18,9 +19,11 @@ a numeric value expressed in gigabases
 an accessory method for various logicals; simple fractional base calculator
 }
 \examples{
-seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
+seqsumFile <- system.file(
+    'extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
 importSequencingSummary(seqsumFile)
-barcodeFile <- system.file('extdata', 'barcoding_summary.txt.bz2', package = 'nanopoRe')
+barcodeFile <- system.file(
+    'extdata', 'barcoding_summary.txt.bz2', package = 'nanopoRe')
 SequencingSummaryBarcodeMerge(barcodeFile=barcodeFile)
 SequenceSummaryBarcodeInfoGraphic()
 

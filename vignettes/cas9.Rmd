@@ -17,7 +17,6 @@ knitr::opts_chunk$set(
 library(nanopoRe)
 library(knitr)
 library(emojifont)
-library(GenomicRanges)
 init()
 setOutputFormat("file")
 ```
@@ -28,7 +27,7 @@ The cas9-mediated target enrichment workflow is configured by a YAML format file
 
 ```{r loadFile}
 yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
-sourceCas9Parameters(yamlFile)
+importConfigYAML(yamlFile=yamlFile)
 ```
 
 Since we are operating within a vignette - or out of the expected CONDA/Snakemake environment a manual update for a couple of fields makes sense
@@ -39,14 +38,14 @@ bamFile <- system.file("extdata", "cas9_FAK76554.bam", package = "nanopoRe")
 referenceGenome <- system.file("extdata", "cas9_demo_ref.fasta", package = "nanopoRe")
 bedTargets <- system.file("extdata", "cas9_demo_target.bed", package = "nanopoRe")
 
-setCas9ParameterValue("reference_genome", referenceGenome)
-setCas9ParameterValue("target_regions", bedTargets)
-addCas9ParameterValue("bam_file", bamFile)
-addCas9ParameterValue("unmapped_quals", unmappedQ)
+setCachedYAMLValue(field="reference_genome", value=referenceGenome)
+setCachedYAMLValue(field="target_regions", value=bedTargets)
+addCachedYAMLValue(field="bam_file", value=bamFile)
+addCachedYAMLValue(field="unmapped_quals", value=unmappedQ)
 ```
 
 ```{r}
-cas9ParametersToYAML("Kable")
+cachedYAMLToYAML(format="Kable")
 ```
 
 Our ducks should now be lined up for further analysis and exploration ...
@@ -54,64 +53,71 @@ Our ducks should now be lined up for further analysis and exploration ...
 Ensure that the enrichment analysis has been run
 
 ```{r, results='hide'}
-RunEnrichmentAnalysis()
+RunEnrichmentAnalysis(force=TRUE, mc.cores=1)
 ```
 
-This can also be validated with the **`is_casDataRun()`** command
+This can also be validated with the **`isEnrichmentAnalysisComplete()`** command
 
 ```{r}
-is_casDataRun()
-```
-
-
-```{r}
-importCas9TutorialData()
+isEnrichmentAnalysisComplete()
 ```
 
 
 ```{r}
-include_graphics( cas9ExecutiveSummary() )
-```
-
-```{r}
-cas9MappingByGenomicSegment()
-```
-
-```{r}
-cas9TargetPerformanceTable()
-```
-
-```{r}
-cas9WriteExcelOnTarget()
-```
-
-```{r}
-targets <- cas9GetTargetList()
-include_graphics( cas9SingleTargetPlot(targets[[1]]) )
-```
-
-```{r}
-include_graphics( cas9StrandedTargetPlot(targets[[1]]) )
+importEnrichmentResults()
 ```
 
 
 ```{r}
-include_graphics( cas9MultiGeneCoveragePanel() )
+include_graphics( enrichmentExecutiveSummary() )
 ```
 
 ```{r}
-include_graphics( cas9CoverageTypeOverChromosomes() )
+enrichmentMappingByGenomicSegment()
+```
+
+```{r}
+enrichmentTargetPerformanceTable()
 ```
 
 
 ```{r}
-include_graphics( cas9OffTargetKaryogram() )
+enrichmentWriteExcelOnTarget()
+```
+
+
+```{r}
+targets <- enrichmentGetTargetList()
+include_graphics( enrichmentSingleTargetPlot(targets[[1]]))
 ```
 
 ```{r}
-cas9OffTargetTable()
+include_graphics( enrichmentStrandedTargetPlot(targets[[1]]) )
+```
+
+
+```{r}
+include_graphics( enrichmentMultiGeneCoveragePanel() )
 ```
 
 ```{r}
-cas9WriteExcelOffTarget()
+include_graphics( enrichmentCoverageTypeOverChromosomes() )
 ```
+
+
+```{r}
+include_graphics( enrichmentOffTargetKaryogram() )
+```
+
+```{r}
+enrichmentOffTargetTable()
+```
+
+```{r}
+enrichmentWriteExcelOffTarget()
+```
+
+
+
+
+The end ...

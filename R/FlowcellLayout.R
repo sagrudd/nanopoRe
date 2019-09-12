@@ -30,6 +30,10 @@ getMinIONChannelMap <- function() {
         cbind(m[seq(5, 8, by = 1), ], m[seq(4), rev(seq(8))])
     }
     layout <- do.call(rbind, lapply(c(1, 449, 385, 321, 257, 193, 129, 65), blockCalc))
+
+    # transpose the layout for cleaner presentation ...
+    layout <- t(layout)
+
     channelMap <- as.data.frame(cbind(channel = as.vector(t(layout)), which(layout == as.vector(layout),
         arr.ind = TRUE)))
     return(channelMap)

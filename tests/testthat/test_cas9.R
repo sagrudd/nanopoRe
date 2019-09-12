@@ -15,15 +15,15 @@ test_that("cas9 - yaml parsing", {
     expect_true("kableExtra" %in% class(html))
     expect_null(cas9ParametersToYAML("Excel"))
     expect_vector(getCas9ParameterFields())
-    expect_equal(getCas9ParameterValue("fastq"), "RawData/FAK76554.fastq.gz")
-    expect_null(getCas9ParameterValue("sheep")) # nonsense check
+    expect_equal(getCachedYAMLValue(field="fastq"), "RawData/FAK76554.fastq.gz")
+    expect_null(getCachedYAMLValue(field="sheep")) # nonsense check
 })
 
 test_that("cas9 - update config parameters", {
-    expect_equal(getCas9ParameterValue("reference_genome"), "http://ftp.ensembl.org/pub/release-96/fasta/homo_sapiens/dna/cas9_demo_ref.fasta.gz")
+    expect_equal(getCachedYAMLValue(field="reference_genome"), "http://ftp.ensembl.org/pub/release-96/fasta/homo_sapiens/dna/cas9_demo_ref.fasta.gz")
     expect_true(setCas9ParameterValue("reference_genome", referenceGenome))
     expect_false(setCas9ParameterValue("nonsensefield", referenceGenome))
-    expect_equal(getCas9ParameterValue("reference_genome"), referenceGenome)
+    expect_equal(getCachedYAMLValue(field="reference_genome"), referenceGenome)
     expect_false(hasCas9ParameterField("bam_file"))
     expect_true(addCas9ParameterValue("bam_file", bamFile))
     expect_true(hasCas9ParameterField("bam_file"))
@@ -52,9 +52,9 @@ test_that("parseGenomeCoordinates - test core functionality", {
     expect_silent(sourceCas9Parameters(yamlFile))
     expect_true(setCas9ParameterValue("reference_genome", referenceGenome))
     expect_true(setCas9ParameterValue("target_regions", bedTargets))
-    setReferenceGenome(getCas9ParameterValue("reference_genome"))
-    parseGenomeCoordinates(getCas9ParameterValue("target_regions"),
-                           getCas9ParameterValue("target_proximity"))
+    setReferenceGenome(getCachedYAMLValue(field="reference_genome"))
+    parseGenomeCoordinates(getCachedYAMLValue(field="target_regions"),
+                           getCachedYAMLValue(field="target_proximity"))
     message("Hello World")
 })
 

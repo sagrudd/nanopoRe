@@ -4,12 +4,15 @@
 \alias{SequencingSummaryChannelActivity}
 \title{prepare a channel activity plot from sequencing_summary reads file}
 \usage{
-SequencingSummaryChannelActivity(seqsum = NA, platform = NA)
+SequencingSummaryChannelActivity(
+    seqsum=NA, platform=NA, showcount=FALSE)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}
 
 \item{platform}{is the nanopore platform [MinION/Flongle/PromethION]}
+
+\item{showcount}{logical - show read counts per channel}
 }
 \value{
 ggplot2 channel activity plot

@@ -4,10 +4,9 @@
 \alias{SequencingSummaryT50}
 \title{calculates the timepoint within a sequencing run where 50percent of the data is produced}
 \usage{
-SequencingSummaryT50(seqsum,
+SequencingSummaryT50(seqsum=NA,
     t = 0.5,
-    scaling = 1,
-    sampleHours = 48,
+    sampleHours = NA,
     sampleIntervalMinutes = 60
 )
 }
@@ -15,8 +14,6 @@ SequencingSummaryT50(seqsum,
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}
 
 \item{t}{is a fractional point through run against which time will be calculated}
-
-\item{scaling}{factor}
 
 \item{sampleHours}{is the number of hours to consider}
 

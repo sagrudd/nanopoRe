@@ -2,12 +2,18 @@
 \title{nanopoRe NEWS}
 \encoding{UTF-8}
 
+\section{Version 0.2.11}{\itemize{
+\item code cleanup and stripping redundant methods and duplicated code
+\item update to BasicQC workflow to accommodate PromethION scale data
+\item inclusion of flowcell layout for PromethION
+\item updated vignettes demonstrating core methods and workflows
+}}
+
 \section{Version 0.2.10}{\itemize{
 \item inclusion of functional vignettes for Cas9 and BasicQC
 \item Cas9 BAM parsing moved into the package - crazy dependencies solved
 \item removed a load more warnings and updated method documentation examples
 }}
-
 
 \section{Version 0.2.9}{\itemize{
 \item Conda release

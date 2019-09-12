@@ -4,7 +4,10 @@
 \alias{listCachedObjects}
 \title{list objects that are stored within the nanopoRe working space}
 \usage{
-listCachedObjects()
+listCachedObjects(subenv = NULL)
+}
+\arguments{
+\item{subenv}{the nested environment to consider}
 }
 \value{
 character vector of objects stored in the nanopoRe environment

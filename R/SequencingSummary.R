@@ -22,7 +22,10 @@ importSequencingSummary <- function(seqsum) {
     # downsample performed with cat lambda_sequencing_summary.txt |
     # awk ' BEGIN {srand()} {print rand()
     # ' ' $0}' | sort | head -5 | sed 's/[^ ]* //'
-    seqsumdata <- data.table::fread(seqsum, stringsAsFactors = FALSE)
+    seqsumdata <- data.table::fread(
+        seqsum, stringsAsFactors = FALSE, select=c(
+            "read_id", "channel", "start_time", "duration", "passes_filtering",
+            "sequence_length_template", "mean_qscore_template"))
 
     # remove the redundant headers from merged files
     if (length(which(seqsumdata[, 1] == "filename")) > 0) {
@@ -33,7 +36,6 @@ importSequencingSummary <- function(seqsum) {
     seqsumdata$channel <- as.numeric(seqsumdata$channel)
     seqsumdata$start_time <- as.numeric(seqsumdata$start_time)
     seqsumdata$duration <- as.numeric(seqsumdata$duration)
-    seqsumdata$num_events <- as.numeric(seqsumdata$num_events)
     seqsumdata$sequence_length_template <-
         as.numeric(seqsumdata$sequence_length_template)
     seqsumdata$mean_qscore_template <-
@@ -55,6 +57,31 @@ importSequencingSummary <- function(seqsum) {
 }
 
 
+
+
+#' does the SequencingSummary information define a barcode?
+#'
+#' does the SequencingSummary information define a barcode?
+#'
+#' @return logical
+#'
+#' @examples
+#' init()
+#' seqsumFile <- system.file("extdata",
+#'     "sequencing_summary.txt.bz2", package = "nanopoRe")
+#' seqsum <- importSequencingSummary(seqsumFile)
+#' SequencingSummaryHasBarcodeInfo()
+#'
+#' @export
+SequencingSummaryHasBarcodeInfo <- function() {
+    seqsum <- handleSeqSumCache(NA)
+    if ("barcode_arrangement" %in% names(seqsum)) {
+        return(TRUE)
+    } else if (hasCachedObject("barcodedata")) {
+        return(TRUE)
+    }
+    return(FALSE)
+}
 
 
 
@@ -114,10 +141,13 @@ SequencingSummaryPassGauge <- function(seqsum = NA) {
 #' plots the basic eye-candy gauge channel activity plot of reads against
 #' channel of origin
 #'
+#' @usage SequencingSummaryChannelActivity(
+#'     seqsum=NA, platform=NA, showcount=FALSE)
 #' @importFrom reshape2 acast
 #' @importFrom grDevices colorRamp colorRampPalette
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
 #' @param platform is the nanopore platform [MinION/Flongle/PromethION]
+#' @param showcount logical - show read counts per channel
 #' @return ggplot2 channel activity plot
 #'
 #' @examples
@@ -128,7 +158,8 @@ SequencingSummaryPassGauge <- function(seqsum = NA) {
 #' plot <- SequencingSummaryChannelActivity(seqsum)
 #'
 #' @export
-SequencingSummaryChannelActivity <- function(seqsum = NA, platform = NA) {
+SequencingSummaryChannelActivity <- function(
+    seqsum=NA, platform=NA, showcount=FALSE) {
 
     seqsum <- handleSeqSumCache(seqsum)
 
@@ -154,14 +185,19 @@ SequencingSummaryChannelActivity <- function(seqsum = NA, platform = NA) {
 
     theme_update(plot.title = element_text(hjust = 0.5))
 
-    activityPlot <- ggplot(channelMap, aes_string(x = "row", y = "col", fill = "count")) + geom_tile() +
-        geom_text(data = channelMap, aes_string(x = "row", y = "col", label = "count", color = "count"),
-            show.legend = FALSE, size = 2.5) + scale_x_discrete(breaks = NULL) + scale_y_discrete(breaks = NULL) +
+    activityPlot <- ggplot(
+        channelMap, aes_string(x = "col", y = "row", fill = "count")) +
+        geom_tile() + scale_x_discrete(breaks = NULL) + scale_y_discrete(breaks = NULL) +
         coord_equal() + scale_fill_gradientn(colours = hm.palette(100)) + scale_color_gradient2(low = hm.palette(100),
         high = hm.palette(1)) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(title = "Channel activity plot showing number of reads per flowcell channel") +
         theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
             axis.title.x = element_blank(), axis.title.y = element_blank(), legend.position = "bottom",
             legend.key.width = unit(5.6, "cm"))
+    if (showcount) {
+        activityPlot <- activityPlot + geom_text(data = channelMap, aes_string(
+            x = "col", y = "row", label = "count", color = "count"),
+            show.legend = FALSE, size = 2.5)
+    }
 
     return(ggplot2handler(activityPlot))
 }
@@ -270,14 +306,19 @@ SequencingSummaryWeightedReadLength <- function(seqsum=NA) {
     passedMeanLength = round(mean(passedSeqs$sequence_length_template), digits = 0)
 
     scrapeBinnedBases <- function(level, qcpass, binAssignments, seqsum) {
-        data <- seqsum[which(binAssignments == level), ]
-        sum(data[data$passes_filtering == qcpass, "sequence_length_template"])
+        candidates <- which(binAssignments == level)
+        if (length(candidates) > 0) {
+            data <- seqsum[candidates, ]
+            candidates2 <- which(data$passes_filtering == qcpass)
+            if (length(candidates2) > 0) {
+                return(sum(data[candidates2, "sequence_length_template"]))
+            }
+        }
+        return(0)
     }
 
-    passedBinnedBases <- unlist(lapply(levels(binAssignments), scrapeBinnedBases, qcpass = TRUE, binAssignments = binAssignments,
-        seqsum = seqsum))
-    failedBinnedBases <- unlist(lapply(levels(binAssignments), scrapeBinnedBases, qcpass = FALSE, binAssignments = binAssignments,
-        seqsum = seqsum))
+    passedBinnedBases <- unlist(lapply(levels(binAssignments), scrapeBinnedBases, qcpass = TRUE, binAssignments = binAssignments,seqsum = seqsum))
+    failedBinnedBases <- unlist(lapply(levels(binAssignments), scrapeBinnedBases, qcpass = FALSE, binAssignments = binAssignments,seqsum = seqsum))
 
     binnedBaseDist <- data.frame(length = head(breaks, -1), pass = passedBinnedBases, fail = failedBinnedBases)
     binnedBaseMelt <- reshape2::melt(binnedBaseDist, id.vars = c("length"))
@@ -394,8 +435,8 @@ SequencingSummaryReadQualityHistogram <- function(seqsum=NA) {
 #'
 #' plots the density plot of read length against read mean quality scores
 #'
-#' @usage SequencingSummaryReadLengthQualityDensity(seqsum,
-#'     binFilter = 5,
+#' @usage SequencingSummaryReadLengthQualityDensity(seqsum=NA,
+#'     binFilter = 2,
 #'     qcThreshold = 7
 #' )
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
@@ -411,7 +452,7 @@ SequencingSummaryReadQualityHistogram <- function(seqsum=NA) {
 #' plot <- SequencingSummaryReadLengthQualityDensity(seqsum)
 #'
 #' @export
-SequencingSummaryReadLengthQualityDensity <- function(seqsum=NA, binFilter = 5, qcThreshold = 7) {
+SequencingSummaryReadLengthQualityDensity <- function(seqsum=NA, binFilter=2, qcThreshold=7) {
 
     seqsum <- handleSeqSumCache(seqsum)
 
@@ -435,7 +476,19 @@ SequencingSummaryReadLengthQualityDensity <- function(seqsum=NA, binFilter = 5, 
 
 
 
-getTemporalDataset <- function(seqsum, sampleIntervalMinutes, breaks, binass) {
+getTemporalDataset <- function(seqsum, sampleHours, sampleIntervalMinutes) {
+
+    breaks = seq(0, sampleHours * 60 * 60, by = 60 * sampleIntervalMinutes)
+
+    # has this object already been created?
+    objectName <- paste0("seqsum.temporaldata.",sampleIntervalMinutes,".",length(breaks))
+    if (hasCachedObject(objectName)) {
+        return(getCachedObject(objectName))
+    }
+
+
+    binass <- findInterval(seqsum$start_time, breaks)
+
     mergeItPerHour <- function(interval, binnedAssignments, filter) {
         totalbases = 0
         if (length(which(binnedAssignments == interval)) > 0) {
@@ -454,6 +507,7 @@ getTemporalDataset <- function(seqsum, sampleIntervalMinutes, breaks, binass) {
         binnedAssignments = binass, filter = FALSE))))
 
     binnedTemporalDataPerHour$time <- binnedTemporalDataPerHour$time/60/60
+    setCachedObject(objectName, binnedTemporalDataPerHour)
     return(binnedTemporalDataPerHour)
 }
 
@@ -464,13 +518,11 @@ getTemporalDataset <- function(seqsum, sampleIntervalMinutes, breaks, binass) {
 #' plots a ggplot2 graph of performance against time for run and separates passed and failed sequence reads
 #'
 #' @usage SequencingSummaryTemporalThroughput(seqsum,
-#'     scaling = 1,
-#'     sampleHours = 48,
+#'     sampleHours = NA,
 #'     sampleIntervalMinutes = 60
 #' )
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
-#' @param scaling scale factor for the data
-#' @param sampleHours is the number of hours to plot data for (default is 48)
+#' @param sampleHours is the number of hours to plot data for
 #' @param sampleIntervalMinutes is the resolution to plot data at
 #' @return ggplot2 showing temporal performance
 #'
@@ -482,17 +534,14 @@ getTemporalDataset <- function(seqsum, sampleIntervalMinutes, breaks, binass) {
 #' plot <- SequencingSummaryTemporalThroughput(seqsum)
 #'
 #' @export
-SequencingSummaryTemporalThroughput <- function(seqsum=NA, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+SequencingSummaryTemporalThroughput <- function(seqsum=NA, sampleHours = NA, sampleIntervalMinutes = 60) {
 
     seqsum <- handleSeqSumCache(seqsum)
+    if (is.na(sampleHours)) {
+        sampleHours <- SequencingSummaryExtractRuntime()
+    }
 
-    seqsum$start_time <- seqsum$start_time - min(seqsum$start_time)
-    seqsum$start_time <- seqsum$start_time/scaling
-
-    breaks = seq(0, sampleHours * 60 * 60, by = 60 * sampleIntervalMinutes)
-    binass <- findInterval(seqsum$start_time, breaks)
-
-    binnedTemporalDataPerHour <- getTemporalDataset(seqsum, sampleIntervalMinutes, breaks, binass)
+    binnedTemporalDataPerHour <- getTemporalDataset(seqsum, sampleHours, sampleIntervalMinutes)
 
     plot <- ggplot(binnedTemporalDataPerHour, aes_string("time")) + geom_line(aes(y = binnedTemporalDataPerHour$fail,
         colour = "fail"), size = 1) + geom_line(aes(y = binnedTemporalDataPerHour$pass, colour = "pass"),
@@ -509,13 +558,11 @@ SequencingSummaryTemporalThroughput <- function(seqsum=NA, scaling = 1, sampleHo
 #' from passed and failed sequence reads
 #'
 #' @usage SequencingSummaryCumulativeBases(seqsum,
-#'     scaling = 1,
-#'     sampleHours = 48,
+#'     sampleHours = NA,
 #'     sampleIntervalMinutes = 60
 #' )
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
-#' @param scaling scale factor for the data
-#' @param sampleHours is the number of hours to plot data for (default is 48)
+#' @param sampleHours is the number of hours to plot data for
 #' @param sampleIntervalMinutes is the resolution to plot data at
 #' @return ggplot2 showing temporal performance
 #'
@@ -527,17 +574,14 @@ SequencingSummaryTemporalThroughput <- function(seqsum=NA, scaling = 1, sampleHo
 #' plot <- SequencingSummaryCumulativeBases(seqsum)
 #'
 #' @export
-SequencingSummaryCumulativeBases <- function(seqsum=NA, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+SequencingSummaryCumulativeBases <- function(seqsum=NA, sampleHours = NA, sampleIntervalMinutes = 60) {
 
     seqsum <- handleSeqSumCache(seqsum)
+    if (is.na(sampleHours)) {
+        sampleHours <- SequencingSummaryExtractRuntime()
+    }
 
-    seqsum$start_time <- seqsum$start_time - min(seqsum$start_time)
-    seqsum$start_time <- seqsum$start_time/scaling
-
-    breaks = seq(0, sampleHours * 60 * 60, by = 60 * sampleIntervalMinutes)
-    binass <- findInterval(seqsum$start_time, breaks)
-
-    binnedTemporalDataPerHour <- getTemporalDataset(seqsum, sampleIntervalMinutes, breaks, binass)
+    binnedTemporalDataPerHour <- getTemporalDataset(seqsum, sampleHours, sampleIntervalMinutes)
 
     # binnedTemporalDataPerHour is scaled to Gbp per hour - rescale to raw for cumulative plotting
     binnedTemporalDataPerHour$pass <- binnedTemporalDataPerHour$pass/60 * sampleIntervalMinutes
@@ -545,8 +589,8 @@ SequencingSummaryCumulativeBases <- function(seqsum=NA, scaling = 1, sampleHours
 
     base50 <- SequencingSummaryBase50(seqsum, b = 0.5)
     base90 <- SequencingSummaryBase50(seqsum, b = 0.9)
-    T50 <- SequencingSummaryT50(seqsum, t = 0.5, scaling = scaling, sampleHours = sampleHours, sampleIntervalMinutes = sampleIntervalMinutes)
-    T90 <- SequencingSummaryT50(seqsum, t = 0.9, scaling = scaling, sampleHours = sampleHours, sampleIntervalMinutes = sampleIntervalMinutes)
+    T50 <- SequencingSummaryT50(seqsum, t = 0.5, sampleHours = sampleHours, sampleIntervalMinutes = sampleIntervalMinutes)
+    T90 <- SequencingSummaryT50(seqsum, t = 0.9, sampleHours = sampleHours, sampleIntervalMinutes = sampleIntervalMinutes)
 
 
     cumulativePlot <- ggplot(binnedTemporalDataPerHour, aes_string("time")) + geom_line(aes(y = cumsum(binnedTemporalDataPerHour$fail),
@@ -600,15 +644,13 @@ SequencingSummaryBase50 <- function(seqsum, b = 0.5) {
 #'
 #' @importFrom stats approxfun
 #' @importFrom stats optimize
-#' @usage SequencingSummaryT50(seqsum,
+#' @usage SequencingSummaryT50(seqsum=NA,
 #'     t = 0.5,
-#'     scaling = 1,
-#'     sampleHours = 48,
+#'     sampleHours = NA,
 #'     sampleIntervalMinutes = 60
 #' )
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
 #' @param t is a fractional point through run against which time will be calculated
-#' @param scaling factor
 #' @param sampleHours is the number of hours to consider
 #' @param sampleIntervalMinutes is the resolution of the plot in minutes
 #' @return a numeric value expressed in hours
@@ -622,17 +664,14 @@ SequencingSummaryBase50 <- function(seqsum, b = 0.5) {
 #' T50
 #'
 #' @export
-SequencingSummaryT50 <- function(seqsum=NA, t = 0.5, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+SequencingSummaryT50 <- function(seqsum=NA, t = 0.5, sampleHours = NA, sampleIntervalMinutes = 60) {
 
     seqsum <- handleSeqSumCache(seqsum)
+    if (is.na(sampleHours)) {
+        sampleHours <- SequencingSummaryExtractRuntime()
+    }
 
-    seqsum$start_time <- seqsum$start_time - min(seqsum$start_time)
-    seqsum$start_time <- seqsum$start_time/scaling
-
-    breaks = seq(0, sampleHours * 60 * 60, by = 60 * sampleIntervalMinutes)
-    binass <- findInterval(seqsum$start_time, breaks)
-
-    binnedTemporalDataPerHour <- getTemporalDataset(seqsum, sampleIntervalMinutes, breaks, binass)
+    binnedTemporalDataPerHour <- getTemporalDataset(seqsum, sampleHours, sampleIntervalMinutes)
 
     # binnedTemporalDataPerHour is scaled to Gbp per hour - rescale to raw for cumulative plotting
     binnedTemporalDataPerHour$pass <- binnedTemporalDataPerHour$pass/60 * sampleIntervalMinutes
@@ -658,13 +697,11 @@ SequencingSummaryT50 <- function(seqsum=NA, t = 0.5, scaling = 1, sampleHours = 
 #' failed sequence reads
 #'
 #' @usage SequencingSummaryCumulativeReads(seqsum,
-#'     scaling = 1,
-#'     sampleHours = 48,
+#'     sampleHours = NA,
 #'     sampleIntervalMinutes = 60
 #' )
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
-#' @param scaling scale factor for the data
-#' @param sampleHours is the number of hours to plot data for (default is 48)
+#' @param sampleHours is the number of hours to plot data for
 #' @param sampleIntervalMinutes is the resolution to plot data at
 #' @return ggplot2 showing temporal performance
 #'
@@ -676,12 +713,12 @@ SequencingSummaryT50 <- function(seqsum=NA, t = 0.5, scaling = 1, sampleHours = 
 #' plot <- SequencingSummaryCumulativeReads(seqsum)
 #'
 #' @export
-SequencingSummaryCumulativeReads <- function(seqsum=NA, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+SequencingSummaryCumulativeReads <- function(seqsum=NA, sampleHours = NA, sampleIntervalMinutes = 60) {
 
     seqsum <- handleSeqSumCache(seqsum)
-
-    seqsum$start_time <- seqsum$start_time - min(seqsum$start_time)
-    seqsum$start_time <- seqsum$start_time/scaling
+    if (is.na(sampleHours)) {
+        sampleHours <- SequencingSummaryExtractRuntime()
+    }
 
     breaks = seq(0, sampleHours * 60 * 60, by = 60 * sampleIntervalMinutes)
     binass <- findInterval(seqsum$start_time, breaks)
@@ -724,14 +761,12 @@ SequencingSummaryCumulativeReads <- function(seqsum=NA, scaling = 1, sampleHours
 #'
 #' plots a ggplot2 box-and-whisker plot for the distribution of sequencing speeds against time
 #'
-#' @usage SequencingSummarySpeedPlot(seqsum,
-#'     scaling = 1,
-#'     sampleHours = 48,
+#' @usage SequencingSummarySpeedPlot(seqsum = NA,
+#'     sampleHours = NA,
 #'     sampleIntervalMinutes = 60
 #' )
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
-#' @param scaling scale factor for the data
-#' @param sampleHours is the number of hours to plot data for (default is 48)
+#' @param sampleHours is the number of hours to plot data for
 #' @param sampleIntervalMinutes is the resolution to plot data at
 #' @return ggplot2 showing temporal performance
 #'
@@ -740,20 +775,20 @@ SequencingSummaryCumulativeReads <- function(seqsum=NA, scaling = 1, sampleHours
 #' seqsumFile <- system.file("extdata",
 #'     "sequencing_summary.txt.bz2", package = "nanopoRe")
 #' seqsum <- importSequencingSummary(seqsumFile)
-#' plot <- SequencingSummarySpeedPlot(seqsum)
+#' plot <- SequencingSummarySpeedPlot()
 #'
 #' @export
-SequencingSummarySpeedPlot <- function(seqsum=NA, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+SequencingSummarySpeedPlot <- function(seqsum = NA, sampleHours = NA, sampleIntervalMinutes = 60) {
 
     seqsum <- handleSeqSumCache(seqsum)
-
-    seqsum$start_time <- seqsum$start_time - min(seqsum$start_time)
-    seqsum$start_time <- seqsum$start_time/scaling
+    if (is.na(sampleHours)) {
+        sampleHours <- SequencingSummaryExtractRuntime()
+    }
 
     breaks = seq(0, sampleHours * 60 * 60, by = 60 * sampleIntervalMinutes)
     binass <- findInterval(seqsum$start_time, breaks)
 
-    speedTime <- data.frame(segment = binass, rate = seqsum$sequence_length_template/(seqsum$duration/scaling))
+    speedTime <- data.frame(segment = binass, rate = seqsum$sequence_length_template/(seqsum$duration))
 
     speedplot <- ggplot(speedTime, aes_string(x = "segment", y = "rate", group = "segment")) + geom_boxplot(fill = "steelblue",
         outlier.shape = NA) + scale_x_continuous(name = "Time (hours)") + ylab("Sequencing rate (bases per second)") +
@@ -770,13 +805,11 @@ SequencingSummarySpeedPlot <- function(seqsum=NA, scaling = 1, sampleHours = 48,
 #' plots a ggplot2 plot of active channels against time
 #'
 #' @usage SequencingSummaryActiveChannelPlot(seqsum,
-#'     scaling = 1,
-#'     sampleHours = 48,
+#'     sampleHours = NA,
 #'     sampleIntervalMinutes = 60
 #' )
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
-#' @param scaling scale factor for the data
-#' @param sampleHours is the number of hours to plot data for (default is 48)
+#' @param sampleHours is the number of hours to plot data for
 #' @param sampleIntervalMinutes is the resolution to plot data at
 #' @return ggplot2 showing temporal performance
 #'
@@ -788,12 +821,12 @@ SequencingSummarySpeedPlot <- function(seqsum=NA, scaling = 1, sampleHours = 48,
 #' plot <- SequencingSummaryActiveChannelPlot(seqsum)
 #'
 #' @export
-SequencingSummaryActiveChannelPlot <- function(seqsum=NA, scaling = 1, sampleHours = 48, sampleIntervalMinutes = 60) {
+SequencingSummaryActiveChannelPlot <- function(seqsum=NA, sampleHours = NA, sampleIntervalMinutes = 60) {
 
     seqsum <- handleSeqSumCache(seqsum)
-
-    seqsum$start_time <- seqsum$start_time - min(seqsum$start_time)
-    seqsum$start_time <- seqsum$start_time/scaling
+    if (is.na(sampleHours)) {
+        sampleHours <- SequencingSummaryExtractRuntime()
+    }
 
     breaks = seq(0, sampleHours * 60 * 60, by = 60 * sampleIntervalMinutes)
     binass <- findInterval(seqsum$start_time, breaks)
@@ -917,6 +950,34 @@ handleSeqSumCache <- function(seqsum) {
         }
     }
     return(seqsum)
+}
+
+
+
+#' from sequencing_summary.txt return integer describing runtime in hours
+#'
+#' from provided sequencing_summary.txt file return an integer best describing
+#' the runtime in hours
+#'
+#' @param seqsum is the data.frame object as prepared by importSequencingSummary
+#' @return integer of runtime in hours
+#'
+#' @examples
+#' init()
+#' seqsumFile <- system.file("extdata",
+#'     "sequencing_summary.txt.bz2", package = "nanopoRe")
+#' importSequencingSummary(seqsumFile)
+#' SequencingSummaryExtractRuntime()
+#'
+#' @export
+SequencingSummaryExtractRuntime <- function(seqsum=NA) {
+    seqsum <- handleSeqSumCache(seqsum)
+    runtime <- max(seqsum[,"start_time"]) / 60 / 60
+    expectedRuntimes <- c(4,8,12,24,36,48,64,72,96)
+    temporaldistance <- sqrt((expectedRuntimes - runtime)^2)
+    rruntime <- expectedRuntimes[[which(
+        temporaldistance==min(temporaldistance))]]
+    return(rruntime)
 }
 
 

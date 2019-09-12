@@ -1,0 +1,22 @@
+---
+title: "nanopoRe: flowcell layout and spatial presentation"
+author: "Stephen Rudd"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+    %\VignetteIndexEntry{nanopoRe: flowcell layout and spatial presentation}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>"
+)
+library(nanopoRe)
+library(knitr)
+init()
+setOutputFormat("file")
+```
+

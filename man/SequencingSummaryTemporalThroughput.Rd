@@ -5,17 +5,14 @@
 \title{plot a sequence throughput against time for specified sequencing_summary run}
 \usage{
 SequencingSummaryTemporalThroughput(seqsum,
-    scaling = 1,
-    sampleHours = 48,
+    sampleHours = NA,
     sampleIntervalMinutes = 60
 )
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}
 
-\item{scaling}{scale factor for the data}
-
-\item{sampleHours}{is the number of hours to plot data for (default is 48)}
+\item{sampleHours}{is the number of hours to plot data for}
 
 \item{sampleIntervalMinutes}{is the resolution to plot data at}
 }

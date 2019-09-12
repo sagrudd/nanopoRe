@@ -12,51 +12,53 @@
 #'
 #' @examples
 #' yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
-#' sourceCas9Parameters(yamlFile)
-#' is_casDataRun()
+#' importConfigYAML(yamlFile=yamlFile)
+#' isEnrichmentAnalysisComplete()
 #' # this is a header to a document - not a live Snakemake workspace - demo
 #' # how to actually run ad-hoc the code
-#' setCas9ParameterValue(
-#'     "reference_genome", system.file("extdata", "cas9_demo_ref.fasta", package = "nanopoRe"))
-#' setCas9ParameterValue(
-#'     "target_regions", system.file("extdata", "cas9_demo_target.bed", package = "nanopoRe"))
-#' addCas9ParameterValue(
-#'     "bam_file", system.file("extdata", "cas9_FAK76554.bam", package = "nanopoRe"))
-#' addCas9ParameterValue(
-#'     "unmapped_quals", system.file("extdata", "cas9_FAK76554.unmapped.quals", package = "nanopoRe"))
+#' setCachedYAMLValue(
+#'     field="reference_genome",
+#'     value=system.file("extdata", "cas9_demo_ref.fasta", package="nanopoRe"))
+#' setCachedYAMLValue(
+#'     field="target_regions",
+#'     value=system.file("extdata", "cas9_demo_target.bed", package="nanopoRe"))
+#' addCachedYAMLValue(
+#'     field="bam_file",
+#'     value=system.file("extdata", "cas9_FAK76554.bam", package ="nanopoRe"))
+#' addCachedYAMLValue(
+#'     field="unmapped_quals",
+#'     value=system.file("extdata", "cas9_FAK76554.unmapped.quals", package="nanopoRe"))
 #' # lines between the previous comment and here are typically not required
 #' RunEnrichmentAnalysis(mc.cores=1)
 #'
 #' @export
 RunEnrichmentAnalysis <- function(force=FALSE, ...) {
 
-    if (!is_casDataRun() || force) {
-        message(paste0("loading reference genome: ",
-            getCas9ParameterValue("reference_genome")))
-        setReferenceGenome(getCas9ParameterValue("reference_genome"))
+    if (!isEnrichmentAnalysisComplete() || force) {
+        message(paste0("loading reference genome: ", getCachedYAMLValue(field ="reference_genome")))
+        setReferenceGenome(getCachedYAMLValue(field="reference_genome"))
         loadReferenceGenome()
 
         # define BAM location
-        if (!hasCas9ParameterField("bam_file")) {
-            addCas9ParameterValue("bam_file", file.path("Analysis", "Minimap2",
-                paste0(getCas9ParameterValue("study_name"), ".bam")))
+        if (!hasCachedYAMLField(field="bam_file")) {
+            addCachedYAMLValue(field="bam_file", value=file.path("Analysis", "Minimap2",
+                paste0(getCachedYAMLValue(field="study_name"), ".bam")))
         }
-        if (!hasCas9ParameterField("unmapped_quals")) {
-            addCas9ParameterValue("unmapped_quals", file.path("Analysis", "Minimap2", paste0(getCas9ParameterValue("study_name"), ".unmapped.quals")))
+        if (!hasCachedYAMLField(field="unmapped_quals")) {
+            addCachedYAMLValue(field="unmapped_quals", value=file.path("Analysis", "Minimap2", paste0(getCachedYAMLValue(field="study_name"), ".unmapped.quals")))
         }
 
-        message(paste0("loading unmapped_reads: ", getCas9ParameterValue("unmapped_quals")))
-        harvestUnmappedQuals(getCas9ParameterValue("unmapped_quals"), force)
+        message(paste0("loading unmapped_reads: ", getCachedYAMLValue(field="unmapped_quals")))
+        harvestUnmappedQuals(getCachedYAMLValue(field="unmapped_quals"), force)
 
         message(paste0("parsing genome coordinates: ", "..."))
-        parseGenomeCoordinates(getCas9ParameterValue("target_regions"),
-            getCas9ParameterValue("target_proximity"))
+        parseGenomeCoordinates(getCachedYAMLValue(field="target_regions"), getCachedYAMLValue(field="target_proximity"))
 
-        message(paste0("parsing BAM file: ", getCas9ParameterValue("bam_file")))
+        message(paste0("parsing BAM file: ", getCachedYAMLValue(field="bam_file")))
         parseEnrichmentBam(
-            getCas9ParameterValue("bam_file"),
-            getCas9ParameterValue("gstride"),
-            getCas9ParameterValue("offtarget_level"))
+            getCachedYAMLValue(field="bam_file"),
+            getCachedYAMLValue(field="gstride"),
+            getCachedYAMLValue(field="offtarget_level"))
         message(paste0("preparing mapping characteristics", "\n"))
         mapUniverseTypes(...)
 
@@ -73,10 +75,10 @@ RunEnrichmentAnalysis <- function(force=FALSE, ...) {
 aggregatedOntarget <- function(mc.cores=min(parallel::detectCores()-1, max_threads)) {
     message(paste0("scoring data per target region", "\n"))
     ontargetUniverse <- get("ontargetUniverse", envir = getCachedObject("GRanges"))
-    max_threads <- getCas9ParameterValue("threads")
+    max_threads <- getCachedYAMLValue(field="threads")
     suppressWarnings({
         aggregatedCov <- dplyr::bind_rows(pbmclapply(seq_along(ontargetUniverse), aggregateDepthInfo, xr=ontargetUniverse, ontarget=TRUE, mc.cores=mc.cores), .id = "column_label")
-        aggregatedCovFile <- file.path(getRpath(), paste0(getCas9ParameterValue("study_name"), "_aggregated_coverage", ".Rdata"))
+        aggregatedCovFile <- file.path(getRpath(), paste0(getCachedYAMLValue(field="study_name"), "_aggregated_coverage", ".Rdata"))
         aggregatedGR <- GenomicRanges::makeGRangesFromDataFrame(aggregatedCov[,-1], keep.extra.columns = TRUE)
         # quick update to add coverage for the reverse strand as explicit column
         aggregatedGR$rev_cov <- aggregatedGR$binned_cov - aggregatedGR$fwd_cov
@@ -88,11 +90,11 @@ aggregatedOntarget <- function(mc.cores=min(parallel::detectCores()-1, max_threa
 aggregatedOfftarget <- function(mc.cores=min(parallel::detectCores()-1, max_threads)) {
     message(paste0("parsing off-target/background coverage - please be patient ...", "\n"))
     offtargetUniverse <- get("offtargetUniverse", envir = getCachedObject("GRanges"))
-    max_threads <- getCas9ParameterValue("threads")
+    max_threads <- getCachedYAMLValue(field="threads")
     suppressWarnings({
         offtCov <- pbmclapply(seq_along(offtargetUniverse), aggregateDepthInfo, xr=offtargetUniverse, geneId="OffTarget", mc.cores=mc.cores)
         aggregatedOff <- dplyr::bind_rows(offtCov, .id = "column_label")
-        aggregatedOffFile <- file.path(getRpath(), paste0(getCas9ParameterValue("study_name"), "_aggregated_offt_coverage", ".Rdata"))
+        aggregatedOffFile <- file.path(getRpath(), paste0(getCachedYAMLValue(field="study_name"), "_aggregated_offt_coverage", ".Rdata"))
         save(aggregatedOff, file=aggregatedOffFile)
     })
 }
@@ -106,7 +108,7 @@ aggregatedOfftarget <- function(mc.cores=min(parallel::detectCores()-1, max_thre
 aggregateDepthInfo <- function(x, xr, ontarget=FALSE, geneId=NA) {
     targetRegion <- xr[x]
     proximalRegion <- targetRegion
-    target_proximity <- getCas9ParameterValue("target_proximity")
+    target_proximity <- getCachedYAMLValue(field="target_proximity")
     if (ontarget) {
         start(proximalRegion) <- max(IRanges::start(proximalRegion) - target_proximity, 1)
         end(proximalRegion) <- IRanges::end(proximalRegion) + target_proximity
@@ -140,9 +142,9 @@ aggregateDepthInfo <- function(x, xr, ontarget=FALSE, geneId=NA) {
     ba$fwd_cov <- mcols(binnedAverage(bins, fcov, "fwd_cov"))$fwd_cov
     # write the target sequences to file ...
     if (ontarget) {
-        write(mcols(c2)$qname, file.path(file.path(getRpath(), "..", "OnTarget"), paste0(getCas9ParameterValue("study_name"), ".", geneId, ".mappedreads")), append=TRUE)
+        write(mcols(c2)$qname, file.path(file.path(getRpath(), "..", "OnTarget"), paste0(getCachedYAMLValue(field="study_name"), ".", geneId, ".mappedreads")), append=TRUE)
     } else {
-        write(mcols(c2)$qname, file.path(file.path(getRpath(), "..", "OffTarget"), paste0(getCas9ParameterValue("study_name"), ".", geneId, ".mappedreads")), append=TRUE)
+        write(mcols(c2)$qname, file.path(file.path(getRpath(), "..", "OffTarget"), paste0(getCachedYAMLValue(field="study_name"), ".", geneId, ".mappedreads")), append=TRUE)
     }
     return(as.data.frame(ba))
 }
@@ -165,7 +167,7 @@ mapUniverseTypes <- function(...) {
     br <- get("br", envir = getCachedObject("GRanges"))
     wga.cov <- get("wga.cov", envir = getCachedObject("GRanges"))
 
-    mappingResultsFile <- file.path(getRpath(), paste0(getCas9ParameterValue("study_name"), "_mapping_results", ".Rdata"))
+    mappingResultsFile <- file.path(getRpath(), paste0(getCachedYAMLValue(field="study_name"), "_mapping_results", ".Rdata"))
     message(paste0("writing result to:", mappingResultsFile))
     save(br, wga.cov, backgroundUniverse, offtargetUniverse, ontargetUniverse, targetproximalUniverse, file=mappingResultsFile)
 
@@ -283,7 +285,7 @@ getStartStrand <- function(x, gdata) {
 
 bamMineUniverse <- function(universe, mc.cores=min(parallel::detectCores()-1, max_threads)) {
 
-    max_threads <- getCas9ParameterValue("threads")
+    max_threads <- getCachedYAMLValue(field="threads")
 
     startStrand <-matrix(unlist(pbmclapply(seq_along(seqnames(universe)), getStartStrand, gdata=universe, mc.cores=mc.cores)), ncol=22, byrow=TRUE)
     universe$rstart <- startStrand[,1]

@@ -4,8 +4,8 @@
 \alias{SequencingSummaryReadLengthQualityDensity}
 \title{plot a density map of sequence lengths and quality scores}
 \usage{
-SequencingSummaryReadLengthQualityDensity(seqsum,
-    binFilter = 5,
+SequencingSummaryReadLengthQualityDensity(seqsum=NA,
+    binFilter = 2,
     qcThreshold = 7
 )
 }

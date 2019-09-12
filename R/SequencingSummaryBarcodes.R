@@ -11,9 +11,11 @@
 #' @return a data.frame with barcode information
 #'
 #' @examples
-#' seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
+#' seqsumFile <- system.file(
+#'     'extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
 #' importSequencingSummary(seqsumFile)
-#' barcodeFile <- system.file('extdata', 'barcoding_summary.txt.bz2', package = 'nanopoRe')
+#' barcodeFile <- system.file(
+#'     'extdata', 'barcoding_summary.txt.bz2', package = 'nanopoRe')
 #' SequencingSummaryBarcodeMerge(barcodeFile=barcodeFile)
 #'
 #' @export
@@ -22,11 +24,11 @@ SequencingSummaryBarcodeMerge <- function(seqsum=NA, barcodeFile=NULL) {
     seqsum <- handleSeqSumCache(seqsum)
     seqsum <- seqsum[which(seqsum$passes_filtering), ]
 
-    # if barcode_arrangement is lacking this could still be guppy called sequence?
     if (!"barcode_arrangement" %in% colnames(seqsum)) {
 
         if (!is.null(barcodeFile) && file.exists(barcodeFile)) {
-            barcodedata <- data.table::fread(barcodeFile, select = c("read_id", "barcode_arrangement"),
+            barcodedata <- data.table::fread(barcodeFile, select = c(
+                "read_id", "barcode_arrangement"),
                 showProgress = TRUE, stringsAsFactors = FALSE)
             pso <- order(seqsum$read_id, method = "radix")
             seqsum <- seqsum[pso, ]
@@ -49,13 +51,16 @@ SequencingSummaryBarcodeMerge <- function(seqsum=NA, barcodeFile=NULL) {
 #' an accessory method for various logicals; simple fractional base calculator
 #'
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
-#' @param bcthreshold the threshold number of reads for a barcode to be considered (150)
+#' @param bcthreshold the threshold number of reads for a barcode to be
+#' considered (150)
 #' @return a numeric value expressed in gigabases
 #'
 #' @examples
-#' seqsumFile <- system.file('extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
+#' seqsumFile <- system.file(
+#'     'extdata', 'sequencing_summary.txt.bz2', package = 'nanopoRe')
 #' importSequencingSummary(seqsumFile)
-#' barcodeFile <- system.file('extdata', 'barcoding_summary.txt.bz2', package = 'nanopoRe')
+#' barcodeFile <- system.file(
+#'     'extdata', 'barcoding_summary.txt.bz2', package = 'nanopoRe')
 #' SequencingSummaryBarcodeMerge(barcodeFile=barcodeFile)
 #' SequenceSummaryBarcodeInfoGraphic()
 #'
@@ -72,7 +77,8 @@ SequenceSummaryBarcodeInfoGraphic <- function(seqsum=NA, bcthreshold = 150) {
         barcodedata = subset(barcodedata, barcodedata$freq > bcthreshold)
         names(barcodedata) <- gsub("x", "barcode", names(barcodedata))
         if ("unclassified" %in% barcodedata$barcode) {
-            barcodes <- nrow(barcodedata[-which(barcodedata$barcode == "unclassified"), ])
+            barcodes <- nrow(
+                barcodedata[-which(barcodedata$barcode == "unclassified"), ])
             barcodeUnass <- sum(barcodedata[-which(barcodedata$barcode == "unclassified"), "freq"])/sum(barcodedata$freq) *
                 100
             barcodeRange <- range(subset(barcodedata, "barcode" != "unclassified")$freq)

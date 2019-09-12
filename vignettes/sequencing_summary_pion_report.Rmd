@@ -1,10 +1,10 @@
 ---
-title: "nanopoRe: assessment of Oxford Nanopore run performance using sequencing_summary.txt"
+title: "nanopoRe: assessment of PromethION run performance using sequencing_summary.txt"
 author: "Stephen Rudd"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-    %\VignetteIndexEntry{nanopoRe: assessment of Oxford Nanopore run performance using sequencing_summary.txt}
+    %\VignetteIndexEntry{nanopoRe: assessment of PromethION run performance using sequencing_summary.txt}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 ---
@@ -23,11 +23,10 @@ setOutputFormat("file")
 
 
 ```{r loadFile}
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
-barcodeFile <- system.file("extdata", "barcoding_summary.txt.bz2", package = "nanopoRe")
+seqsumFile <- "/Users/srudd/SynologyDrive/Dolores_PromethION_1M.txt"
 
 importSequencingSummary(seqsumFile)
-SequencingSummaryBarcodeMerge(barcodeFile=barcodeFile)
+#SequencingSummaryBarcodeMerge(barcodeFile=barcodeFile)
 ```
 
 ```{r executiveSummary}
@@ -39,7 +38,7 @@ include_graphics( SequencingSummaryPassGauge() )
 ```
 
 ```{r channelSpatialActivityPlot}
-include_graphics( SequencingSummaryChannelActivity(showcount=TRUE) )
+include_graphics( SequencingSummaryChannelActivity() )
 ```
 
 ```{r basicSummaryInfo}
@@ -61,7 +60,7 @@ include_graphics( SequencingSummaryReadQualityHistogram() )
 
 
 ```{r qualityReadLengthDensity}
-include_graphics( SequencingSummaryReadLengthQualityDensity(binFilter=3) )
+include_graphics( SequencingSummaryReadLengthQualityDensity(binFilter=5) )
 ```
 
 ```{r temporalThroughput}
