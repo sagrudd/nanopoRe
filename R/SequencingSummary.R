@@ -28,8 +28,8 @@ importSequencingSummary <- function(seqsum) {
             "sequence_length_template", "mean_qscore_template"))
 
     # remove the redundant headers from merged files
-    if (length(which(seqsumdata[, 1] == "filename")) > 0) {
-        seqsumdata <- seqsumdata[-which(seqsumdata[, 1] == "filename"), ]
+    if (length(which(seqsumdata$read_id == "read_id")) > 0) {
+        seqsumdata <- seqsumdata[-which(seqsumdata$read_id == "read_id"), ]
     }
 
     # coerce the columns used in analytics into more appropriate data-types
