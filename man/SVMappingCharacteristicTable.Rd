@@ -23,10 +23,19 @@ as primary, secondary and supplementary and will overlay additional data that re
 length, read quality and other characteristics as reported in the tutorial document
 }
 \examples{
-\dontrun{
-mappingFile <- system.file('extdata', 'mapping.bam', package = 'nanopoRe', mustWork = TRUE)
-bamSummary <- bamSummarise(bamFile)
-kable <- SVMappingCharacteristicTable(bamSummary)
-}
+demoBam <- system.file("extdata",
+    "Ecoli_zymo_R10_filt_subs.bam",
+    package = "nanopoRe")
+demoFastq <- system.file("extdata",
+    "Ecoli_zymo_R10.fastq.gz",
+    package = "nanopoRe")
+referenceGenome <- system.file("extdata",
+    "Escherichia_coli_complete_genome.fasta",
+    package = "nanopoRe")
+setReferenceGenome(referenceGenome)
+loadReferenceGenome()
+bamSummary <- bamSummarise(demoBam, force=FALSE, blockSize=1000L)
+fastqView <- fastqCheckup(demoFastq)
+kable <- SVMappingCharacteristicTable(bamSummary, fastqView, demoBam)
 
 }

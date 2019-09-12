@@ -16,8 +16,7 @@ a ggbio/ggplot2 graph
 This method will prepare a karyogram of annotated SVs against the genome reference
 }
 \examples{
-\dontrun{
+vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf", package = "nanopoRe")
 Vcf2GRanges(vcfFile)
-}
 
 }

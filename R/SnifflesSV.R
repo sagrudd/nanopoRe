@@ -15,9 +15,8 @@
 #' @return a GRanges object describing the duplications
 #'
 #' @examples
-#' \dontrun{
-#' Vcf2FilteredGranges(vcfFile)
-#' }
+#' vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf", package = "nanopoRe")
+#' Vcf2FilteredGranges(vcfFile, svtype = "INS")
 #'
 #' @export
 Vcf2FilteredGranges <- function(vcfFile, svtype = "INS") {
@@ -45,9 +44,8 @@ Vcf2FilteredGranges <- function(vcfFile, svtype = "INS") {
 #' @return a ggbio/ggplot2 graph
 #'
 #' @examples
-#' \dontrun{
+#' vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf", package = "nanopoRe")
 #' Vcf2GRanges(vcfFile)
-#' }
 #'
 #' @export
 Vcf2GRanges <- function(vcfFile) {
@@ -83,9 +81,9 @@ Vcf2GRanges <- function(vcfFile) {
 #' @return a ggbio/ggplot2 graph
 #'
 #' @examples
-#' \dontrun{
-#' snifflesKaryogram(vcfFile)
-#' }
+#' vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf", package = "nanopoRe")
+#' # a reference genome should really be defined with setReferenceGenome
+#' snifflesKaryogram(vcfFile, demoChr=20)
 #'
 #' @export
 snifflesKaryogram <- function(vcfFile, demoChr=NULL) {
@@ -95,7 +93,6 @@ snifflesKaryogram <- function(vcfFile, demoChr=NULL) {
     karyo <- karyo[grep("(MT)|(\\..+)", as.character(seqnames(karyo)), invert = TRUE), ]
     factoids <- gtools::mixedsort(unique(as.character(seqnames(karyo))))
     seqlevels(karyo) <- factoids
-    seqlengths(karyo) <- getSeqLengths(names(seqlengths(karyo)))
 
     if (length(unique(as.character(seqnames(karyo)))) == 1 && !is.null(demoChr)) {
         # this is a tutorial workflow ... may require debugging depending on how script is used in real
@@ -107,11 +104,13 @@ snifflesKaryogram <- function(vcfFile, demoChr=NULL) {
                 101991189, 90338345, 83257441, 80373285, 58617616, 64444167, 46709983, 50818468, 156040895,
                 57227415)
         }
+    } else {
+        seqlengths(karyo) <- getSeqLengths(names(seqlengths(karyo)))
     }
 
-    karyogram <- autoplot(karyo, layout = "karyogram", aes_string(color = "SVTYPE", fill = "SVTYPE"),
+    suppressMessages(suppressWarnings(karyogram <- autoplot(karyo, layout = "karyogram", aes_string(color = "SVTYPE", fill = "SVTYPE"),
         main = "Karyogram showing location and type of structural variations") + scale_fill_brewer(palette = "Set1") +
-        scale_color_brewer(palette = "Set1")
+        scale_color_brewer(palette = "Set1")))
 
     return(karyogram)
 
@@ -132,9 +131,8 @@ snifflesKaryogram <- function(vcfFile, demoChr=NULL) {
 #' @return a ggplot2 graph
 #'
 #' @examples
-#' \dontrun{
+#' vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf", package = "nanopoRe")
 #' svLengthDistribution(vcfFile)
-#' }
 #'
 #' @export
 svLengthDistribution <- function(vcfFile) {

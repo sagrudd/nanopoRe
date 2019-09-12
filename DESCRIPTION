@@ -1,7 +1,7 @@
 Package: nanopoRe
 Type: Package
 Title: Accessory Methods for the Analysis of Oxford Nanopore Technologies DNA Sequence Data
-Version: 0.2.11
+Version: 0.2.12
 Author: Stephen Rudd <stephen.rudd@nanoporetech.com>
 Maintainer: Stephen Rudd <stephen.rudd@nanoporetech.com>
 Description: A collection of utilities used by the Oxford Nanopore Technologies DNA sequence 

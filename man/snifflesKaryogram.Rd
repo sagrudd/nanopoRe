@@ -18,8 +18,8 @@ a ggbio/ggplot2 graph
 This method will prepare a karyogram of annotated SVs against the genome reference
 }
 \examples{
-\dontrun{
-snifflesKaryogram(vcfFile)
-}
+vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf", package = "nanopoRe")
+# a reference genome should really be defined with setReferenceGenome
+snifflesKaryogram(vcfFile, demoChr=20)
 
 }

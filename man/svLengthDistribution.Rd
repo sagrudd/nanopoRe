@@ -16,8 +16,7 @@ a ggplot2 graph
 This method will prepare figure of SV length distribution
 }
 \examples{
-\dontrun{
+vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf", package = "nanopoRe")
 svLengthDistribution(vcfFile)
-}
 
 }
