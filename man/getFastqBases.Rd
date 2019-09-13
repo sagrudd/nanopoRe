@@ -2,7 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{getFastqBases}
 \alias{getFastqBases}
-\title{return the number of fastq bases previously parsed from provided Fastq file}
+\title{return the number of fastq bases previously parsed from
+provided Fastq file}
 \usage{
 getFastqBases()
 }
@@ -10,7 +11,8 @@ getFastqBases()
 long long integer of read fastq bases
 }
 \description{
-return the number of fastq bases previously parsed from provided Fastq file
+return the number of fastq bases previously parsed from
+provided Fastq file
 }
 \examples{
 fastq <- system.file("extdata", "example.fastq.gz", package = "nanopoRe")

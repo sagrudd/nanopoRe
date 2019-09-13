@@ -2,7 +2,8 @@
 % Please edit documentation in R/EnrichmentPresentation.R
 \name{enrichmentStrandedTargetPlot}
 \alias{enrichmentStrandedTargetPlot}
-\title{prepare a plot of sequence coverage shaded by strand over a cas9 target region}
+\title{prepare a plot of sequence coverage shaded by strand over a cas9 target
+region}
 \usage{
 enrichmentStrandedTargetPlot(geneName, delta = 0)
 }
@@ -15,7 +16,8 @@ enrichmentStrandedTargetPlot(geneName, delta = 0)
 ggplot2 figure
 }
 \description{
-prepare a plot of depth-of-coverage shaded by strand over and around a specified target region
+prepare a plot of depth-of-coverage shaded by strand over and around a
+specified target region
 }
 \examples{
 yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")

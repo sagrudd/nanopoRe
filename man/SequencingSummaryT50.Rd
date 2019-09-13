@@ -2,7 +2,8 @@
 % Please edit documentation in R/SequencingSummary.R
 \name{SequencingSummaryT50}
 \alias{SequencingSummaryT50}
-\title{calculates the timepoint within a sequencing run where 50percent of the data is produced}
+\title{calculates the timepoint within a sequencing run where
+50percent of the total data is produced}
 \usage{
 SequencingSummaryT50(seqsum=NA,
     t = 0.5,
@@ -13,7 +14,8 @@ SequencingSummaryT50(seqsum=NA,
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}
 
-\item{t}{is a fractional point through run against which time will be calculated}
+\item{t}{is a fractional point through run against which time will be
+calculated}
 
 \item{sampleHours}{is the number of hours to consider}
 
@@ -23,7 +25,8 @@ SequencingSummaryT50(seqsum=NA,
 a numeric value expressed in hours
 }
 \description{
-an accessory method for identifying a timepoint where a given amount of data has been produced
+an accessory method for identifying a timepoint where a given amount of data
+has been produced
 }
 \examples{
 init()

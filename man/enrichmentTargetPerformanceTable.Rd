@@ -10,7 +10,8 @@ enrichmentTargetPerformanceTable()
 kable table in html format
 }
 \description{
-prepare tabular data showing the enrichment performance for the cas9 targets included within an enrichment study
+prepare tabular data showing the enrichment performance for the cas9 targets
+included within an enrichment study
 }
 \examples{
 yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")

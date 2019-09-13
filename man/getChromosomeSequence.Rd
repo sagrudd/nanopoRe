@@ -2,7 +2,8 @@
 % Please edit documentation in R/ReferenceGenome.R
 \name{getChromosomeSequence}
 \alias{getChromosomeSequence}
-\title{returns a DNAStringSet object corresponding to specified chromosome from reference genome}
+\title{returns a DNAStringSet object corresponding to specified chromosome from
+reference genome}
 \usage{
 getChromosomeSequence(dnaStringSetId)
 }
@@ -13,7 +14,8 @@ getChromosomeSequence(dnaStringSetId)
 DNAStringSet corresponding to pointer provided
 }
 \description{
-This method will return a DNAStringSet object from the reference genome; requires a numeric pointer to the object
+This method will return a DNAStringSet object from the reference genome;
+requires a numeric pointer to the object
 }
 \examples{
 init()

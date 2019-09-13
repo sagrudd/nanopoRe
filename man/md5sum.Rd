@@ -16,7 +16,8 @@ character representation of md5sum
 This method calculates the md5 checksum for the specified file
 }
 \examples{
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
+seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2",
+    package = "nanopoRe")
 md5sum(seqsumFile)
 
 }

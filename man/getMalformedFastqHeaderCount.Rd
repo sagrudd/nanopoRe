@@ -13,7 +13,8 @@ integer count of malformed fastq header entries
 count of fastq elements rejected due to malformed fastq header
 }
 \examples{
-fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+fastq <- system.file("extdata", "frankenFastq.fastq.gz",
+    package = "nanopoRe")
 fastqValidator(fastq)
 getMalformedFastqHeaderCount()
 

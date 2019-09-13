@@ -12,7 +12,8 @@ SequencingSummaryReadLengthQualityDensity(seqsum=NA,
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}
 
-\item{binFilter}{is the minimum number of reads to include a cell in plot (removes speckle)}
+\item{binFilter}{is the minimum number of reads to include a cell in plot
+(removes speckle)}
 
 \item{qcThreshold}{is the QC threshold used}
 }

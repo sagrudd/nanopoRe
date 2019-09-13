@@ -10,7 +10,8 @@ getMinIONChannelMap()
 data.frame with channel, row and col columns
 }
 \description{
-prepares a data.frame of channelIds and their X, Y coordinates for a MinION flowcell
+prepares a data.frame of channelIds and their X, Y coordinates for a MinION
+flowcell
 }
 \examples{
 head(getMinIONChannelMap())

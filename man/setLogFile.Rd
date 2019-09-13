@@ -9,7 +9,8 @@ setLogFile(filename = NULL, append = TRUE)
 \arguments{
 \item{filename}{the path to the logfile to use}
 
-\item{append}{is a boolean defining whether the log file should be appended or ab initio}
+\item{append}{is a boolean defining whether the log file should be appended
+or ab initio}
 }
 \value{
 None

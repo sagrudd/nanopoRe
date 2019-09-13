@@ -43,7 +43,8 @@ inline bool myfile_exists (const std::string& name) {
 
 
 inline int suffix_match(const char *query, const char *suffix) {
-  return(strncmp(query + strlen(query) - strlen(suffix), suffix, strlen(suffix)));
+  return(strncmp(query + strlen(query) -
+         strlen(suffix), suffix, strlen(suffix)));
 }
 
 
@@ -52,7 +53,7 @@ inline int is_gzipped(std::string query)
   vector<string> list;
   list.push_back(".gzip");
   list.push_back(".gz");
-  for( vector<string>::const_iterator it = list.begin(); it != list.end(); ++it )
+  for( vector<string>::const_iterator it = list.begin(); it!=list.end(); ++it )
   {
     std::string suffix = *it;
     if (suffix_match(query.c_str(), suffix.c_str()) == 0)
@@ -87,7 +88,8 @@ int has_next_fastq()
 
 int realign_fastq() {
   /**
-   * the aim of this is to endeavour to resynchronise a fastq file that may contain an INS or DEL
+   * the aim of this is to endeavour to resynchronise a fastq file that may
+   * contain an INS or DEL
    * resulting in the missing header and SEQ/QUAL separator
    */
 
@@ -116,10 +118,12 @@ int realign_fastq() {
     char headdelim = fq.header[0];
     if (headdelim=='@') {
       // we may be aligned ??
-      // but @ is a valid quality score (phred=31) ... it therefore makes some sense just to check ???
+      // but @ is a valid quality score (phred=31) ... it therefore makes some
+      // sense just to check ???
 
       // KEEPING THIS FOR A FUTURE UPDATE ???
-      // this does not break functionality, but a block selected on basis of a QUAL @ would sort itself out pretty quickly?
+      // this does not break functionality, but a block selected on basis of a
+      // QUAL @ would sort itself out pretty quickly?
 
       if (isZipped == 1)
       {
@@ -148,7 +152,6 @@ int validate_fastq()
   char headdelim = fq.header[0];
   if (headdelim!='@')
   {
-    //Rcout << "Malformed fastq entry delimitter " << headdelim << "!=@" << std::endl;
     malformed_fastq_delim ++;
     validFastq = false;
     return(realign_fastq());
@@ -177,7 +180,6 @@ int validate_fastq()
 
   // does sequence length == quality length
   if (seqlength != qlength) {
-    //Rcout << "Malformed fastq entry ~ length(sequence)!=length(quality)" << std::endl;
     sequenceQualityLengthMismatch ++;
     validFastq = false;
     return(0);
@@ -220,7 +222,8 @@ int get_next_fastq()
 
 
 
-//' return the number of fastq entries previously parsed from provided Fastq file
+//' return the number of fastq entries previously parsed from provided Fastq
+//' file
 //'
 //' @return long integer of read fastq elements
 //'
@@ -237,7 +240,8 @@ long int getFastqCount()
 }
 
 
-//' return the number of fastq bases previously parsed from provided Fastq file
+//' return the number of fastq bases previously parsed from
+//' provided Fastq file
 //'
 //' @return long long integer of read fastq bases
 //'
@@ -258,7 +262,8 @@ long int getFastqBases()
 //' @return integer count of malformed fastq header entries
 //'
 //' @examples
-//' fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+//' fastq <- system.file("extdata", "frankenFastq.fastq.gz",
+//'     package = "nanopoRe")
 //' fastqValidator(fastq)
 //' getMalformedFastqHeaderCount()
 //'
@@ -274,7 +279,8 @@ int getMalformedFastqHeaderCount()
 //' @return integer count of malformed fastq '+' separator entries
 //'
 //' @examples
-//' fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+//' fastq <- system.file("extdata", "frankenFastq.fastq.gz",
+//'     package = "nanopoRe")
 //' fastqValidator(fastq)
 //' getFastqPlusErrorCount()
 //'
@@ -290,7 +296,8 @@ int getFastqPlusErrorCount()
 //' @return integer count of fastq entries with zero sequence length
 //'
 //' @examples
-//' fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+//' fastq <- system.file("extdata", "frankenFastq.fastq.gz",
+//'     package = "nanopoRe")
 //' fastqValidator(fastq)
 //' getZeroLengthSequenceCount()
 //'
@@ -301,12 +308,14 @@ int getZeroLengthSequenceCount()
   return(zeroLengthSequence);
 }
 
-//' count of fastq elements rejected due to mismatch between sequence and quality field lengths
+//' count of fastq elements rejected due to mismatch between sequence and
+//' quality field lengths
 //'
 //' @return integer count of fastq entries with seq/qual length challenges
 //'
 //' @examples
-//' fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+//' fastq <- system.file("extdata", "frankenFastq.fastq.gz",
+//'     package = "nanopoRe")
 //' fastqValidator(fastq)
 //' getSequenceQualityMismatchCount()
 //'
@@ -322,7 +331,8 @@ int getSequenceQualityMismatchCount()
 //' @return integer count of lines skipped
 //'
 //' @examples
-//' fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+//' fastq <- system.file("extdata", "frankenFastq.fastq.gz",
+//'     package = "nanopoRe")
 //' fastqValidator(fastq)
 //' getSkippedLineCount()
 //'
@@ -351,9 +361,10 @@ void reset() {
 
 //' parse a fastq file aiming to validate sequences
 //'
-//' fastqValidator will parse the specified fastq (or fastq.gz) file looking for fastq
-//' entry compliance. A boolean value of overall file compliance will be returned. Additional
-//' summary counts describing the reason for rejection are also made available
+//' fastqValidator will parse the specified fastq (or fastq.gz) file looking
+//' for fastq entry compliance. A boolean value of overall file compliance will
+//' be returned. Additional summary counts describing the reason for rejection
+//' are also made available
 //'
 //' @param fastq A fastq format DNA/RNA sequence file
 //' @return logical defining if fastq provided is indeed valid fastq
@@ -361,7 +372,8 @@ void reset() {
 //' @examples
 //' fastq <- system.file("extdata", "example.fastq.gz", package = "nanopoRe")
 //' fastqValidator(fastq)
-//' badFastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+//' badFastq <- system.file("extdata", "frankenFastq.fastq.gz",
+//'     package = "nanopoRe")
 //' fastqValidator(badFastq)
 //'
 //' @export
@@ -431,15 +443,17 @@ char* getFastqEntry()
 
 //' fix a corrupted fastq file (if fastq-like)
 //'
-//' fixFastq parses a fastq (or fastq.gz) file for compliant fastq entries and writes these to
-//' the file specified in newfastq parameter. Any non-compliant reads are dropped
+//' fixFastq parses a fastq (or fastq.gz) file for compliant fastq entries
+//' and writes these to the file specified in newfastq parameter. Any
+//' non-compliant reads are dropped
 //'
 //' @param fastq file location of fastq source
 //' @param newfastq location of file to write content to
 //' @return path to new fastq file (same as newfastq provided)
 //'
 //' @examples
-//' badFastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+//' badFastq <- system.file("extdata", "frankenFastq.fastq.gz", package =
+//'     "nanopoRe")
 //' fastqValidator(badFastq)
 //' tempFile <- tempfile(pattern="fastq", fileext=".fq")
 //' fixFastq(badFastq, tempFile)

@@ -2,7 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{getSequenceQualityMismatchCount}
 \alias{getSequenceQualityMismatchCount}
-\title{count of fastq elements rejected due to mismatch between sequence and quality field lengths}
+\title{count of fastq elements rejected due to mismatch between sequence and
+quality field lengths}
 \usage{
 getSequenceQualityMismatchCount()
 }
@@ -10,10 +11,12 @@ getSequenceQualityMismatchCount()
 integer count of fastq entries with seq/qual length challenges
 }
 \description{
-count of fastq elements rejected due to mismatch between sequence and quality field lengths
+count of fastq elements rejected due to mismatch between sequence and
+quality field lengths
 }
 \examples{
-fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+fastq <- system.file("extdata", "frankenFastq.fastq.gz",
+    package = "nanopoRe")
 fastqValidator(fastq)
 getSequenceQualityMismatchCount()
 

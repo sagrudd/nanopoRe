@@ -2,7 +2,8 @@
 % Please edit documentation in R/SequencingSummary.R
 \name{SequencingSummaryGetPlatform}
 \alias{SequencingSummaryGetPlatform}
-\title{identify the most likely sequencing platform used to create the summary data}
+\title{identify the most likely sequencing platform used to create
+the summary data}
 \usage{
 SequencingSummaryGetPlatform(seqsum = NA)
 }

@@ -2,7 +2,8 @@
 % Please edit documentation in R/SequencingSummary.R
 \name{SequenceSummaryExecutiveSummary}
 \alias{SequenceSummaryExecutiveSummary}
-\title{present an infographic styled executive summary of sequence_summary.txt content}
+\title{present an infographic styled executive summary of sequence_summary.txt
+content}
 \usage{
 SequenceSummaryExecutiveSummary(seqsum = NA, flowcellId = "undefined")
 }
@@ -15,7 +16,8 @@ SequenceSummaryExecutiveSummary(seqsum = NA, flowcellId = "undefined")
 file path to ggplot2 format file
 }
 \description{
-present an infographic styled executive summary of sequence_summary.txt content
+present an infographic styled executive summary of sequence_summary.txt
+content
 }
 \examples{
 init()

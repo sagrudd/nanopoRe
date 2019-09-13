@@ -15,7 +15,8 @@
 #' @return a GRanges object describing the duplications
 #'
 #' @examples
-#' vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf", package = "nanopoRe")
+#' vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf",
+#'     package = "nanopoRe")
 #' Vcf2FilteredGranges(vcfFile, svtype = "INS")
 #'
 #' @export
@@ -32,7 +33,8 @@ Vcf2FilteredGranges <- function(vcfFile, svtype = "INS") {
 
 #' convert VCF content into a GRanges object for nanopoRe usage
 #'
-#' This method will prepare a karyogram of annotated SVs against the genome reference
+#' This method will prepare a karyogram of annotated SVs against the genome
+#' reference
 #'
 #' @importFrom IRanges start
 #' @importFrom IRanges ranges
@@ -44,15 +46,17 @@ Vcf2FilteredGranges <- function(vcfFile, svtype = "INS") {
 #' @return a ggbio/ggplot2 graph
 #'
 #' @examples
-#' vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf", package = "nanopoRe")
+#' vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf",
+#'     package = "nanopoRe")
 #' Vcf2GRanges(vcfFile)
 #'
 #' @export
 Vcf2GRanges <- function(vcfFile) {
 
     vcf <- read.vcfR(vcfFile)
-    karyo <- GRanges(seqnames = as.factor(getFIX(vcf)[, "CHROM"]), ranges = IRanges(start = as.numeric(getFIX(vcf)[,
-        "POS"]), end = as.numeric(getFIX(vcf)[, "POS"])))
+    karyo <- GRanges(seqnames = as.factor(getFIX(vcf)[, "CHROM"]),
+        ranges = IRanges(start = as.numeric(getFIX(vcf)[,"POS"]), end =
+        as.numeric(getFIX(vcf)[, "POS"])))
 
     karyo$SVTYPE <- factor(extract.info(vcf, element = "SVTYPE"))
     karyo$SVLEN <- as.numeric(extract.info(vcf, element = "SVLEN"))
@@ -62,7 +66,8 @@ Vcf2GRanges <- function(vcfFile) {
     # fix the negative values for deletions
     delets <- which(karyo$SVLEN < 0)
     karyo$SVLEN[delets] <- karyo$SVLEN[delets] * -1
-    ranges(karyo)[delets] <- IRanges(start = start(karyo)[delets], end = start(karyo)[delets] + karyo$SVLEN[delets])
+    ranges(karyo)[delets] <- IRanges(start = start(karyo)[delets], end =
+        start(karyo)[delets] + karyo$SVLEN[delets])
 
     return(karyo)
 }
@@ -70,7 +75,8 @@ Vcf2GRanges <- function(vcfFile) {
 
 #' prepare karyogram of annotated SVs
 #'
-#' This method will prepare a karyogram of annotated SVs against the genome reference
+#' This method will prepare a karyogram of annotated SVs against the genome
+#' reference
 #'
 #' @importFrom ggbio autoplot
 #' @importFrom ggplot2 aes_string
@@ -81,7 +87,8 @@ Vcf2GRanges <- function(vcfFile) {
 #' @return a ggbio/ggplot2 graph
 #'
 #' @examples
-#' vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf", package = "nanopoRe")
+#' vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf",
+#'     package = "nanopoRe")
 #' # a reference genome should really be defined with setReferenceGenome
 #' snifflesKaryogram(vcfFile, demoChr=20)
 #'
@@ -90,27 +97,31 @@ snifflesKaryogram <- function(vcfFile, demoChr=NULL) {
 
     karyo <- Vcf2GRanges(vcfFile)
 
-    karyo <- karyo[grep("(MT)|(\\..+)", as.character(seqnames(karyo)), invert = TRUE), ]
+    karyo <- karyo[grep("(MT)|(\\..+)", as.character(seqnames(karyo)),
+        invert = TRUE), ]
     factoids <- gtools::mixedsort(unique(as.character(seqnames(karyo))))
     seqlevels(karyo) <- factoids
 
-    if (length(unique(as.character(seqnames(karyo)))) == 1 && !is.null(demoChr)) {
-        # this is a tutorial workflow ... may require debugging depending on how script is used in real
-        # workflows?
-        if (unique(gtools::mixedsort(as.character(seqnames(karyo)))) == demoChr) {
+    if (length(unique(as.character(seqnames(karyo))))==1 && !is.null(demoChr)) {
+        # this is a tutorial workflow ... may require debugging depending on
+        # how script is used in real workflows?
+        if (unique(gtools::mixedsort(as.character(seqnames(karyo))))==demoChr) {
             seqlevels(karyo) <- append(seq(1, 22), c("X", "Y"))
-            seqlengths(karyo) <- c(248956422, 242193529, 198295559, 190214555, 181538259, 170805979,
-                159345973, 145138636, 138394717, 133797422, 135086622, 133275309, 114364328, 107043718,
-                101991189, 90338345, 83257441, 80373285, 58617616, 64444167, 46709983, 50818468, 156040895,
-                57227415)
+            seqlengths(karyo) <- c(248956422, 242193529, 198295559, 190214555,
+                181538259, 170805979, 159345973, 145138636, 138394717,
+                133797422, 135086622, 133275309, 114364328, 107043718,
+                101991189, 90338345, 83257441, 80373285, 58617616, 64444167,
+                46709983, 50818468, 156040895, 57227415)
         }
     } else {
         seqlengths(karyo) <- getSeqLengths(names(seqlengths(karyo)))
     }
 
-    suppressMessages(suppressWarnings(karyogram <- autoplot(karyo, layout = "karyogram", aes_string(color = "SVTYPE", fill = "SVTYPE"),
-        main = "Karyogram showing location and type of structural variations") + scale_fill_brewer(palette = "Set1") +
-        scale_color_brewer(palette = "Set1")))
+    suppressMessages(suppressWarnings(karyogram <- autoplot(karyo,
+        layout = "karyogram", aes_string(color = "SVTYPE", fill = "SVTYPE"),
+        main = "Karyogram showing location and type of structural variations")+
+        scale_fill_brewer(palette = "Set1") + scale_color_brewer(palette =
+        "Set1")))
 
     return(karyogram)
 
@@ -131,14 +142,17 @@ snifflesKaryogram <- function(vcfFile, demoChr=NULL) {
 #' @return a ggplot2 graph
 #'
 #' @examples
-#' vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf", package = "nanopoRe")
+#' vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf",
+#'     package = "nanopoRe")
 #' svLengthDistribution(vcfFile)
 #'
 #' @export
 svLengthDistribution <- function(vcfFile) {
     sdata <- Vcf2GRanges(vcfFile)
-    plot <- ggplot(as.data.frame(mcols(sdata)), aes_string(x = "SVLEN", fill = "SVTYPE")) + geom_histogram(bins = 70) +
-        scale_x_log10() + scale_fill_brewer(palette = "Set1") + labs(title = "Plot showing frequency of log10-scaled SV lengths") +
+    plot <- ggplot(as.data.frame(mcols(sdata)), aes_string(x = "SVLEN", fill =
+        "SVTYPE")) + geom_histogram(bins = 70) + scale_x_log10() +
+        scale_fill_brewer(palette = "Set1") + labs(title =
+        "Plot showing frequency of log10-scaled SV lengths") +
         xlab("log10 sequence length (bases)") + ylab("Frequency")
     return(plot)
 }

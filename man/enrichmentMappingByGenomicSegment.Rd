@@ -10,8 +10,9 @@ enrichmentMappingByGenomicSegment()
 kable table in html format
 }
 \description{
-the method prepares a table that defines the mapping characteristics by on-target, target-proximal, off-target and
-background - parses the content produced within the broader on_tutorial_cas9 workflow
+the method prepares a table that defines the mapping characteristics by
+on-target, target-proximal, off-target and background - parses the content
+produced within the broader on_tutorial_cas9 workflow
 }
 \examples{
 yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")

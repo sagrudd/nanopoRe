@@ -17,7 +17,8 @@ plotDepthOfCoverageMegablock(coverageData = NULL, colMax = 4, ...)
 ggplot2 image
 }
 \description{
-This method will display depths-of-coverage for the chromosomes contained in the provided parsedBamFile
+This method will display depths-of-coverage for the chromosomes contained in
+the provided parsedBamFile
 container
 }
 \examples{

@@ -2,7 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{getFastqCount}
 \alias{getFastqCount}
-\title{return the number of fastq entries previously parsed from provided Fastq file}
+\title{return the number of fastq entries previously parsed from provided Fastq
+file}
 \usage{
 getFastqCount()
 }
@@ -10,7 +11,8 @@ getFastqCount()
 long integer of read fastq elements
 }
 \description{
-return the number of fastq entries previously parsed from provided Fastq file
+return the number of fastq entries previously parsed from provided Fastq
+file
 }
 \examples{
 fastq <- system.file("extdata", "example.fastq.gz", package = "nanopoRe")

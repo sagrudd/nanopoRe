@@ -2,16 +2,19 @@
 % Please edit documentation in R/EnrichmentPresentation.R
 \name{enrichmentCoverageTypeOverChromosomes}
 \alias{enrichmentCoverageTypeOverChromosomes}
-\title{prepare a barchart showing number of bases per chromosome coloured by mapping-type}
+\title{prepare a barchart showing number of bases per chromosome coloured by
+mapping-type}
 \usage{
 enrichmentCoverageTypeOverChromosomes()
 }
 \value{
-ggplot2 format barchart showing fraction of mapping types per chromosome
+ggplot2 format barchart showing fraction of mapping types per
+chromosome
 }
 \description{
-prepare a barchart showing number of bases per chromosome coloured by mapping-type;
-enables looking for unexpected distributions of off-target, background etc per chromosome
+prepare a barchart showing number of bases per chromosome coloured by
+mapping-type; enables looking for unexpected distributions of off-target,
+background etc per chromosome
 }
 \examples{
 yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")

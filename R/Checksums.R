@@ -8,7 +8,8 @@
 #' @return character representation of md5sum
 #'
 #' @examples
-#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
+#' seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2",
+#'     package = "nanopoRe")
 #' md5sum(seqsumFile)
 #'
 #' @export

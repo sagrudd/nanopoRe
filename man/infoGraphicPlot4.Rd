@@ -10,7 +10,8 @@ infoGraphicPlot4(identifier, panelA, panelB, panelC,
 \arguments{
 \item{identifier}{a key for the plot}
 
-\item{panelA}{information for panel1 in format of panelA=c(key='', value='', icon='')}
+\item{panelA}{information for panel1 in format of panelA=c(key='', value='',
+icon='')}
 
 \item{panelB}{see panelA}
 
@@ -24,7 +25,8 @@ infoGraphicPlot4(identifier, panelA, panelB, panelC,
 link to a figure for display
 }
 \description{
-This method will prepare a 4x graphical plot summarising user data with an emphasis on visualisation
+This method will prepare a 4x graphical plot summarising user data with an
+emphasis on visualisation
 }
 \examples{
 library(emojifont)

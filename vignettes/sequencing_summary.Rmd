@@ -1,10 +1,10 @@
 ---
-title: "nanopoRe: assessment of Oxford Nanopore run performance using sequencing_summary.txt"
+title: "nanopoRe: assessment of flowcell run performance"
 author: "Stephen Rudd"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-    %\VignetteIndexEntry{nanopoRe: assessment of Oxford Nanopore run performance using sequencing_summary.txt}
+    %\VignetteIndexEntry{nanopoRe: assessment of flowcell run performance}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 ---
@@ -23,8 +23,10 @@ setOutputFormat("file")
 
 
 ```{r loadFile}
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
-barcodeFile <- system.file("extdata", "barcoding_summary.txt.bz2", package = "nanopoRe")
+seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", 
+    package = "nanopoRe")
+barcodeFile <- system.file("extdata", "barcoding_summary.txt.bz2", 
+    package = "nanopoRe")
 
 importSequencingSummary(seqsumFile)
 SequencingSummaryBarcodeMerge(barcodeFile=barcodeFile)

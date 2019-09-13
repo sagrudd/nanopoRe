@@ -15,7 +15,9 @@ ncalc(len.vector, n)
 numeric of the corresponding N value
 }
 \description{
-Given a set of contigs, the N50 is defined as the sequence length of the shortest contig at 50% of the total genome length (https://en.wikipedia.org/wiki/N50,_L50,_and_related_statistics)
+Given a set of contigs, the N50 is defined as the sequence length of the
+shortest contig at 50% of the total genome length
+(https://en.wikipedia.org/wiki/N50,_L50,_and_related_statistics)
 }
 \examples{
 # to calculate e.g. N50

@@ -20,8 +20,8 @@ SequencingSummaryCumulativeBases(seqsum,
 ggplot2 showing temporal performance
 }
 \description{
-plots a ggplot2 graph of accumulated sequenced bases against time for run and separates bases called
-from passed and failed sequence reads
+plots a ggplot2 graph of accumulated sequenced bases against time for run
+and separates bases called from passed and failed sequence reads
 }
 \examples{
 init()

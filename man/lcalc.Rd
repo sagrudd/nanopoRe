@@ -15,7 +15,9 @@ lcalc(len.vector, n)
 character representation of md5sum
 }
 \description{
-Given a set of contigs, each with its own length, the L50 count is defined as the smallest number of contigs whose length sum makes up half of genome size (https://en.wikipedia.org/wiki/N50,_L50,_and_related_statistics)
+Given a set of contigs, each with its own length, the L50 count is defined
+as the smallest number of contigs whose length sum makes up half of genome
+size (https://en.wikipedia.org/wiki/N50,_L50,_and_related_statistics)
 }
 \examples{
 lcalc(seq(1, 10), 0.5)

@@ -44,7 +44,8 @@ importSequencingSummary <- function(seqsum) {
     # passes_filtering is a useful flag; but there are examples of
     # sequencing_summary.txt where this is
     # not present -
-    # https://github.com/a-slide/pycoQC/blob/master/pycoQC/data/sequencing_summary_1D_DNA_Albacore_1.2.1.txt
+    # https://github.com/a-slide/pycoQC/blob/master/pycoQC/data/...
+    #     ... sequencing_summary_1D_DNA_Albacore_1.2.1.txt
     if (!"passes_filtering" %in% colnames(seqsumdata)) {
         # set all of the reads to pass? apply a cutoff?
         seqsumdata$passes_filtering <- TRUE
@@ -119,14 +120,17 @@ SequencingSummaryPassGauge <- function(seqsum = NA) {
 
     title = "Percentage of reads\npassing QC filter"
 
-    gaugePlot <- ggplot(
-        df, aes_string(fill = "group", ymax = "percentage", ymin = 0, xmax = 2, xmin = 1)) +
-        geom_rect(aes(ymax = 1, ymin = 0, xmax = 2, xmin = 1), fill = "#ece8bd") + geom_rect() + coord_polar(theta = "y",
-        start = -pi/2) + xlim(c(0, 2)) + ylim(c(0, 2)) + guides(fill = FALSE) + guides(colour = FALSE) +
-        theme_void() + theme(strip.background = element_blank(), strip.text.x = element_blank()) + geom_text(aes_string(x = 0,
-        y = 0, label = "label"), size = 13) + geom_text(aes_string(x = 1.5, y = 1.5, label = "title"),
-        size = 11) + scale_fill_manual(values = c(red = "#C9146C", orange = "#DA9112", green = "#129188")) +
-        scale_colour_manual(values = c(red = "#C9146C", orange = "#DA9112", green = "#129188"))
+    gaugePlot <- ggplot(df, aes_string(fill = "group", ymax = "percentage",
+        ymin = 0, xmax = 2, xmin = 1)) + geom_rect(aes(ymax = 1, ymin = 0, xmax
+        = 2, xmin = 1), fill = "#ece8bd") + geom_rect() + coord_polar(theta =
+        "y", start = -pi/2) + xlim(c(0, 2)) + ylim(c(0, 2)) + guides(fill =
+        FALSE) + guides(colour = FALSE) + theme_void() + theme(strip.background
+        = element_blank(), strip.text.x = element_blank()) + geom_text(
+        aes_string(x = 0, y = 0, label = "label"), size = 13) + geom_text(
+        aes_string(x = 1.5, y = 1.5, label = "title"), size = 11) +
+        scale_fill_manual(values = c(red = "#C9146C", orange = "#DA9112",
+        green = "#129188")) + scale_colour_manual(values = c(red = "#C9146C",
+        orange = "#DA9112", green = "#129188"))
 
     return(ggplot2handler(gaugePlot))
 }
@@ -166,7 +170,6 @@ SequencingSummaryChannelActivity <- function(
     if (is.na(platform)) {
         platform <- SequencingSummaryGetPlatform(seqsum)
     }
-
     channelMap <- SequencingSummaryGetChannelMap(platform)
 
     hm.palette <- colorRampPalette(brewer.pal(9, "Blues"), space = "Lab")
@@ -187,23 +190,27 @@ SequencingSummaryChannelActivity <- function(
 
     activityPlot <- ggplot(
         channelMap, aes_string(x = "col", y = "row", fill = "count")) +
-        geom_tile() + scale_x_discrete(breaks = NULL) + scale_y_discrete(breaks = NULL) +
-        coord_equal() + scale_fill_gradientn(colours = hm.palette(100)) + scale_color_gradient2(low = hm.palette(100),
-        high = hm.palette(1)) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(title = "Channel activity plot showing number of reads per flowcell channel") +
-        theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-            axis.title.x = element_blank(), axis.title.y = element_blank(), legend.position = "bottom",
-            legend.key.width = unit(5.6, "cm"))
+        geom_tile() + scale_x_discrete(breaks = NULL) + scale_y_discrete(
+        breaks = NULL) + coord_equal() + scale_fill_gradientn(colours =
+        hm.palette(100)) + scale_color_gradient2(low = hm.palette(100),
+        high = hm.palette(1)) + theme(axis.text.x = element_text(angle = 90,
+        hjust = 1)) + labs(title =
+        "Channel activity plot showing number of reads per flowcell channel") +
+        theme(panel.border = element_blank(), panel.grid.major=element_blank(),
+        panel.grid.minor = element_blank(), axis.title.x = element_blank(),
+        axis.title.y = element_blank(), legend.position = "bottom",
+        legend.key.width = unit(5.6, "cm"))
     if (showcount) {
         activityPlot <- activityPlot + geom_text(data = channelMap, aes_string(
             x = "col", y = "row", label = "count", color = "count"),
             show.legend = FALSE, size = 2.5)
     }
-
     return(ggplot2handler(activityPlot))
 }
 
 
-#' identify the most likely sequencing platform used to create the summary data
+#' identify the most likely sequencing platform used to create
+#' the summary data
 #'
 #' when provided with the seqsum object from a Sequencing_summary.txt file
 #' identify the
@@ -250,7 +257,8 @@ SequencingSummaryGetPlatform <- function(seqsum = NA) {
 
 
 
-# https://stackoverflow.com/questions/6461209/how-to-round-up-to-the-nearest-10-or-100-or-x
+# https://stackoverflow.com/questions/6461209/
+# how-to-round-up-to-the-nearest-10-or-100-or-x
 roundUpNice <- function(x, nice = seq(from = 1, to = 10, by = 0.25)) {
     if (length(x) != 1)
         stop("'x' must be of length 1")
@@ -259,15 +267,18 @@ roundUpNice <- function(x, nice = seq(from = 1, to = 10, by = 0.25)) {
 
 
 getBinAssignments <- function(seqsum, breaks) {
-    binAssignments <- cut(seqsum$sequence_length_template, breaks, include.lowest = TRUE, right = FALSE)
+    binAssignments <- cut(seqsum$sequence_length_template, breaks,
+        include.lowest = TRUE, right = FALSE)
     return(binAssignments)
 }
 
 #' @importFrom stats quantile
 getBinBreaks <- function(seqsum) {
-    # pick a friendly upper limit to render sequence lengths into a histogram here we're aiming for a
-    # robustly rounded up 97.5 quantile of the data (skip a few outliers ...)
-    upperLimit <- roundUpNice(as.numeric(quantile(x = seqsum$sequence_length_template, probs = c(0.975))))
+    # pick a friendly upper limit to render sequence lengths into a histogram
+    # here we're aiming for a  robustly rounded up 97.5 quantile of the data
+    # (skip a few outliers ...)
+    upperLimit <- roundUpNice(as.numeric(quantile(
+        x = seqsum$sequence_length_template, probs = c(0.975))))
     # an ideal histogram will have 40 or so bins
     histogramBinCount <- 40
     breakVal = roundUpNice(upperLimit/histogramBinCount)
@@ -293,9 +304,7 @@ getBinBreaks <- function(seqsum) {
 #'
 #' @export
 SequencingSummaryWeightedReadLength <- function(seqsum=NA) {
-
     seqsum <- handleSeqSumCache(seqsum)
-
     breaks <- getBinBreaks(seqsum)
     breakVal <- breaks[2]  # assuming that the range is 0 based
     upperLimit <- dplyr::last(breaks)
@@ -303,7 +312,8 @@ SequencingSummaryWeightedReadLength <- function(seqsum=NA) {
 
     passedSeqs <- seqsum[which(seqsum$passes_filtering), ]
     N50 <- ncalc(passedSeqs$sequence_length_template, 0.5)
-    passedMeanLength = round(mean(passedSeqs$sequence_length_template), digits = 0)
+    passedMeanLength = round(
+        mean(passedSeqs$sequence_length_template), digits = 0)
 
     scrapeBinnedBases <- function(level, qcpass, binAssignments, seqsum) {
         candidates <- which(binAssignments == level)
@@ -317,20 +327,28 @@ SequencingSummaryWeightedReadLength <- function(seqsum=NA) {
         return(0)
     }
 
-    passedBinnedBases <- unlist(lapply(levels(binAssignments), scrapeBinnedBases, qcpass = TRUE, binAssignments = binAssignments,seqsum = seqsum))
-    failedBinnedBases <- unlist(lapply(levels(binAssignments), scrapeBinnedBases, qcpass = FALSE, binAssignments = binAssignments,seqsum = seqsum))
+    passedBinnedBases <-unlist(lapply(levels(binAssignments), scrapeBinnedBases,
+        qcpass = TRUE, binAssignments = binAssignments,seqsum = seqsum))
+    failedBinnedBases <-unlist(lapply(levels(binAssignments), scrapeBinnedBases,
+        qcpass = FALSE, binAssignments = binAssignments,seqsum = seqsum))
 
-    binnedBaseDist <- data.frame(length = head(breaks, -1), pass = passedBinnedBases, fail = failedBinnedBases)
+    binnedBaseDist <- data.frame(length = head(breaks, -1), pass =
+        passedBinnedBases, fail = failedBinnedBases)
     binnedBaseMelt <- reshape2::melt(binnedBaseDist, id.vars = c("length"))
 
-    weightedReadLengths <- ggplot(binnedBaseMelt, aes_string(x = "length", fill = "variable", y = "value")) +
-        geom_bar(stat = "identity") + xlab("Read length\n") + ylab("Number of bases sequenced\n") +
-        scale_fill_manual("QC", values = c(fail = brewer.pal(6, "Paired")[1], pass = brewer.pal(6, "Paired")[2])) +
-        scale_x_continuous(limits = c(-breakVal, upperLimit), breaks = pretty(passedSeqs$sequence_length_template,
-            n = 40)) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(title = "Histogram showing the number of sequenced bases against sequence length",
-        fill = "QV filter") + geom_vline(xintercept = N50, size = 1) + annotate("text", x = N50, y = max(passedBinnedBases +
-        failedBinnedBases), label = " N50", hjust = 0, colour = "SteelBlue") + geom_vline(xintercept = passedMeanLength,
-        size = 1) + annotate("text", x = passedMeanLength, y = max(passedBinnedBases + failedBinnedBases),
+    weightedReadLengths <- ggplot(binnedBaseMelt, aes_string(x = "length",
+        fill = "variable", y = "value")) + geom_bar(stat = "identity") +
+        xlab("Read length\n") + ylab("Number of bases sequenced\n") +
+        scale_fill_manual("QC", values = c(fail = brewer.pal(6, "Paired")[1],
+        pass = brewer.pal(6, "Paired")[2])) + scale_x_continuous(limits = c(
+        -breakVal,upperLimit),breaks=pretty(passedSeqs$sequence_length_template,
+        n = 40)) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+        labs(title = paste0("Histogram showing the number of sequenced bases a",
+        "gainst sequence length"), fill = "QV filter") + geom_vline(xintercept =
+        N50, size = 1) + annotate("text", x = N50, y = max(passedBinnedBases +
+        failedBinnedBases), label = " N50", hjust = 0, colour = "SteelBlue") +
+        geom_vline(xintercept = passedMeanLength, size = 1) + annotate("text",
+        x = passedMeanLength, y = max(passedBinnedBases + failedBinnedBases),
         label = " Mean", hjust = 0, colour = "SteelBlue")
 
     return(ggplot2handler(weightedReadLengths))
@@ -368,28 +386,38 @@ SequencingSummaryReadLengthHistogram <- function(seqsum=NA) {
 
     passedSeqs <- seqsum[which(seqsum$passes_filtering), ]
     N50 <- ncalc(passedSeqs$sequence_length_template, 0.5)
-    passedMeanLength = round(mean(passedSeqs$sequence_length_template), digits = 0)
+    passedMeanLength = round(mean(
+        passedSeqs$sequence_length_template), digits = 0)
 
     scrapeBinnedReads <- function(level, qcpass) {
         # length(subset(seqsum[which(binAssignments == level), ],
         # `passes_filtering`==qcpass)$sequence_length_template)
-        length(which(seqsum[which(binAssignments == level), ]$passes_filtering == qcpass))
+        length(which(seqsum[which(
+            binAssignments == level), ]$passes_filtering == qcpass))
     }
 
-    passedBinnedReads <- unlist(lapply(levels(binAssignments), scrapeBinnedReads, qcpass = TRUE))
-    failedBinnedReads <- unlist(lapply(levels(binAssignments), scrapeBinnedReads, qcpass = FALSE))
+    passedBinnedReads <- unlist(lapply(levels(
+        binAssignments), scrapeBinnedReads, qcpass = TRUE))
+    failedBinnedReads <- unlist(lapply(levels(
+        binAssignments), scrapeBinnedReads, qcpass = FALSE))
 
-    binnedReadDist <- data.frame(length = head(breaks, -1), pass = passedBinnedReads, fail = failedBinnedReads)
+    binnedReadDist <- data.frame(length = head(
+        breaks, -1), pass = passedBinnedReads, fail = failedBinnedReads)
     binnedReadMelt <- reshape2::melt(binnedReadDist, id.vars = c("length"))
 
-    lengthHistogram <- ggplot(binnedReadMelt, aes_string(x = "length", fill = "variable", y = "value")) +
-        geom_bar(stat = "identity") + xlab("Read length\n") + ylab("Number of reads\n") + scale_fill_manual("QC",
-        values = c(fail = brewer.pal(6, "Paired")[1], pass = brewer.pal(6, "Paired")[2])) + scale_x_continuous(limits = c(-breakVal,
-        upperLimit), breaks = pretty(passedSeqs$sequence_length_template, n = 40)) + theme(axis.text.x = element_text(angle = 90,
-        hjust = 1)) + labs(title = "Histogram showing distribution of read lengths across quality passing sequences",
-        fill = "QV filter") + geom_vline(xintercept = N50, size = 1) + annotate("text", x = N50, y = max(passedBinnedReads +
-        failedBinnedReads), label = " N50", hjust = 0, colour = "SteelBlue") + geom_vline(xintercept = passedMeanLength,
-        size = 1) + annotate("text", x = passedMeanLength, y = max(passedBinnedReads + failedBinnedReads),
+    lengthHistogram <- ggplot(binnedReadMelt, aes_string(x = "length", fill =
+        "variable", y = "value")) + geom_bar(stat = "identity") + xlab(
+        "Read length\n") + ylab("Number of reads\n") + scale_fill_manual("QC",
+        values = c(fail = brewer.pal(6, "Paired")[1], pass = brewer.pal(6,
+        "Paired")[2])) + scale_x_continuous(limits = c(-breakVal, upperLimit),
+        breaks = pretty(passedSeqs$sequence_length_template, n = 40)) +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(title =
+        paste0("Histogram showing distribution of read lengths across quality ",
+        "passing sequences"), fill = "QV filter") + geom_vline(xintercept = N50,
+        size = 1) + annotate("text", x = N50, y = max(passedBinnedReads +
+        failedBinnedReads), label = " N50", hjust = 0, colour = "SteelBlue") +
+        geom_vline(xintercept = passedMeanLength, size = 1) + annotate("text",
+        x = passedMeanLength, y = max(passedBinnedReads + failedBinnedReads),
         label = " Mean", hjust = 0, colour = "SteelBlue")
 
     return(ggplot2handler(lengthHistogram))
@@ -417,11 +445,13 @@ SequencingSummaryReadQualityHistogram <- function(seqsum=NA) {
 
     seqsum <- handleSeqSumCache(seqsum)
 
-    qdist <- ggplot(seqsum, aes_string(x = "mean_qscore_template", fill = "passes_filtering")) + geom_histogram(breaks = seq(from = 0,
-        to = 15, by = 0.1)) + scale_fill_manual(name = "QC", values = c(`TRUE` = brewer.pal(6, "Paired")[2],
-        `FALSE` = brewer.pal(6, "Paired")[1]), labels = c("pass", "fail"), breaks = c("TRUE", "FALSE")) +
-        labs(title = "Plot showing distribution of quality scores across all reads") + xlab("Mean Q score of read") +
-        ylab("Number of reads")
+    qdist <- ggplot(seqsum, aes_string(x = "mean_qscore_template", fill =
+        "passes_filtering")) + geom_histogram(breaks = seq(from = 0,
+        to = 15, by = 0.1)) + scale_fill_manual(name = "QC", values = c(`TRUE`=
+        brewer.pal(6, "Paired")[2], `FALSE` = brewer.pal(6, "Paired")[1]),
+        labels = c("pass", "fail"), breaks = c("TRUE", "FALSE")) + labs(title =
+        "Plot showing distribution of quality scores across all reads") +
+        xlab("Mean Q score of read") + ylab("Number of reads")
 
     return(ggplot2handler(qdist))
 }
@@ -440,7 +470,8 @@ SequencingSummaryReadQualityHistogram <- function(seqsum=NA) {
 #'     qcThreshold = 7
 #' )
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
-#' @param binFilter is the minimum number of reads to include a cell in plot (removes speckle)
+#' @param binFilter is the minimum number of reads to include a cell in plot
+#' (removes speckle)
 #' @param qcThreshold is the QC threshold used
 #' @return ggplot2 showing densities of read length and quality distribution
 #'
@@ -452,25 +483,30 @@ SequencingSummaryReadQualityHistogram <- function(seqsum=NA) {
 #' plot <- SequencingSummaryReadLengthQualityDensity(seqsum)
 #'
 #' @export
-SequencingSummaryReadLengthQualityDensity <- function(seqsum=NA, binFilter=2, qcThreshold=7) {
-
+SequencingSummaryReadLengthQualityDensity <- function(
+    seqsum=NA, binFilter=2, qcThreshold=7) {
     seqsum <- handleSeqSumCache(seqsum)
 
     # prepare the density plot, but do not render
-    lq_dens <- ggplot(seqsum, aes(log10(seqsum$sequence_length_template), seqsum$mean_qscore_template)) +
-        geom_bin2d(bins = 100)
+    lq_dens <- ggplot(seqsum, aes(log10(seqsum$sequence_length_template),
+        seqsum$mean_qscore_template)) + geom_bin2d(bins = 100)
     # extract the density map from the plot
     lq_dens_counts <- ggplot_build(lq_dens)$data[[1]]
     if (binFilter > 0) {
-        # remove the bins from the density map that do not contain sequence count above threshold
-        lq_dens_counts <- lq_dens_counts[-which(lq_dens_counts$count <= binFilter), ]
+        # remove the bins from the density map that do not contain sequence
+        # count above threshold
+        lq_dens_counts <- lq_dens_counts[-which(
+            lq_dens_counts$count <= binFilter), ]
     }
     # directly plot this modified density map (stat=='identity')
-    qldensityplot <- ggplot(lq_dens_counts) + geom_bin2d(aes_string("x", "y", fill = "count"), stat = "identity") +
-        scale_fill_distiller(palette = "Blues", trans = "reverse") + geom_hline(yintercept = qcThreshold,
-        size = 1) + xlab("log10(read length)") + ylab("read mean quality") + scale_x_continuous(breaks = c(1,
-        2, 3, 4, 5), labels = c("10", "100", "1000", "10,000", "100,000")) + annotation_logticks(base = 10,
-        sides = "b", scaled = TRUE) + labs(title = "Contour Plot showing distribution of quality scores against log10 read lengths (all reads)")
+    qldensityplot <- ggplot(lq_dens_counts) + geom_bin2d(aes_string("x", "y",
+        fill = "count"), stat = "identity") + scale_fill_distiller(palette =
+        "Blues", trans = "reverse") + geom_hline(yintercept = qcThreshold,
+        size = 1) + xlab("log10(read length)") + ylab("read mean quality") +
+        scale_x_continuous(breaks = c(1, 2, 3, 4, 5), labels = c("10", "100",
+        "1000", "10,000", "100,000")) + annotation_logticks(base = 10, sides =
+        "b", scaled = TRUE) + labs(title = paste0("Contour Plot showing distri",
+        "bution of quality scores against log10 read lengths (all reads)"))
     return(ggplot2handler(qldensityplot))
 }
 
@@ -481,12 +517,11 @@ getTemporalDataset <- function(seqsum, sampleHours, sampleIntervalMinutes) {
     breaks = seq(0, sampleHours * 60 * 60, by = 60 * sampleIntervalMinutes)
 
     # has this object already been created?
-    objectName <- paste0("seqsum.temporaldata.",sampleIntervalMinutes,".",length(breaks))
+    objectName <- paste0(
+        "seqsum.temporaldata.",sampleIntervalMinutes,".",length(breaks))
     if (hasCachedObject(objectName)) {
         return(getCachedObject(objectName))
     }
-
-
     binass <- findInterval(seqsum$start_time, breaks)
 
     mergeItPerHour <- function(interval, binnedAssignments, filter) {
@@ -494,16 +529,19 @@ getTemporalDataset <- function(seqsum, sampleHours, sampleIntervalMinutes) {
         if (length(which(binnedAssignments == interval)) > 0) {
             subset <- seqsum[which(binnedAssignments == interval), ]
             if (length(which(subset$passes_filtering == filter)) > 0) {
-                totalbases = sum(subset[which(subset$passes_filtering == filter), "sequence_length_template"])
+                totalbases = sum(subset[which(subset$passes_filtering ==
+                    filter), "sequence_length_template"])
             }
         }
-        # need to scale what is being returned - totalbases value is total bases within an interval
+        # need to scale what is being returned - totalbases value is total
+        # bases within an interval
         # (sampleIntervalMinutes)
         return(totalbases/1e+09/sampleIntervalMinutes * 60)
     }
 
-    binnedTemporalDataPerHour <- data.frame(cbind(time = breaks, pass = unlist(lapply(seq(breaks), mergeItPerHour,
-        binnedAssignments = binass, filter = TRUE)), fail = unlist(lapply(seq(breaks), mergeItPerHour,
+    binnedTemporalDataPerHour <- data.frame(cbind(time = breaks, pass = unlist(
+        lapply(seq(breaks), mergeItPerHour, binnedAssignments = binass,
+        filter = TRUE)), fail = unlist(lapply(seq(breaks), mergeItPerHour,
         binnedAssignments = binass, filter = FALSE))))
 
     binnedTemporalDataPerHour$time <- binnedTemporalDataPerHour$time/60/60
@@ -513,9 +551,11 @@ getTemporalDataset <- function(seqsum, sampleHours, sampleIntervalMinutes) {
 
 
 
-#' plot a sequence throughput against time for specified sequencing_summary run
+#' plot a sequence throughput against time for specified
+#' sequencing_summary run
 #'
-#' plots a ggplot2 graph of performance against time for run and separates passed and failed sequence reads
+#' plots a ggplot2 graph of performance against time for run and separates
+#' passed and failed sequence reads
 #'
 #' @usage SequencingSummaryTemporalThroughput(seqsum,
 #'     sampleHours = NA,
@@ -534,19 +574,24 @@ getTemporalDataset <- function(seqsum, sampleHours, sampleIntervalMinutes) {
 #' plot <- SequencingSummaryTemporalThroughput(seqsum)
 #'
 #' @export
-SequencingSummaryTemporalThroughput <- function(seqsum=NA, sampleHours = NA, sampleIntervalMinutes = 60) {
+SequencingSummaryTemporalThroughput <- function(
+    seqsum=NA, sampleHours = NA, sampleIntervalMinutes = 60) {
 
     seqsum <- handleSeqSumCache(seqsum)
     if (is.na(sampleHours)) {
         sampleHours <- SequencingSummaryExtractRuntime()
     }
 
-    binnedTemporalDataPerHour <- getTemporalDataset(seqsum, sampleHours, sampleIntervalMinutes)
+    binnedTemporalDataPerHour <- getTemporalDataset(
+        seqsum, sampleHours, sampleIntervalMinutes)
 
-    plot <- ggplot(binnedTemporalDataPerHour, aes_string("time")) + geom_line(aes(y = binnedTemporalDataPerHour$fail,
-        colour = "fail"), size = 1) + geom_line(aes(y = binnedTemporalDataPerHour$pass, colour = "pass"),
-        size = 1) + scale_color_manual(name = "QV", values = c(fail = brewer.pal(6, "Paired")[1], pass = brewer.pal(6,
-        "Paired")[2])) + xlab("Time (hours)") + ylab("Gigabases sequenced per hour") + labs(title = "Plot showing sequence throughput against time")
+    plot <- ggplot(binnedTemporalDataPerHour, aes_string("time")) + geom_line(
+        aes(y = binnedTemporalDataPerHour$fail, colour = "fail"), size = 1) +
+        geom_line(aes(y = binnedTemporalDataPerHour$pass, colour = "pass"),
+        size = 1) + scale_color_manual(name = "QV", values = c(fail =
+        brewer.pal(6, "Paired")[1], pass = brewer.pal(6, "Paired")[2])) +
+        xlab("Time (hours)") + ylab("Gigabases sequenced per hour") +
+        labs(title = "Plot showing sequence throughput against time")
 
     return(ggplot2handler(plot))
 }
@@ -554,8 +599,8 @@ SequencingSummaryTemporalThroughput <- function(seqsum=NA, sampleHours = NA, sam
 
 #' plot cumulative volumes of sequence bases
 #'
-#' plots a ggplot2 graph of accumulated sequenced bases against time for run and separates bases called
-#' from passed and failed sequence reads
+#' plots a ggplot2 graph of accumulated sequenced bases against time for run
+#' and separates bases called from passed and failed sequence reads
 #'
 #' @usage SequencingSummaryCumulativeBases(seqsum,
 #'     sampleHours = NA,
@@ -574,35 +619,48 @@ SequencingSummaryTemporalThroughput <- function(seqsum=NA, sampleHours = NA, sam
 #' plot <- SequencingSummaryCumulativeBases(seqsum)
 #'
 #' @export
-SequencingSummaryCumulativeBases <- function(seqsum=NA, sampleHours = NA, sampleIntervalMinutes = 60) {
+SequencingSummaryCumulativeBases <- function(seqsum=NA, sampleHours = NA,
+    sampleIntervalMinutes = 60) {
 
     seqsum <- handleSeqSumCache(seqsum)
     if (is.na(sampleHours)) {
         sampleHours <- SequencingSummaryExtractRuntime()
     }
 
-    binnedTemporalDataPerHour <- getTemporalDataset(seqsum, sampleHours, sampleIntervalMinutes)
+    binnedTemporalDataPerHour <- getTemporalDataset(
+        seqsum, sampleHours, sampleIntervalMinutes)
 
-    # binnedTemporalDataPerHour is scaled to Gbp per hour - rescale to raw for cumulative plotting
-    binnedTemporalDataPerHour$pass <- binnedTemporalDataPerHour$pass/60 * sampleIntervalMinutes
-    binnedTemporalDataPerHour$fail <- binnedTemporalDataPerHour$fail/60 * sampleIntervalMinutes
+    # binnedTemporalDataPerHour is scaled to Gbp per hour - rescale to raw for
+    # cumulative plotting
+    binnedTemporalDataPerHour$pass <- binnedTemporalDataPerHour$pass/60 *
+        sampleIntervalMinutes
+    binnedTemporalDataPerHour$fail <- binnedTemporalDataPerHour$fail/60 *
+        sampleIntervalMinutes
 
     base50 <- SequencingSummaryBase50(seqsum, b = 0.5)
     base90 <- SequencingSummaryBase50(seqsum, b = 0.9)
-    T50 <- SequencingSummaryT50(seqsum, t = 0.5, sampleHours = sampleHours, sampleIntervalMinutes = sampleIntervalMinutes)
-    T90 <- SequencingSummaryT50(seqsum, t = 0.9, sampleHours = sampleHours, sampleIntervalMinutes = sampleIntervalMinutes)
+    T50 <- SequencingSummaryT50(seqsum, t = 0.5, sampleHours = sampleHours,
+        sampleIntervalMinutes = sampleIntervalMinutes)
+    T90 <- SequencingSummaryT50(seqsum, t = 0.9, sampleHours = sampleHours,
+        sampleIntervalMinutes = sampleIntervalMinutes)
 
 
-    cumulativePlot <- ggplot(binnedTemporalDataPerHour, aes_string("time")) + geom_line(aes(y = cumsum(binnedTemporalDataPerHour$fail),
-        colour = "fail"), size = 1) + geom_line(aes(y = cumsum(binnedTemporalDataPerHour$pass), colour = "pass"),
-        size = 1) + scale_color_manual(name = "QV", values = c(fail = brewer.pal(6, "Paired")[1], pass = brewer.pal(6,
-        "Paired")[2])) + geom_segment(x = T50$minimum, y = 0, xend = T50$minimum, yend = base50, colour = "darkgray",
-        size = 1) + geom_segment(x = 0, y = base50, xend = T50$minimum, yend = base50, colour = "darkgray",
-        size = 1) + annotate("text", x = T50$minimum, y = base50, label = " T50", vjust = 1, hjust = 0,
-        colour = "SteelBlue") + geom_segment(x = T90$minimum, y = 0, xend = T90$minimum, yend = base90,
-        colour = "darkgray", size = 1) + geom_segment(x = 0, y = base90, xend = T90$minimum, yend = base90,
-        colour = "darkgray", size = 1) + annotate("text", x = T90$minimum, y = base90, label = " T90",
-        vjust = 1, hjust = 0, colour = "SteelBlue") + xlab("Time (hours)") + ylab("Number of bases sequenced (Gigabases)") +
+    cumulativePlot <- ggplot(binnedTemporalDataPerHour, aes_string("time")) +
+        geom_line(aes(y = cumsum(binnedTemporalDataPerHour$fail), colour =
+        "fail"), size = 1) + geom_line(aes(y = cumsum(
+        binnedTemporalDataPerHour$pass), colour = "pass"), size = 1) +
+        scale_color_manual(name = "QV", values = c(fail = brewer.pal(6,
+        "Paired")[1], pass = brewer.pal(6, "Paired")[2])) + geom_segment(x =
+        T50$minimum, y = 0, xend = T50$minimum, yend = base50, colour =
+        "darkgray", size = 1) + geom_segment(x = 0, y = base50, xend =
+        T50$minimum, yend = base50, colour = "darkgray", size = 1) +
+        annotate("text", x = T50$minimum, y = base50, label = " T50", vjust =1,
+        hjust = 0, colour = "SteelBlue") + geom_segment(x = T90$minimum, y = 0,
+        xend = T90$minimum, yend = base90, colour = "darkgray", size = 1) +
+        geom_segment(x = 0, y = base90, xend = T90$minimum, yend = base90,
+        colour = "darkgray", size = 1) + annotate("text", x = T90$minimum,
+        y = base90, label = " T90", vjust = 1, hjust = 0, colour = "SteelBlue")+
+        xlab("Time (hours)") + ylab("Number of bases sequenced (Gigabases)") +
         labs(title = "Plot showing cumulative bases sequenced against time")
 
     return(ggplot2handler(cumulativePlot))
@@ -612,12 +670,14 @@ SequencingSummaryCumulativeBases <- function(seqsum=NA, sampleHours = NA, sample
 
 
 
-#' calculates the fractional number of bases according to supplied b parameter
+#' calculates the fractional number of bases according to
+#' supplied b parameter
 #'
 #' an accessory method for various logicals; simple fractional base calculator
 #'
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
-#' @param b is a fractional point through run against which time will be calculated
+#' @param b is a fractional point through run against which time will be
+#' calculated
 #' @return a numeric value expressed in gigabases
 #'
 #' @examples
@@ -638,9 +698,11 @@ SequencingSummaryBase50 <- function(seqsum, b = 0.5) {
 
 
 
-#' calculates the timepoint within a sequencing run where 50percent of the data is produced
+#' calculates the timepoint within a sequencing run where
+#' 50percent of the total data is produced
 #'
-#' an accessory method for identifying a timepoint where a given amount of data has been produced
+#' an accessory method for identifying a timepoint where a given amount of data
+#' has been produced
 #'
 #' @importFrom stats approxfun
 #' @importFrom stats optimize
@@ -650,7 +712,8 @@ SequencingSummaryBase50 <- function(seqsum, b = 0.5) {
 #'     sampleIntervalMinutes = 60
 #' )
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
-#' @param t is a fractional point through run against which time will be calculated
+#' @param t is a fractional point through run against which time will be
+#' calculated
 #' @param sampleHours is the number of hours to consider
 #' @param sampleIntervalMinutes is the resolution of the plot in minutes
 #' @return a numeric value expressed in hours
@@ -664,26 +727,32 @@ SequencingSummaryBase50 <- function(seqsum, b = 0.5) {
 #' T50
 #'
 #' @export
-SequencingSummaryT50 <- function(seqsum=NA, t = 0.5, sampleHours = NA, sampleIntervalMinutes = 60) {
+SequencingSummaryT50 <- function(
+    seqsum=NA, t = 0.5, sampleHours = NA, sampleIntervalMinutes = 60) {
 
     seqsum <- handleSeqSumCache(seqsum)
     if (is.na(sampleHours)) {
         sampleHours <- SequencingSummaryExtractRuntime()
     }
 
-    binnedTemporalDataPerHour <- getTemporalDataset(seqsum, sampleHours, sampleIntervalMinutes)
+    binnedTemporalDataPerHour <- getTemporalDataset(
+        seqsum, sampleHours, sampleIntervalMinutes)
 
-    # binnedTemporalDataPerHour is scaled to Gbp per hour - rescale to raw for cumulative plotting
-    binnedTemporalDataPerHour$pass <- binnedTemporalDataPerHour$pass/60 * sampleIntervalMinutes
+    # binnedTemporalDataPerHour is scaled to Gbp per hour - rescale to raw
+    # for cumulative plotting
+    binnedTemporalDataPerHour$pass <- binnedTemporalDataPerHour$pass/60 *
+        sampleIntervalMinutes
 
-    # https://stackoverflow.com/questions/31404679/can-ggplot2-find-the-intersections-or-is-there-any-other-neat-way
+    # https://stackoverflow.com/questions/31404679/
+    # can-ggplot2-find-the-intersections-or-is-there-any-other-neat-way
     acquireTimePoints <- which(binnedTemporalDataPerHour$pass > 0)
-    targetInterpolate <- approxfun(x = binnedTemporalDataPerHour[acquireTimePoints, "time"], y = cumsum(binnedTemporalDataPerHour[acquireTimePoints,
-        "pass"]))
+    targetInterpolate <- approxfun(x = binnedTemporalDataPerHour[
+        acquireTimePoints, "time"], y = cumsum(binnedTemporalDataPerHour[
+        acquireTimePoints, "pass"]))
 
     base50 <- SequencingSummaryBase50(seqsum, b = t)
-    T50 <- optimize(function(t0) abs(targetInterpolate(t0) - base50), interval = range(binnedTemporalDataPerHour[acquireTimePoints,
-        "time"]))
+    T50 <- optimize(function(t0) abs(targetInterpolate(t0) - base50),
+        interval = range(binnedTemporalDataPerHour[acquireTimePoints, "time"]))
 
     return(T50)
 }
@@ -693,8 +762,8 @@ SequencingSummaryT50 <- function(seqsum=NA, t = 0.5, sampleHours = NA, sampleInt
 
 #' plot cumulative volumes of sequence reads
 #'
-#' plots a ggplot2 graph of accumulated sequence reads against time for run and separates passed and
-#' failed sequence reads
+#' plots a ggplot2 graph of accumulated sequence reads against time for run and
+#' separates passed and failed sequence reads
 #'
 #' @usage SequencingSummaryCumulativeReads(seqsum,
 #'     sampleHours = NA,
@@ -713,7 +782,8 @@ SequencingSummaryT50 <- function(seqsum=NA, t = 0.5, sampleHours = NA, sampleInt
 #' plot <- SequencingSummaryCumulativeReads(seqsum)
 #'
 #' @export
-SequencingSummaryCumulativeReads <- function(seqsum=NA, sampleHours = NA, sampleIntervalMinutes = 60) {
+SequencingSummaryCumulativeReads <- function(seqsum=NA, sampleHours = NA,
+    sampleIntervalMinutes = 60) {
 
     seqsum <- handleSeqSumCache(seqsum)
     if (is.na(sampleHours)) {
@@ -728,27 +798,36 @@ SequencingSummaryCumulativeReads <- function(seqsum=NA, sampleHours = NA, sample
         if (length(which(binnedAssignments == interval)) > 0) {
             subset <- seqsum[which(binnedAssignments == interval), ]
             if (length(which(subset$passes_filtering == filter)) > 0) {
-                totalreads = nrow(subset[which(subset$passes_filtering == filter), ])
+                totalreads = nrow(subset[which(
+                    subset$passes_filtering == filter), ])
             }
         }
         # scale results to mean millions of reads per hour
         return(totalreads/1e+06/sampleIntervalMinutes * 60)
     }
 
-    binnedTemporalDataReadsPerHour <- data.frame(cbind(time = breaks, pass = unlist(lapply(seq(breaks),
-        mergeItReadsPerHour, binnedAssignments = binass, filter = TRUE)), fail = unlist(lapply(seq(breaks),
+    binnedTemporalDataReadsPerHour <- data.frame(cbind(time = breaks, pass =
+        unlist(lapply(seq(breaks), mergeItReadsPerHour, binnedAssignments =
+        binass, filter = TRUE)), fail = unlist(lapply(seq(breaks),
         mergeItReadsPerHour, binnedAssignments = binass, filter = FALSE))))
 
-    binnedTemporalDataReadsPerHour$time <- binnedTemporalDataReadsPerHour$time/60/60
-    # binnedTemporalDataReadsPerHour is scaled to Gbp per hour - rescale to raw for cumulative plotting
-    binnedTemporalDataReadsPerHour$pass <- binnedTemporalDataReadsPerHour$pass/60 * sampleIntervalMinutes
-    binnedTemporalDataReadsPerHour$fail <- binnedTemporalDataReadsPerHour$fail/60 * sampleIntervalMinutes
+    binnedTemporalDataReadsPerHour$time <-
+        binnedTemporalDataReadsPerHour$time/60/60
+    # binnedTemporalDataReadsPerHour is scaled to Gbp per hour - rescale to raw
+    # for cumulative plotting
+    binnedTemporalDataReadsPerHour$pass <-
+        binnedTemporalDataReadsPerHour$pass/60 * sampleIntervalMinutes
+    binnedTemporalDataReadsPerHour$fail <-
+        binnedTemporalDataReadsPerHour$fail/60 * sampleIntervalMinutes
 
-    cumulativePlot <- ggplot(binnedTemporalDataReadsPerHour, aes_string("time")) + geom_line(aes(y = cumsum(binnedTemporalDataReadsPerHour$fail),
-        colour = "fail"), size = 1) + geom_line(aes(y = cumsum(binnedTemporalDataReadsPerHour$pass),
-        colour = "pass"), size = 1) + scale_color_manual(name = "QV", values = c(fail = brewer.pal(6,
-        "Paired")[1], pass = brewer.pal(6, "Paired")[2])) + xlab("Time (hours)") + ylab("Number of reads sequenced (Millions)") +
-        labs(title = "Plot showing cumulative reads sequenced against time")
+    cumulativePlot <- ggplot(binnedTemporalDataReadsPerHour,aes_string("time"))+
+        geom_line(aes(y = cumsum(binnedTemporalDataReadsPerHour$fail),
+        colour = "fail"), size = 1) + geom_line(aes(y = cumsum(
+        binnedTemporalDataReadsPerHour$pass), colour = "pass"), size = 1) +
+        scale_color_manual(name = "QV", values = c(fail = brewer.pal(6,
+        "Paired")[1], pass = brewer.pal(6, "Paired")[2]))+xlab("Time (hours)")+
+        ylab("Number of reads sequenced (Millions)") + labs(title =
+        "Plot showing cumulative reads sequenced against time")
 
     return(ggplot2handler(cumulativePlot))
 }
@@ -759,7 +838,8 @@ SequencingSummaryCumulativeReads <- function(seqsum=NA, sampleHours = NA, sample
 
 #' plot speed of sequencing against time (bases per second distribution)
 #'
-#' plots a ggplot2 box-and-whisker plot for the distribution of sequencing speeds against time
+#' plots a ggplot2 box-and-whisker plot for the distribution of sequencing
+#' speeds against time
 #'
 #' @usage SequencingSummarySpeedPlot(seqsum = NA,
 #'     sampleHours = NA,
@@ -778,7 +858,8 @@ SequencingSummaryCumulativeReads <- function(seqsum=NA, sampleHours = NA, sample
 #' plot <- SequencingSummarySpeedPlot()
 #'
 #' @export
-SequencingSummarySpeedPlot <- function(seqsum = NA, sampleHours = NA, sampleIntervalMinutes = 60) {
+SequencingSummarySpeedPlot <- function(
+    seqsum = NA, sampleHours = NA, sampleIntervalMinutes = 60) {
 
     seqsum <- handleSeqSumCache(seqsum)
     if (is.na(sampleHours)) {
@@ -788,11 +869,14 @@ SequencingSummarySpeedPlot <- function(seqsum = NA, sampleHours = NA, sampleInte
     breaks = seq(0, sampleHours * 60 * 60, by = 60 * sampleIntervalMinutes)
     binass <- findInterval(seqsum$start_time, breaks)
 
-    speedTime <- data.frame(segment = binass, rate = seqsum$sequence_length_template/(seqsum$duration))
+    speedTime <- data.frame(segment = binass, rate =
+        seqsum$sequence_length_template/(seqsum$duration))
 
-    speedplot <- ggplot(speedTime, aes_string(x = "segment", y = "rate", group = "segment")) + geom_boxplot(fill = "steelblue",
-        outlier.shape = NA) + scale_x_continuous(name = "Time (hours)") + ylab("Sequencing rate (bases per second)") +
-        labs(title = "boxplot showing distribution of translocation speed against time")
+    speedplot <- ggplot(speedTime, aes_string(x = "segment", y = "rate", group=
+        "segment")) + geom_boxplot(fill = "steelblue", outlier.shape = NA) +
+        scale_x_continuous(name = "Time (hours)") +
+        ylab("Sequencing rate (bases per second)") + labs(title =
+        "boxplot showing distribution of translocation speed against time")
 
     return(ggplot2handler(speedplot))
 }
@@ -821,7 +905,8 @@ SequencingSummarySpeedPlot <- function(seqsum = NA, sampleHours = NA, sampleInte
 #' plot <- SequencingSummaryActiveChannelPlot(seqsum)
 #'
 #' @export
-SequencingSummaryActiveChannelPlot <- function(seqsum=NA, sampleHours = NA, sampleIntervalMinutes = 60) {
+SequencingSummaryActiveChannelPlot <- function(
+    seqsum=NA, sampleHours = NA, sampleIntervalMinutes = 60) {
 
     seqsum <- handleSeqSumCache(seqsum)
     if (is.na(sampleHours)) {
@@ -840,13 +925,14 @@ SequencingSummaryActiveChannelPlot <- function(seqsum=NA, sampleHours = NA, samp
         return(totalChannels)
     }
 
-    binnedTemporalChannels <- data.frame(time = breaks, channels = unlist(lapply(seq(breaks), mergeActiveChannels,
-        binnedAssignments = binass)))
+    binnedTemporalChannels <- data.frame(time = breaks, channels =unlist(lapply(
+        seq(breaks), mergeActiveChannels, binnedAssignments = binass)))
 
     binnedTemporalChannels$time <- binnedTemporalChannels$time/60/60
 
-    activityPlot <- ggplot(binnedTemporalChannels, aes_string("time")) + geom_step(aes_string(y = "channels"),
-        size = 1, colour = "Steelblue") + xlab("Time (hours)") + ylab("Number of channels producing data") +
+    activityPlot <- ggplot(binnedTemporalChannels, aes_string("time")) +
+        geom_step(aes_string(y = "channels"), size = 1, colour = "Steelblue") +
+        xlab("Time (hours)") + ylab("Number of channels producing data") +
         labs(title = "Plot showing number of functional channels against time")
     return(ggplot2handler(activityPlot))
 }
@@ -858,9 +944,11 @@ SequencingSummaryActiveChannelPlot <- function(seqsum=NA, sampleHours = NA, samp
 
 
 
-#' present an infographic styled executive summary of sequence_summary.txt content
+#' present an infographic styled executive summary of sequence_summary.txt
+#' content
 #'
-#' present an infographic styled executive summary of sequence_summary.txt content
+#' present an infographic styled executive summary of sequence_summary.txt
+#' content
 #'
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
 #' @param flowcellId is a label for the plot
@@ -874,7 +962,8 @@ SequencingSummaryActiveChannelPlot <- function(seqsum=NA, sampleHours = NA, samp
 #' plot <- SequenceSummaryExecutiveSummary(seqsum)
 #'
 #' @export
-SequenceSummaryExecutiveSummary <- function(seqsum=NA, flowcellId = "undefined") {
+SequenceSummaryExecutiveSummary <- function(
+    seqsum=NA, flowcellId = "undefined") {
     # calculate some basic, but key, metrics
 
     seqsum <- handleSeqSumCache(seqsum)
@@ -888,19 +977,22 @@ SequenceSummaryExecutiveSummary <- function(seqsum=NA, flowcellId = "undefined")
 
     # render an info-graphic-like plot for these observations
 
-    infoFile1 <- infoGraphicPlot3(identifier = "ExecutiveSummaryValueBoxes", panelA = c(value = "flowcell",
-        key = flowcellId, icon = "fa-qrcode"), panelB = c(value = readCount, key = "Reads produced",
-        icon = "fa-filter"), panelC = c(value = gigabases, key = "gigabases called", icon = "fa-file-text-o"))
+    infoFile1 <- infoGraphicPlot3(identifier = "ExecutiveSummaryValueBoxes",
+        panelA = c(value = "flowcell", key = flowcellId, icon = "fa-qrcode"),
+        panelB = c(value = readCount, key = "Reads produced", icon="fa-filter"),
+        panelC = c(value = gigabases, key = "gigabases called", icon =
+        "fa-file-text-o"))
 
     return(infoFile1)
-
 }
 
 
 
-#' present an infographic styled basic characteristics plot of sequence_summary.txt content
+#' present an infographic styled basic characteristics plot of
+#' sequence_summary.txt content
 #'
-#' present an infographic styled basic characteristics plot of sequence_summary.txt content
+#' present an infographic styled basic characteristics plot of
+#' sequence_summary.txt content
 #'
 #' @param seqsum is the data.frame object as prepared by importSequencingSummary
 #' @return file path to ggplot2 format file
@@ -920,22 +1012,28 @@ SequenceSummaryBasicInfoPlot <- function(seqsum=NA) {
     passedSeqs <- seqsum[which(seqsum$passes_filtering), ]
     failedSeqs <- seqsum[which(!seqsum$passes_filtering), ]
 
-    passedMeanLength = round(mean(passedSeqs$sequence_length_template), digits = 0)
+    passedMeanLength = round(mean(
+        passedSeqs$sequence_length_template), digits = 0)
 
     N50 <- ncalc(passedSeqs$sequence_length_template, 0.5)
 
     passedMeanQ = round(mean(passedSeqs$mean_qscore_template), digits = 1)
     failedMeanQ = round(mean(failedSeqs$mean_qscore_template), digits = 1)
-    longestRead <- (scales::comma_format())(max(passedSeqs$sequence_length_template))
+    longestRead <- (scales::comma_format())(max(
+        passedSeqs$sequence_length_template))
 
-    # N50 length is the length of the shortest contig such that the sum of contigs of equal length or
-    # longer is at least 50% of the total length of all contigs
+    # N50 length is the length of the shortest contig such that the sum of
+    # contigs of equal length oe longer is at least 50% of the total length of
+    # all contigs
 
-    infoFile2 <- infoGraphicPlot5(identifier = "SequenceCharacteristicValueBoxes", panelA = c(value = (scales::comma_format())(passedMeanLength),
-        key = "Mean Read Length (nt)", icon = "fa-bar-chart"), panelB = c(value = (scales::comma_format())(N50),
-        key = "N50", icon = "fa-play"), panelC = c(value = passedMeanQ, key = "Mean Read Quality (QV)",
-        icon = "fa-area-chart"), panelD = c(value = failedMeanQ, key = "Mean Failed QV", icon = "fa-bug"),
-        panelE = c(value = longestRead, key = "Longest Read", icon = "fa-sort"))
+    infoFile2 <- infoGraphicPlot5(identifier="SequenceCharacteristicValueBoxes",
+        panelA = c(value = (scales::comma_format())(passedMeanLength), key =
+        "Mean Read Length (nt)", icon = "fa-bar-chart"), panelB = c(value =
+        (scales::comma_format())(N50), key = "N50", icon = "fa-play"), panelC =
+        c(value = passedMeanQ, key = "Mean Read Quality (QV)", icon =
+        "fa-area-chart"), panelD = c(value = failedMeanQ,key="Mean Failed QV",
+        icon = "fa-bug"), panelE = c(value = longestRead, key = "Longest Read",
+        icon = "fa-sort"))
     return(infoFile2)
 }
 

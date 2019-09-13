@@ -9,17 +9,17 @@ bamSummarise(bamFile, force = FALSE, blockSize = 50000L)
 \arguments{
 \item{bamFile}{is the location to the BAM file to parse}
 
-\item{force}{logical value describing whether the analysis should be force recalculated}
+\item{force}{logical value of whether  analysis should be force recalculated}
 
-\item{blockSize}{the number of reads to process at the time as iterating through}
+\item{blockSize}{the number of reads to process in chunks}
 }
 \value{
 data.frame of per read summary observations
 }
 \description{
-This method will parse a BAM file and summarise the mapping observations in a
+This method will parse BAM file and summarise the mapping observations in a
 way that can be used for preparation of figures and confidence plots by
-the nanopoRe package. This is single threaded and DOES NOT require access to the
+the nanopoRe package. This is single threaded and DOES NOT require access to
 reference genome.
 }
 \examples{

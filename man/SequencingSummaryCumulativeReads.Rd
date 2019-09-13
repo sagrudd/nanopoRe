@@ -20,8 +20,8 @@ SequencingSummaryCumulativeReads(seqsum,
 ggplot2 showing temporal performance
 }
 \description{
-plots a ggplot2 graph of accumulated sequence reads against time for run and separates passed and
-failed sequence reads
+plots a ggplot2 graph of accumulated sequence reads against time for run and
+separates passed and failed sequence reads
 }
 \examples{
 init()

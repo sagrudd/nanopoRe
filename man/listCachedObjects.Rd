@@ -13,9 +13,9 @@ listCachedObjects(subenv = NULL)
 character vector of objects stored in the nanopoRe environment
 }
 \description{
-The nanopoRe package makes use of R environments to store data in memory, but within
-an internally-named environment; this method dumps out (for reasons of QC and
-transparency) a complete listing of these stored objects
+The nanopoRe package makes use of R environments to store data in memory,
+but within an internally-named environment; this method dumps out (for
+reasons of QC and transparency) a complete listing of these stored objects
 }
 \examples{
 cachedObjects <- listCachedObjects()

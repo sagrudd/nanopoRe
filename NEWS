@@ -2,6 +2,13 @@
 \title{nanopoRe NEWS}
 \encoding{UTF-8}
 
+\section{Version 0.3.0}{\itemize{
+\item milestone release
+\item code style, refactoring and line-lengths
+\item ready for BioC submissions
+\item validation with downstream tutorials for Cas9, BasicQC
+}}
+
 \section{Version 0.2.11}{\itemize{
 \item code cleanup and stripping redundant methods and duplicated code
 \item update to BasicQC workflow to accommodate PromethION scale data

@@ -13,8 +13,9 @@ qualToMeanQ(qstr)
 mean phred scaled q-value
 }
 \description{
-FASTQ and BAM store per base qualities as an ASCII string. Accessory methods in e.g. ShortRead allow for a
-sum of the numeric encoded scores; this is not corrected for the log/linear so scores are synthetically boosted
+FASTQ and BAM store per base qualities as an ASCII string. Accessory methods
+in e.g. ShortRead allow for a sum of the numeric encoded scores; this is not
+corrected for the log/linear so scores are synthetically boosted
 - this simple method performs mean on the character level data ...
 }
 \examples{

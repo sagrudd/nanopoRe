@@ -18,7 +18,7 @@ bamSummaryToCoverage(bamFile=NULL,
 
 \item{blocksize}{to use for parsing the BAM file}
 
-\item{flag}{the mapping type to filter reads for (Primary/Secondary/Supplementary)}
+\item{flag}{mapping type for filter (Primary/Secondary/Supplementary)}
 
 \item{...}{such as FORCE=TRUE}
 }
@@ -26,7 +26,8 @@ bamSummaryToCoverage(bamFile=NULL,
 GRanges object with mean depth of coverage data in binned_cov field
 }
 \description{
-This method will return a tiled Granges object containing mean depth of coverage information
+This method will return a tiled Granges object containing mean depth of
+coverage information
 }
 \examples{
 demoBam <- system.file("extdata",

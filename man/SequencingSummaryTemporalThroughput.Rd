@@ -2,7 +2,8 @@
 % Please edit documentation in R/SequencingSummary.R
 \name{SequencingSummaryTemporalThroughput}
 \alias{SequencingSummaryTemporalThroughput}
-\title{plot a sequence throughput against time for specified sequencing_summary run}
+\title{plot a sequence throughput against time for specified
+sequencing_summary run}
 \usage{
 SequencingSummaryTemporalThroughput(seqsum,
     sampleHours = NA,
@@ -20,7 +21,8 @@ SequencingSummaryTemporalThroughput(seqsum,
 ggplot2 showing temporal performance
 }
 \description{
-plots a ggplot2 graph of performance against time for run and separates passed and failed sequence reads
+plots a ggplot2 graph of performance against time for run and separates
+passed and failed sequence reads
 }
 \examples{
 init()

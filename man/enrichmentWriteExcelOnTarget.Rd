@@ -2,7 +2,8 @@
 % Please edit documentation in R/EnrichmentPresentation.R
 \name{enrichmentWriteExcelOnTarget}
 \alias{enrichmentWriteExcelOnTarget}
-\title{write summary of on-target mapping results to an excel format result file}
+\title{write summary of on-target mapping results to an excel format
+result file}
 \usage{
 enrichmentWriteExcelOnTarget()
 }

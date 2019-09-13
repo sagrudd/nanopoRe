@@ -15,10 +15,12 @@ snifflesKaryogram(vcfFile, demoChr = NULL)
 a ggbio/ggplot2 graph
 }
 \description{
-This method will prepare a karyogram of annotated SVs against the genome reference
+This method will prepare a karyogram of annotated SVs against the genome
+reference
 }
 \examples{
-vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf", package = "nanopoRe")
+vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf",
+    package = "nanopoRe")
 # a reference genome should really be defined with setReferenceGenome
 snifflesKaryogram(vcfFile, demoChr=20)
 

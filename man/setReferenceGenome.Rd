@@ -7,7 +7,8 @@
 setReferenceGenome(reference.file)
 }
 \arguments{
-\item{reference.file}{is the location of the fasta format sequence file for reference genome}
+\item{reference.file}{is the location of the fasta format sequence file for
+reference genome}
 }
 \value{
 None

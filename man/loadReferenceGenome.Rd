@@ -10,7 +10,8 @@ loadReferenceGenome()
 None
 }
 \description{
-This method will parse the defined reference.file into a DNAStringSet object for handling in memory
+This method will parse the defined reference.file into a DNAStringSet object
+for handling in memory
 }
 \examples{
 init()

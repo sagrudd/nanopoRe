@@ -10,7 +10,8 @@ enrichmentExecutiveSummary()
 path to a file that has been created
 }
 \description{
-prepare an infographic style executive summary for key cas9 enrichment measurements
+prepare an infographic style executive summary for key cas9 enrichment
+measurements
 }
 \examples{
 yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")

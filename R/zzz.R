@@ -1,6 +1,7 @@
 #' nanopoRe
 #'
-#' methods for supporting the Oxford Nanopore Technologies Bioinformatics Tutorials
+#' methods for supporting the Oxford Nanopore Technologies Bioinformatics
+#' Tutorials
 #'
 #' @docType package
 #' @author Stephen Rudd
@@ -17,6 +18,7 @@ NULL
 
 .onAttach <- function(libname, pkgname) {
     Sys.setenv("_R_S3_METHOD_REGISTRATION_NOTE_OVERWRITES_"=0)
-    packageStartupMessage(paste0("nanopoRe package - v ", utils::packageVersion("nanopoRe")))
+    packageStartupMessage(paste0("nanopoRe package - v ",
+        utils::packageVersion("nanopoRe")))
     invisible()
 }

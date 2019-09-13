@@ -8,23 +8,30 @@ RepeatMaskerGR(RepeatMaskerFile = NULL, RepeatMaskerSRC = NULL,
     force = FALSE)
 }
 \arguments{
-\item{RepeatMaskerFile}{is a path to an already downloaded RepeatMasker results file}
+\item{RepeatMaskerFile}{is a path to an already downloaded RepeatMasker
+results file}
 
 \item{RepeatMaskerSRC}{is the URL to RepeatMasker dataset}
 
-\item{force}{is a boolean to specify whether the build of external data should be forced}
+\item{force}{is a boolean to specify whether the build of external data
+should be forced}
 }
 \value{
 GRanges object of annotated repeats
 }
 \description{
-this method is used to extract most salient data from the RepeatMasker annotation file into a GRanges
-object so that Genome Geometry analyses can be performed and genome coordinates can be used to quickly
+this method is used to extract most salient data from the RepeatMasker
+annotation file into a GRanges
+object so that Genome Geometry analyses can be performed and genome
+coordinates can be used to quickly
 associate with repeat types
 }
 \examples{
-# Using C.elegans repeats as demo; small file with only 90k repeats = easy demo ...
-src <- "http://www.repeatmasker.org/genomes/ce10/RepeatMasker-rm405-db20140131/ce10.fa.out.gz"
+# Using C.elegans repeats as demo; small file with only 90k repeats = easy
+src <- paste0("http://www.repeatmasker.org/genomes/ce10/",
+    "RepeatMasker-rm405-db20140131/ce10.fa.out.gz")
+# if you roll your eyes and sigh - then please feel my frustration with the
+# required strict adherence to Bioc conventions for line length ...
 repeats <- RepeatMaskerGR(RepeatMaskerSRC=src)
 
 }

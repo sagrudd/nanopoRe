@@ -13,9 +13,9 @@ phredmean(q)
 mean phred scaled q-value
 }
 \description{
-This method calculates the mean quality value from a list of q-values; handles the
-challenge of relative log-scaling of the Q and challenges of a more linear mean; this
-avoids an artificial inflation of phred-scores
+This method calculates the mean quality value from a list of q-values;
+handles the challenge of relative log-scaling of the Q and challenges of a
+more linear mean; this avoids an artificial inflation of phred-scores
 }
 \examples{
 mean(c(20,30,40))

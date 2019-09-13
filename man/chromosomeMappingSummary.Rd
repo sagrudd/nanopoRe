@@ -17,7 +17,8 @@ chromosomeMappingSummary(chrIds, bamFile, flag = "Primary")
 data.frame of mapping characteristics
 }
 \description{
-This method will return a data.frame of basic per chromosome mapping statistics
+This method will return a data.frame of basic per chromosome mapping
+statistics
 }
 \examples{
 init()

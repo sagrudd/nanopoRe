@@ -1,8 +1,9 @@
 
 #' Initialise the nanopoRe environment
 #'
-#' Creates a nanopoRe environment; package specific parameters and values will be stored within this
-#' environment; the name of the environment is defined internally
+#' Creates a nanopoRe environment; package specific parameters and values will
+#' be stored within this environment; the name of the environment is defined
+#' internally
 #'
 #' @return None
 #'
@@ -11,7 +12,8 @@
 #'
 #' @export
 init <- function() {
-    eval(parse(text = paste0(nanopoRe.env.name, " <<- new.env(parent=emptyenv())")))
+    eval(parse(text = paste0(
+        nanopoRe.env.name, " <<- new.env(parent=emptyenv())")))
     setRpath(file.path("Analysis", "R"))
 }
 
@@ -21,9 +23,11 @@ init <- function() {
 #'
 #' @return a logical defining whether the environment is initialised
 isInitialised <- function() {
-    eval(parse(text = paste0("return(exists(\"", nanopoRe.env.name, "\", mode=\"environment\"))")))
+    eval(parse(text = paste0(
+        "return(exists(\"", nanopoRe.env.name, "\", mode=\"environment\"))")))
 }
-# nanopoRe.env.name <- 'nanopoRe.env' usethis::use_data(nanopoRe.env.name, internal=TRUE)
+# nanopoRe.env.name <- 'nanopoRe.env' usethis::use_data(
+#     nanopoRe.env.name, internal=TRUE)
 getEnvironment <- function() {
     if (!isInitialised()) {
         init()
@@ -69,9 +73,9 @@ getCachedObject <- function(objectName, subenv=NULL) {
 
 #' list objects that are stored within the nanopoRe working space
 #'
-#' The nanopoRe package makes use of R environments to store data in memory, but within
-#' an internally-named environment; this method dumps out (for reasons of QC and
-#' transparency) a complete listing of these stored objects
+#' The nanopoRe package makes use of R environments to store data in memory,
+#' but within an internally-named environment; this method dumps out (for
+#' reasons of QC and transparency) a complete listing of these stored objects
 #'
 #' @importFrom utils ls.str
 #' @param subenv the nested environment to consider
@@ -171,7 +175,8 @@ getCachedYAMLValue <- function(yaml="config", field, subenv=NULL) {
 #' init()
 #' yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
 #' importConfigYAML(yamlFile=yamlFile)
-#' referenceGenome <- system.file("extdata", "cas9_demo_ref.fasta", package = "nanopoRe")
+#' referenceGenome <- system.file("extdata", "cas9_demo_ref.fasta",
+#'     package = "nanopoRe")
 #' setCachedYAMLValue(field="reference_genome", value=referenceGenome)
 #' getCachedYAMLValue(field="reference_genome")
 #'

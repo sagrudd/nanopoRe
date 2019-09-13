@@ -2,7 +2,8 @@
 % Please edit documentation in R/ONT_tutorial_sv.R
 \name{SVMappingCharacteristicTable}
 \alias{SVMappingCharacteristicTable}
-\title{ont_tutorial_sv = summarise the mapping characteristics from a given BAM file}
+\title{ont_tutorial_sv = summarise the mapping characteristics
+from a given BAM file}
 \usage{
 SVMappingCharacteristicTable(bamSummary, validationResponse, bamFile)
 }
@@ -14,13 +15,16 @@ SVMappingCharacteristicTable(bamSummary, validationResponse, bamFile)
 \item{bamFile}{is a path to a file}
 }
 \value{
-kable table of mapping characteristics as tuned for the ont_tutorial_sv document
+kable table of mapping characteristics as tuned for the
+ont_tutorial_sv document
 }
 \description{
-this method prepares a kable format table summarising the key mapping characteritics from a provided
-BAM file summary (from bamSummarise). This will describe the mapped sequence reads that are defined
-as primary, secondary and supplementary and will overlay additional data that releases to read
-length, read quality and other characteristics as reported in the tutorial document
+this method prepares a kable format table summarising the key mapping
+characteritics from a provided BAM file summary (from bamSummarise). This
+will describe the mapped sequence reads that are defined as primary,
+secondary and supplementary and will overlay additional data that releases
+to read length, read quality and other characteristics as reported in the
+tutorial document
 }
 \examples{
 demoBam <- system.file("extdata",

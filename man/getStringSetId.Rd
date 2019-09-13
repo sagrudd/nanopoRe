@@ -2,7 +2,8 @@
 % Please edit documentation in R/ReferenceGenome.R
 \name{getStringSetId}
 \alias{getStringSetId}
-\title{accessory method for mapping named chromosomes to their pointers in the reference fasta}
+\title{accessory method for mapping named chromosomes to their pointers in the
+reference fasta}
 \usage{
 getStringSetId(chrId)
 }
@@ -13,7 +14,8 @@ getStringSetId(chrId)
 None
 }
 \description{
-This method will return the numerical index for the named chromosome within the referenceGenomeSequence
+This method will return the numerical index for the named chromosome within
+the referenceGenomeSequence
 }
 \examples{
 init()

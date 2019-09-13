@@ -21,7 +21,8 @@ SVLEN field, read support in RE, support type in SUPTYPE. The
 variants will be filtered according to the svtype parameter
 }
 \examples{
-vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf", package = "nanopoRe")
+vcfFile <- system.file("extdata", "GM24385.nf7.chr20.vcf",
+    package = "nanopoRe")
 Vcf2FilteredGranges(vcfFile, svtype = "INS")
 
 }

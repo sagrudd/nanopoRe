@@ -13,7 +13,8 @@ cleanReferenceGenome(delIds)
 None
 }
 \description{
-This method will remove unwanted chromosomes from the reference genome collection; useful for when analyses are to
+This method will remove unwanted chromosomes from the reference genome
+collection; useful for when analyses are to
 be linked to a set of core autosomes, for example.
 }
 \examples{

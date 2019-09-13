@@ -6,7 +6,8 @@
 \alias{nanopoRe-package}
 \title{nanopoRe}
 \description{
-methods for supporting the Oxford Nanopore Technologies Bioinformatics Tutorials
+methods for supporting the Oxford Nanopore Technologies Bioinformatics
+Tutorials
 }
 \author{
 Stephen Rudd

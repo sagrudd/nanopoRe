@@ -16,11 +16,13 @@ bamSummariseByChr(chrId,
 
 \item{bamFile}{is the location to the BAM file to parse}
 
-\item{force}{logical value describing whether the analysis should be force recalculated}
+\item{force}{logical value describing whether the analysis should be force
+recalculated}
 
-\item{blockSize}{the number of reads to process at the time as iterating through}
+\item{blockSize}{the number of reads to process at the time as iterating
+through}
 
-\item{index}{path to the BAI index file - should be automatic in most cases ...}
+\item{index}{path to the BAI index file - should be automatic in most cases}
 }
 \value{
 data.frame of per read summary observations

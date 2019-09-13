@@ -13,7 +13,8 @@ integer count of malformed fastq '+' separator entries
 count of fastq elements rejected due to line 3 plus separator
 }
 \examples{
-fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+fastq <- system.file("extdata", "frankenFastq.fastq.gz",
+    package = "nanopoRe")
 fastqValidator(fastq)
 getFastqPlusErrorCount()
 

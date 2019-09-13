@@ -1,10 +1,10 @@
 ---
-title: "nanopoRe: analysis of enrichment performance from targeted sequencing studies"
+title: "nanopoRe: analysis of target enrichment performance"
 author: "Stephen Rudd"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-    %\VignetteIndexEntry{nanopoRe: analysis of enrichment performance from targeted sequencing studies}
+    %\VignetteIndexEntry{nanopoRe: analysis of target enrichment performance}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 ---
@@ -23,20 +23,26 @@ setOutputFormat("file")
 
 ## Parsing of configuration file
 
-The cas9-mediated target enrichment workflow is configured by a YAML format file that provides paths to the required files, and parameters specific to the workflow. The YAML file should be loaded and evaluated
+The cas9-mediated target enrichment workflow is configured by a YAML format file
+that provides paths to the required files, and parameters specific to the 
+workflow. The YAML file should be loaded and evaluated
 
 ```{r loadFile}
 yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
 importConfigYAML(yamlFile=yamlFile)
 ```
 
-Since we are operating within a vignette - or out of the expected CONDA/Snakemake environment a manual update for a couple of fields makes sense
+Since we are operating within a vignette - or out of the expected 
+CONDA/Snakemake environment a manual update for a couple of fields makes sense
 
 ```{r, results='hide'}
-unmappedQ <- system.file("extdata", "cas9_FAK76554.unmapped.quals", package = "nanopoRe")
+unmappedQ <- system.file("extdata", "cas9_FAK76554.unmapped.quals", 
+    package = "nanopoRe")
 bamFile <- system.file("extdata", "cas9_FAK76554.bam", package = "nanopoRe")
-referenceGenome <- system.file("extdata", "cas9_demo_ref.fasta", package = "nanopoRe")
-bedTargets <- system.file("extdata", "cas9_demo_target.bed", package = "nanopoRe")
+referenceGenome <- system.file("extdata", "cas9_demo_ref.fasta", 
+    package = "nanopoRe")
+bedTargets <- system.file("extdata", "cas9_demo_target.bed", 
+    package = "nanopoRe")
 
 setCachedYAMLValue(field="reference_genome", value=referenceGenome)
 setCachedYAMLValue(field="target_regions", value=bedTargets)

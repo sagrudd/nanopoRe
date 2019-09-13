@@ -25,7 +25,8 @@ update the stored parameter value from named config field
 init()
 yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
 importConfigYAML(yamlFile=yamlFile)
-referenceGenome <- system.file("extdata", "cas9_demo_ref.fasta", package = "nanopoRe")
+referenceGenome <- system.file("extdata", "cas9_demo_ref.fasta",
+    package = "nanopoRe")
 setCachedYAMLValue(field="reference_genome", value=referenceGenome)
 getCachedYAMLValue(field="reference_genome")
 

@@ -13,7 +13,8 @@ integer count of lines skipped
 count of lines of fastq file skipped to enable fastq entry parsing
 }
 \examples{
-fastq <- system.file("extdata", "frankenFastq.fastq.gz", package = "nanopoRe")
+fastq <- system.file("extdata", "frankenFastq.fastq.gz",
+    package = "nanopoRe")
 fastqValidator(fastq)
 getSkippedLineCount()
 

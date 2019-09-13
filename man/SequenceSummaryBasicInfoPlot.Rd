@@ -2,7 +2,8 @@
 % Please edit documentation in R/SequencingSummary.R
 \name{SequenceSummaryBasicInfoPlot}
 \alias{SequenceSummaryBasicInfoPlot}
-\title{present an infographic styled basic characteristics plot of sequence_summary.txt content}
+\title{present an infographic styled basic characteristics plot of
+sequence_summary.txt content}
 \usage{
 SequenceSummaryBasicInfoPlot(seqsum = NA)
 }
@@ -13,7 +14,8 @@ SequenceSummaryBasicInfoPlot(seqsum = NA)
 file path to ggplot2 format file
 }
 \description{
-present an infographic styled basic characteristics plot of sequence_summary.txt content
+present an infographic styled basic characteristics plot of
+sequence_summary.txt content
 }
 \examples{
 init()

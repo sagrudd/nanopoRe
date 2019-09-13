@@ -10,7 +10,8 @@ getFlongleChannelMap()
 data.frame with channel, row and col columns
 }
 \description{
-prepares a data.frame of channelIds and their X, Y coordinates for a flongle flowcell
+prepares a data.frame of channelIds and their X, Y coordinates for a flongle
+flowcell
 }
 \examples{
 head(getFlongleChannelMap())

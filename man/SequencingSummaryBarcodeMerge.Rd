@@ -2,7 +2,7 @@
 % Please edit documentation in R/SequencingSummaryBarcodes.R
 \name{SequencingSummaryBarcodeMerge}
 \alias{SequencingSummaryBarcodeMerge}
-\title{calculates the fractional number of bases according to supplied b parameter}
+\title{merge sequencing summary and barcode summary files}
 \usage{
 SequencingSummaryBarcodeMerge(seqsum = NA, barcodeFile = NULL)
 }
@@ -15,7 +15,8 @@ SequencingSummaryBarcodeMerge(seqsum = NA, barcodeFile = NULL)
 a data.frame with barcode information
 }
 \description{
-an accessory method for various logicals; simple fractional base calculator
+This method is used by the BasicQC tutorial to merge the common sequence
+identifiers shared between sequencing_summary and barcode_summary
 }
 \examples{
 seqsumFile <- system.file(

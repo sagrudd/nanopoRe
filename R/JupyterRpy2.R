@@ -6,7 +6,8 @@
 #' creates a log file and writes R code and messages on STDERR to the log file
 #'
 #' @param filename the path to the logfile to use
-#' @param append is a boolean defining whether the log file should be appended or ab initio
+#' @param append is a boolean defining whether the log file should be appended
+#' or ab initio
 #' @return None
 #'
 #' @examples

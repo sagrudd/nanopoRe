@@ -20,7 +20,8 @@ SequencingSummarySpeedPlot(seqsum = NA,
 ggplot2 showing temporal performance
 }
 \description{
-plots a ggplot2 box-and-whisker plot for the distribution of sequencing speeds against time
+plots a ggplot2 box-and-whisker plot for the distribution of sequencing
+speeds against time
 }
 \examples{
 init()

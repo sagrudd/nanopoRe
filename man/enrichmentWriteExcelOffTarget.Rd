@@ -2,7 +2,8 @@
 % Please edit documentation in R/EnrichmentPresentation.R
 \name{enrichmentWriteExcelOffTarget}
 \alias{enrichmentWriteExcelOffTarget}
-\title{write summary of off-target mapping results to an excel format result file}
+\title{write summary of off-target mapping results to an excel format
+result file}
 \usage{
 enrichmentWriteExcelOffTarget()
 }

@@ -10,7 +10,8 @@ parallelBamSummarise(bamFile, force = FALSE, blockSize=10000L,
 \arguments{
 \item{bamFile}{is the location to the BAM file to parse}
 
-\item{force}{logical value describing whether the analysis should be force recalculated}
+\item{force}{logical value describing whether the analysis should be
+force recalculated}
 
 \item{blockSize}{describes the size of BAM chunk to parse}
 
@@ -34,6 +35,7 @@ referenceGenome <- system.file("extdata",
     package = "nanopoRe")
 setReferenceGenome(referenceGenome)
 loadReferenceGenome()
-bamSummary <- parallelBamSummarise(demoBam, force=FALSE, blockSize=10000L, mc.cores=2)
+bamSummary <- parallelBamSummarise(
+    demoBam, force=FALSE, blockSize=10000L, mc.cores=2)
 
 }

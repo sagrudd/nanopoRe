@@ -1,10 +1,10 @@
 ---
-title: "nanopoRe: assessment of PromethION run performance using sequencing_summary.txt"
+title: "nanopoRe: assessment of PromethION run performance"
 author: "Stephen Rudd"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-    %\VignetteIndexEntry{nanopoRe: assessment of PromethION run performance using sequencing_summary.txt}
+    %\VignetteIndexEntry{nanopoRe: assessment of PromethION run performance}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 ---
@@ -26,7 +26,8 @@ setOutputFormat("file")
 # this is not a promethION dataset - but we need a dataset for vignette testing
 # at TRAVIS - don't see case for adding another 5Mb file that is essentially
 # the same as MinION dataset below (other than additional channel data ...)
-seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", package = "nanopoRe")
+seqsumFile <- system.file("extdata", "sequencing_summary.txt.bz2", 
+    package = "nanopoRe")
 
 importSequencingSummary(seqsumFile)
 ```

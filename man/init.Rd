@@ -10,8 +10,9 @@ init()
 None
 }
 \description{
-Creates a nanopoRe environment; package specific parameters and values will be stored within this
-environment; the name of the environment is defined internally
+Creates a nanopoRe environment; package specific parameters and values will
+be stored within this environment; the name of the environment is defined
+internally
 }
 \examples{
 init()

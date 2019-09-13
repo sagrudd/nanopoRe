@@ -7,16 +7,16 @@
 importEnrichmentResults(resultsDir = NULL)
 }
 \arguments{
-\item{resultsDir}{the location of the folder where files should be pulled from - this should
-be determined automatically from config.yaml in most cases}
+\item{resultsDir}{the location of the folder where files should be pulled
+from - this should be determined automatically from config.yaml in most cases}
 }
 \value{
 None
 }
 \description{
-a method for streamlining the import of R format data from the pre-calculated content
-generated within the ont_tutorial_cas9 workflow. This is an accessory method to abstract some
-of the code that looks out-of-control
+a method for streamlining the import of R format data from the pre-calculated
+content generated within the ont_tutorial_cas9 workflow. This is an accessory
+method to abstract some of the code that looks out-of-control
 }
 \examples{
 yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")

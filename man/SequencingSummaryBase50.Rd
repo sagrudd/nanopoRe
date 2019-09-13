@@ -2,14 +2,16 @@
 % Please edit documentation in R/SequencingSummary.R
 \name{SequencingSummaryBase50}
 \alias{SequencingSummaryBase50}
-\title{calculates the fractional number of bases according to supplied b parameter}
+\title{calculates the fractional number of bases according to
+supplied b parameter}
 \usage{
 SequencingSummaryBase50(seqsum, b = 0.5)
 }
 \arguments{
 \item{seqsum}{is the data.frame object as prepared by importSequencingSummary}
 
-\item{b}{is a fractional point through run against which time will be calculated}
+\item{b}{is a fractional point through run against which time will be
+calculated}
 }
 \value{
 a numeric value expressed in gigabases

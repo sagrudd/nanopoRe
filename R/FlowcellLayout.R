@@ -15,7 +15,8 @@ SequencingSummaryGetChannelMap <- function(platform) {
 
 #' produce the channelMap for a MinION flowcell for spatial plots
 #'
-#' prepares a data.frame of channelIds and their X, Y coordinates for a MinION flowcell
+#' prepares a data.frame of channelIds and their X, Y coordinates for a MinION
+#' flowcell
 #'
 #' @return data.frame with channel, row and col columns
 #'
@@ -29,20 +30,22 @@ getMinIONChannelMap <- function() {
         m <- matrix(seq(i, i + 63, by = 1), ncol = 8, byrow = TRUE)
         cbind(m[seq(5, 8, by = 1), ], m[seq(4), rev(seq(8))])
     }
-    layout <- do.call(rbind, lapply(c(1, 449, 385, 321, 257, 193, 129, 65), blockCalc))
+    layout <- do.call(rbind, lapply(
+        c(1, 449, 385, 321, 257, 193, 129, 65), blockCalc))
 
     # transpose the layout for cleaner presentation ...
     layout <- t(layout)
 
-    channelMap <- as.data.frame(cbind(channel = as.vector(t(layout)), which(layout == as.vector(layout),
-        arr.ind = TRUE)))
+    channelMap <- as.data.frame(cbind(channel = as.vector(t(layout)), which(
+        layout == as.vector(layout), arr.ind = TRUE)))
     return(channelMap)
 }
 
 
 #' produce the channelMap for a flongle flowcell for spatial plots
 #'
-#' prepares a data.frame of channelIds and their X, Y coordinates for a flongle flowcell
+#' prepares a data.frame of channelIds and their X, Y coordinates for a flongle
+#' flowcell
 #'
 #' @return data.frame with channel, row and col columns
 #'
@@ -51,18 +54,19 @@ getMinIONChannelMap <- function() {
 #'
 #' @export
 getFlongleChannelMap <- function() {
-    layout <- matrix(c(seq(1, 12), 0, seq(13, 24), 0, seq(25, 114), 0, seq(115, 126), 0), ncol = 13,
-        byrow = TRUE)
+    layout <- matrix(c(seq(1, 12), 0, seq(13, 24), 0, seq(25, 114), 0,
+        seq(115, 126), 0), ncol = 13, byrow = TRUE)
     layout <- layout[rev(seq(10)), ]
-    channelMap <- as.data.frame(cbind(channel = as.vector(t(layout)), which(layout == as.vector(layout),
-        arr.ind = TRUE)))
+    channelMap <- as.data.frame(cbind(channel = as.vector(t(layout)),
+        which(layout == as.vector(layout), arr.ind = TRUE)))
     return(channelMap)
 }
 
 
 #' produce the channelMap for a PromethION flowcell for spatial plots
 #'
-#' prepares a data.frame of channelIds and their X, Y coordinates for a PromethION flowcell
+#' prepares a data.frame of channelIds and their X, Y coordinates for a
+#' PromethION flowcell
 #'
 #' @return data.frame with channel, row and col columns
 #'
@@ -76,8 +80,8 @@ getPromethIONChannelMap <- function() {
         m + i
     }
     layout <- do.call(cbind, lapply(seq(from=0, to=2750, by=250), chunk))
-    channelMap <- as.data.frame(cbind(channel = as.vector(t(layout)), which(layout == as.vector(layout),
-                                                                            arr.ind = TRUE)))
+    channelMap <- as.data.frame(cbind(channel = as.vector(t(layout)),
+        which(layout == as.vector(layout), arr.ind = TRUE)))
     return(channelMap)
 }
 

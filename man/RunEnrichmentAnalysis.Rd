@@ -36,7 +36,8 @@ addCachedYAMLValue(
     value=system.file("extdata", "cas9_FAK76554.bam", package ="nanopoRe"))
 addCachedYAMLValue(
     field="unmapped_quals",
-    value=system.file("extdata", "cas9_FAK76554.unmapped.quals", package="nanopoRe"))
+    value=system.file("extdata", "cas9_FAK76554.unmapped.quals",
+    package="nanopoRe"))
 # lines between the previous comment and here are typically not required
 RunEnrichmentAnalysis(mc.cores=1)
 
