@@ -4,10 +4,14 @@
 \alias{importSequencingSummary}
 \title{load a sequencing_summary.txt file into memory}
 \usage{
-importSequencingSummary(seqsum)
+importSequencingSummary(seqsum, cache = TRUE, chunksize = 1e+06)
 }
 \arguments{
 \item{seqsum}{is a path to a file}
+
+\item{cache}{whether the object created should be cached in env}
+
+\item{chunksize}{the number of reads to parse per iteration block}
 }
 \value{
 data.frame of observations from the sequencing_summary.txt file
