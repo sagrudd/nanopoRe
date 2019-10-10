@@ -1,4 +1,18 @@
 
+handleCompression <- function(filename) {
+    if (R.utils::isBzipped(filename)) {
+        cat(paste0(paste("bunzip2",filename),"\n"))
+        return(R.utils::bunzip2(filename, temporary=TRUE, remove=FALSE, skip=TRUE))
+    }
+    if (R.utils::isGzipped(filename)) {
+        cat(paste0(paste("gunzip",filename),"\n"))
+        return(R.utils::gunzip(filename, temporary=TRUE, remove=FALSE, skip=TRUE))
+    }
+    return(filename)
+}
+
+
+
 #' load a sequencing_summary.txt file into memory
 #'
 #' importSequencingSummary loads a sequencing_summary.txt file into
@@ -7,7 +21,10 @@
 #'
 #' @importFrom R.utils bunzip2
 #' @importFrom R.utils gunzip
+#' @importFrom LaF laf_open_csv
 #' @param seqsum is a path to a file
+#' @param cache whether the object created should be cached in env
+#' @param chunksize the number of reads to parse per iteration block
 #' @return data.frame of observations from the sequencing_summary.txt file
 #' provided
 #'
@@ -18,42 +35,43 @@
 #' seqsum <- importSequencingSummary(seqsumFile)
 #'
 #' @export
-importSequencingSummary <- function(seqsum) {
-    # downsample performed with cat lambda_sequencing_summary.txt |
-    # awk ' BEGIN {srand()} {print rand()
-    # ' ' $0}' | sort | head -5 | sed 's/[^ ]* //'
-    seqsumdata <- data.table::fread(
-        seqsum, stringsAsFactors = FALSE, select=c(
-            "read_id", "channel", "start_time", "duration", "passes_filtering",
-            "sequence_length_template", "mean_qscore_template"))
+importSequencingSummary <- function(seqsum, cache=TRUE, chunksize=1000000) {
+    seqsum <- handleCompression(seqsum)
+    # identify the available columns ...
+    con <- file(seqsum, "r")
+    sample_lines <- readLines(con, n=2)
+    close(con)
+    columns <- strsplit(sample_lines[1], "\t")[[1]]
 
+    model <- detect_dm_csv(filename=seqsum, header=TRUE, sep="\t")
+    dat <- laf_open(model, ignore_failed_conversion=TRUE)
+
+    select_columns <- c(
+        "read_id", "channel", "start_time", "duration", "passes_filtering",
+        "sequence_length_template", "mean_qscore_template", "barcode_assignment")
+    cids <- as.integer(na.omit(match(select_columns, columns)))
+
+    seqsumdata <- data.frame()
+    begin(dat)
+    while (TRUE) {
+        cat(paste0(dim(seqsumdata), "\n"))
+        d <- next_block(dat, columns=cids, nrows=chunksize)
+        if (nrow(d) == 0) break;
+        seqsumdata <- rbind(seqsumdata, d)
+    }
     # remove the redundant headers from merged files
     if (length(which(seqsumdata$read_id == "read_id")) > 0) {
         seqsumdata <- seqsumdata[-which(seqsumdata$read_id == "read_id"), ]
     }
 
-    # coerce the columns used in analytics into more appropriate data-types
-    seqsumdata$channel <- as.numeric(seqsumdata$channel)
-    seqsumdata$start_time <- as.numeric(seqsumdata$start_time)
-    seqsumdata$duration <- as.numeric(seqsumdata$duration)
-    seqsumdata$sequence_length_template <-
-        as.numeric(seqsumdata$sequence_length_template)
-    seqsumdata$mean_qscore_template <-
-        as.numeric(seqsumdata$mean_qscore_template)
-
-    # passes_filtering is a useful flag; but there are examples of
-    # sequencing_summary.txt where this is
-    # not present -
-    # https://github.com/a-slide/pycoQC/blob/master/pycoQC/data/...
-    #     ... sequencing_summary_1D_DNA_Albacore_1.2.1.txt
     if (!"passes_filtering" %in% colnames(seqsumdata)) {
         # set all of the reads to pass? apply a cutoff?
         seqsumdata$passes_filtering <- TRUE
-    } else {
-        seqsumdata$passes_filtering <- as.logical(seqsumdata$passes_filtering)
     }
 
-    setCachedObject("seqsumdata", seqsumdata)
+    if (cache) {
+        setCachedObject("seqsumdata", seqsumdata)
+    }
     return(invisible(seqsumdata))
 }
 
@@ -978,7 +996,7 @@ SequenceSummaryExecutiveSummary <- function(
     # render an info-graphic-like plot for these observations
 
     infoFile1 <- infoGraphicPlot3(identifier = "ExecutiveSummaryValueBoxes",
-        panelA = c(value = "flowcell", key = flowcellId, icon = "fa-qrcode"),
+        panelA = c(value = flowcellId, key = "flowcell", icon = "fa-qrcode"),
         panelB = c(value = readCount, key = "Reads produced", icon="fa-filter"),
         panelC = c(value = gigabases, key = "gigabases called", icon =
         "fa-file-text-o"))
@@ -1078,4 +1096,39 @@ SequencingSummaryExtractRuntime <- function(seqsum=NA) {
     return(rruntime)
 }
 
+
+
+
+#' get flowcell id from sequencing_summary file
+#'
+#' The sequencing summary file contains a load of additional information;
+#' this method will quickly extract and return the flowcell id
+#'
+#' @return character vector of flowcell id
+#'
+#' @examples
+#' init()
+#' seqsumFile <- system.file("extdata",
+#'     "sequencing_summary.txt.bz2", package = "nanopoRe")
+#' FCid <- SequencingSummaryFlowCellID(seqsumFile)
+#'
+#' @export
+SequencingSummaryFlowCellID <- function(seqsumFile) {
+    con <- file(seqsumFile, "r")
+    sample_lines <- readLines(con, n=2)
+    close(con)
+    columns <- strsplit(sample_lines[1], "\t")[[1]]
+    values <- strsplit(sample_lines[2], "\t")[[1]]
+    if ("filename" %in% columns) {
+        filename <- values[na.omit(match(columns, "filename"))]
+        filenamesplit <- strsplit(filename, "_")[[1]]
+        if (length(filenamesplit)==3) {
+            return(filenamesplit[[1]])
+        }
+        if (length(filenamesplit)==15) {
+            return(filenamesplit[[3]])
+        }
+    }
+    return("RuleMissing")
+}
 
