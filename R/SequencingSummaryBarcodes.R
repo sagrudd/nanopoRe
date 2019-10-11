@@ -204,7 +204,8 @@ SequenceSummaryBarcodeTable <- function(seqsum=NA, bcthreshold = 150) {
         barcodeTable <- kable(barcodedata, format = "html", caption =
         "Table summarising sequence collections ranked by barcode annotation",
             booktabs = TRUE, table.envir = "table*", linesep = "",
-            escape=FALSE) %>% kable_styling(c("striped", "condensed"))
+            escape=FALSE) %>% kable_styling(c("striped", "condensed"),
+                                            full_width=TRUE)
     }
     return(barcodeTable)
 }
