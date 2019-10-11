@@ -2,11 +2,11 @@
 handleCompression <- function(filename, skip=TRUE) {
     if (R.utils::isBzipped(filename)) {
         cat(paste0(paste("bunzip2",filename),"\n"))
-        return(R.utils::bunzip2(filename, temporary=TRUE, remove=FALSE, skip=skip))
+        return(R.utils::bunzip2(filename, temporary=TRUE, remove=FALSE, skip=skip, overwrite=!skip))
     }
     if (R.utils::isGzipped(filename)) {
         cat(paste0(paste("gunzip",filename),"\n"))
-        return(R.utils::gunzip(filename, temporary=TRUE, remove=FALSE, skip=skip))
+        return(R.utils::gunzip(filename, temporary=TRUE, remove=FALSE, skip=skip, overwrite=!skip))
     }
     return(filename)
 }
