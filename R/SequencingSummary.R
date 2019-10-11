@@ -1,12 +1,12 @@
 
-handleCompression <- function(filename) {
+handleCompression <- function(filename, skip=TRUE) {
     if (R.utils::isBzipped(filename)) {
         cat(paste0(paste("bunzip2",filename),"\n"))
-        return(R.utils::bunzip2(filename, temporary=TRUE, remove=FALSE, skip=TRUE))
+        return(R.utils::bunzip2(filename, temporary=TRUE, remove=FALSE, skip=skip))
     }
     if (R.utils::isGzipped(filename)) {
         cat(paste0(paste("gunzip",filename),"\n"))
-        return(R.utils::gunzip(filename, temporary=TRUE, remove=FALSE, skip=TRUE))
+        return(R.utils::gunzip(filename, temporary=TRUE, remove=FALSE, skip=skip))
     }
     return(filename)
 }
@@ -25,6 +25,8 @@ handleCompression <- function(filename) {
 #' @param seqsum is a path to a file
 #' @param cache whether the object created should be cached in env
 #' @param chunksize the number of reads to parse per iteration block
+#' @param skip whether to skip uncompression if file already exists - may
+#' cause collisions due to standard sequencing_summary nomenclature
 #' @return data.frame of observations from the sequencing_summary.txt file
 #' provided
 #'
@@ -35,16 +37,16 @@ handleCompression <- function(filename) {
 #' seqsum <- importSequencingSummary(seqsumFile)
 #'
 #' @export
-importSequencingSummary <- function(seqsum, cache=TRUE, chunksize=1000000) {
-    seqsum <- handleCompression(seqsum)
+importSequencingSummary <- function(seqsum, cache=TRUE, chunksize=1000000, skip=FALSE) {
+    seqsum <- handleCompression(seqsum, skip=skip)
     # identify the available columns ...
     con <- file(seqsum, "r")
     sample_lines <- readLines(con, n=2)
     close(con)
     columns <- strsplit(sample_lines[1], "\t")[[1]]
 
-    model <- detect_dm_csv(filename=seqsum, header=TRUE, sep="\t")
-    dat <- laf_open(model, ignore_failed_conversion=TRUE)
+    model <- LaF::detect_dm_csv(filename=seqsum, header=TRUE, sep="\t")
+    dat <- LaF::laf_open(model, ignore_failed_conversion=TRUE)
 
     select_columns <- c(
         "read_id", "channel", "start_time", "duration", "passes_filtering",
@@ -52,10 +54,13 @@ importSequencingSummary <- function(seqsum, cache=TRUE, chunksize=1000000) {
     cids <- as.integer(na.omit(match(select_columns, columns)))
 
     seqsumdata <- data.frame()
-    begin(dat)
+    LaF::begin(dat)
     while (TRUE) {
-        cat(paste0(dim(seqsumdata), "\n"))
-        d <- next_block(dat, columns=cids, nrows=chunksize)
+        #cat(paste0(dim(seqsumdata), "\n"))
+        d <- LaF::next_block(dat, columns=cids, nrows=chunksize)
+        if ("passes_filtering" %in% columns) {
+            d$passes_filtering <- as.logical(d$passes_filtering)
+        }
         if (nrow(d) == 0) break;
         seqsumdata <- rbind(seqsumdata, d)
     }
