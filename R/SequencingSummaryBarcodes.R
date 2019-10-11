@@ -43,7 +43,7 @@ SequencingSummaryBarcodeMerge <- function(seqsum=NA, barcodeFile=NULL) {
         }
     }
 
-    setCachedObject("barcodedata", seqsum)
+    setCachedObject("seqsumdata", seqsum)
     return(invisible(seqsum))
 }
 
@@ -69,7 +69,7 @@ SequencingSummaryBarcodeMerge <- function(seqsum=NA, barcodeFile=NULL) {
 #' @export
 SequenceSummaryBarcodeInfoGraphic <- function(seqsum=NA, bcthreshold = 150) {
 
-    seqsum <- handleBarcodedCache(seqsum)
+    seqsum <- handleSeqSumCache(seqsum)
 
     barcodes <- 0
     infographicFile <- NULL
@@ -177,7 +177,7 @@ refineBarcodes <- function(barcodedata, seqsum) {
 #'
 #' @export
 SequenceSummaryBarcodeTable <- function(seqsum=NA, bcthreshold = 150) {
-    seqsum <- handleBarcodedCache(seqsum)
+    seqsum <- handleSeqSumCache(seqsum)
 
     barcodes <- 0
     barcodeTable <- NULL
@@ -233,7 +233,7 @@ SequenceSummaryBarcodeTable <- function(seqsum=NA, bcthreshold = 150) {
 #'
 #' @export
 SequenceSummaryBarcodeHistogram <- function(seqsum=NA, bcthreshold = 150) {
-    seqsum <- handleBarcodedCache(seqsum)
+    seqsum <- handleSeqSumCache(seqsum)
 
     barcodes <- 0
     barcodeHistogram <- NULL
@@ -269,15 +269,5 @@ SequenceSummaryBarcodeHistogram <- function(seqsum=NA, bcthreshold = 150) {
     return(ggplot2handler(barcodeHistogram))
 }
 
-
-handleBarcodedCache <- function(seqsum) {
-    if (!is.data.frame(seqsum) && is.na(seqsum)) {
-        oname <- "barcodedata"
-        if (hasCachedObject(oname)) {
-            seqsum <- getCachedObject(oname)
-        }
-    }
-    return(seqsum)
-}
 
 
