@@ -50,7 +50,7 @@ importSequencingSummary <- function(seqsum, cache=TRUE, chunksize=1000000, skip=
 
     select_columns <- c(
         "read_id", "channel", "start_time", "duration", "passes_filtering",
-        "sequence_length_template", "mean_qscore_template", "barcode_assignment")
+        "sequence_length_template", "mean_qscore_template", "barcode_arrangement")
     cids <- as.integer(na.omit(match(select_columns, columns)))
 
     seqsumdata <- data.frame()
