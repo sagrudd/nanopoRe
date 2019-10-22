@@ -59,7 +59,7 @@ plotAlignmentAccuracy <- function(
         labs(title = "Histogram showing distribution of mapping accuracies") +
         xlab("Accuracy (%)") + ylab("Number of reads") +
         theme(plot.title = element_text(size = 11))
-    return(plot)
+    return(ggplot2handler(plot))
 }
 
 
@@ -124,7 +124,7 @@ plotAlignmentIdentity <- function(
         xlab("Identity (%)") + ylab("Number of reads") +
         theme(plot.title = element_text(size = 11))
 
-    return(plot)
+    return(ggplot2handler(plot))
 }
 
 

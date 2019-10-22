@@ -132,6 +132,6 @@ plotOverallCovHistogram <- function(bamFile=NULL, segments = 50, ...) {
         xlab("Coverage (x)") + ylab("Number of bases") +
         theme(plot.title = element_text(size = 11))
 
-    return(plot)
+    return(ggplot2handler(plot))
 }
 
