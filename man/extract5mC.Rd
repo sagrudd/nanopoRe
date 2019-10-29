@@ -4,7 +4,8 @@
 \alias{extract5mC}
 \title{prepares a data.frame of per-read methylC bases from provided fast5 file}
 \usage{
-extract5mC(fast5file, threshold_5mc = 0.85, fast5files = NULL, ...)
+extract5mC(fast5file, threshold_5mc = 0.85, fast5files = NULL,
+  force = FALSE, ...)
 }
 \arguments{
 \item{fast5file}{is the fast5 file to parse}
@@ -12,6 +13,8 @@ extract5mC(fast5file, threshold_5mc = 0.85, fast5files = NULL, ...)
 \item{threshold_5mc}{is the cutoff to apply to values returned}
 
 \item{fast5files}{is a vector of files being processed (for pretty logging)}
+
+\item{force}{to force a recalculation}
 
 \item{...}{beyond}
 }
