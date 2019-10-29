@@ -30,58 +30,21 @@ extractH5Modstemplate <- function(read_id, h5content, fast5file) {
 #' This method will parse a fast5 file to extract the 5mC bases classified as 5mC with a
 #' probability >= the provided threshold_5mc variable
 #'
-#' @importFrom parallel detectCores
-#' @importFrom digest digest
-#' @importFrom rhdf5 h5ls
-#' @importFrom rhdf5 h5read
-#' @importFrom dplyr bind_rows
-#' @importFrom pbmcapply pbmclapply
 #' @param fast5file is the fast5 file to parse
 #' @param threshold_5mc is the cutoff to apply to values returned
 #' @param fast5files is a vector of files being processed (for pretty logging)
 #' @param mc.cores the number of cores to use on a multi-processor Linux system
 #' @param force boolean as to whether to force the calculation
+#' @param ... beyond
 #'
 #' @return data.frame of coordinates and sequence names from fast5
 #'
 #' @export
-extract5mC <- function(fast5file, threshold_5mc = 0.85, fast5files=NULL, mc.cores=(parallel::detectCores()-1), force = FALSE) {
-    if (is.null(fast5files)) {
-        cat(paste0("extracting 5mC coordinates from [",fast5file,"]\n"))
-    } else {
-        cat(paste0("[",which(fast5files==fast5file)," of ",length(fast5files),"] 5mC extract [",fast5file,"]\n"))
-    }
+extract5mC <- function(fast5file, threshold_5mc = 0.85, fast5files=NULL, force = FALSE, ...) {
 
-    baseModResults <- file.path(getRpath(), paste0(digest::digest(fast5file, algo="md5", file = FALSE), ".basemods.",threshold_5mc, ".Rdata"))
-    if (file.exists(baseModResults) && !force) {
-        return(invisible(readRDS(file = baseModResults)))
-    }
+    mod_data <- extractModifiedBasesFromFast5(fast5file, fast5files, mc.cores)
+    mod_data <- mod_data[which(mod_data$prob_5mC>=threshold_5mc),]
 
-    h5content <- rhdf5::h5ls(fast5file)
-    read_ids <- h5content[which(h5content$group == "/"),"name"]
-
-    # use the first read_id to parse out dates of
-    read_id <- read_ids[1]
-    methtemplate <- extractH5Modstemplate(read_id, h5content=h5content, fast5file=fast5file)
-
-    extract5mCByRead <- function(read_id, fast5file, template="Basecall_1D_000") {
-        targetFastq <- paste0("/",read_id,"/Analyses/",template,"/BaseCalled_template/Fastq")
-        targetMods <- paste0("/",read_id,"/Analyses/",template,"/BaseCalled_template/ModBaseProbs")
-
-        read_id <- gsub("(^/read_)|(/Analyses.+)", "", targetFastq)
-        #print(read_id)
-        fastq <- unlist(strsplit(unlist(strsplit(rhdf5::h5read(fast5file, targetFastq), "\n"))[2], ""))
-        basemodprob <- data.frame(t(rhdf5::h5read(fast5file, targetMods)))[,4]/255
-
-        mods_df <- data.frame(read_id=read_id, position=seq(length(fastq)), nucleotide=fastq, prob_5mC=basemodprob, stringsAsFactors=FALSE)
-        mods_df <- mods_df[which(mods_df$nucleotide=="C"),]
-        mods_df <- mods_df[which(mods_df$prob_5mC>=threshold_5mc),]
-        return(invisible(mods_df))
-    }
-
-    mod_data <- dplyr::bind_rows(pbmcapply::pbmclapply(read_ids, extract5mCByRead, fast5file=fast5file, template=methtemplate, mc.cores=mc.cores))
-
-    saveRDS(mod_data, file = baseModResults)
     return(invisible(mod_data))
 }
 
@@ -204,39 +167,17 @@ extractMethylatedBases <- function(x, filteredChunk, modifications_df) {
 
 
 
-
-
-#' prepares a data.frame of per-read methylC probability counts
-#'
-#' This method will parse a fast5 file to the distribution of probabilities for C residues
-#' actually being 5mC residues
-#'
-#' @importFrom parallel detectCores
-#' @importFrom digest digest
-#' @importFrom rhdf5 h5ls
-#' @importFrom rhdf5 h5read
-#' @importFrom dplyr bind_rows
-#' @importFrom pbmcapply pbmclapply
-#' @param fast5file is the fast5 file to parse
-#' @param fast5files is a vector of files being processed (for pretty logging)
-#' @param mc.cores the number of cores to use on a multi-processor Linux system
-#' @param force boolean as to whether to force the calculation
-#'
-#' @return data.frame of coordinates and sequence names from fast5
-#'
-#' @export
-extract5mCProbabilities <- function(fast5file, fast5files=NULL, mc.cores=8, force = FALSE) {
+extractModifiedBasesFromFast5 <- function(fast5file, fast5files=NULL, mc.cores=(parallel::detectCores()-1)) {
     if (is.null(fast5files)) {
         cat(paste0("extracting 5mC probabilities from [",fast5file,"]\n"))
     } else {
         cat(paste0("[",which(fast5files==fast5file)," of ",length(fast5files),"] 5mC extract [",fast5file,"]\n"))
     }
 
-    baseModResults <- file.path(getRpath(), paste0(digest::digest(fast5file, algo="md5", file = FALSE), ".modprobs", ".Rdata"))
+    baseModResults <- file.path(getRpath(), paste0(digest::digest(fast5file, algo="md5", file = FALSE), ".basemods", ".Rdata"))
     if (file.exists(baseModResults) && !force) {
         return(invisible(readRDS(file = baseModResults)))
     }
-
     h5content <- rhdf5::h5ls(fast5file)
     read_ids <- h5content[which(h5content$group == "/"),"name"]
 
@@ -256,16 +197,31 @@ extract5mCProbabilities <- function(fast5file, fast5files=NULL, mc.cores=8, forc
 
         mods_df <- data.frame(read_id=read_id, position=seq(length(fastq)), nucleotide=fastq, prob_5mC=basemodprob, stringsAsFactors=FALSE)
         mods_df <- mods_df[which(mods_df$nucleotide=="C"),]
-
-        tab <- as.integer(table(factor(round(mods_df$prob_5mC*100), levels=seq(0, 100))))
-
-        return(invisible(tab))
+        return(invisible(mods_df))
     }
 
-    data <- pbmcapply::pbmclapply(read_ids, extract5mCByRead, fast5file=fast5file, template=methtemplate, mc.cores=mc.cores)
-    data_df <- data.frame(matrix(unlist(data), nrow=length(data), byrow=T))
-    data_df <- as.integer(colSums(data_df))
+    mod_data <- dplyr::bind_rows(pbmcapply::pbmclapply(read_ids, extract5mCByRead, fast5file=fast5file, template=methtemplate, mc.cores=mc.cores))
+    saveRDS(mod_data, file = baseModResults)
+    return(mod_data)
+}
 
-    saveRDS(data_df, file = baseModResults)
-    return(invisible(data_df))
+
+
+#' prepares a data.frame of per-read methylC probability counts
+#'
+#' This method will parse a fast5 file to the distribution of probabilities for C residues
+#' actually being 5mC residues
+#'
+#' @param fast5file is the fast5 file to parse
+#' @param fast5files is a vector of files being processed (for pretty logging)
+#' @param force boolean as to whether to force the calculation
+#' @param ... beyond
+#'
+#' @return data.frame of coordinates and sequence names from fast5
+#'
+#' @export
+extract5mCProbabilities <- function(fast5file, fast5files=NULL, force = FALSE, ...) {
+    mod_data <- extractModifiedBasesFromFast5(fast5file, fast5files)
+    tab <- as.integer(table(factor(round(mod_data$prob_5mC * 100), levels = seq(0, 100))))
+    return(invisible(tab))
 }
