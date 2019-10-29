@@ -202,7 +202,7 @@ extractModifiedBasesFromFast5 <- function(fast5file, mc.cores=(parallel::detectC
     }
 
     mod_data <- dplyr::bind_rows(pbmcapply::pbmclapply(read_ids, extract5mCByRead, fast5file=fast5file, template=methtemplate, mc.cores=mc.cores))
-    saveRDS(mod_data, file = baseModResults)
+    #saveRDS(mod_data, file = baseModResults)
     return(mod_data)
 }
 
