@@ -33,14 +33,12 @@ extractH5Modstemplate <- function(read_id, h5content, fast5file) {
 #' @param fast5file is the fast5 file to parse
 #' @param threshold_5mc is the cutoff to apply to values returned
 #' @param fast5files is a vector of files being processed (for pretty logging)
-#' @param mc.cores the number of cores to use on a multi-processor Linux system
-#' @param force boolean as to whether to force the calculation
 #' @param ... beyond
 #'
 #' @return data.frame of coordinates and sequence names from fast5
 #'
 #' @export
-extract5mC <- function(fast5file, threshold_5mc = 0.85, fast5files=NULL, force = FALSE, ...) {
+extract5mC <- function(fast5file, threshold_5mc = 0.85, fast5files=NULL, ...) {
 
     mod_data <- extractModifiedBasesFromFast5(fast5file, fast5files, mc.cores)
     mod_data <- mod_data[which(mod_data$prob_5mC>=threshold_5mc),]
@@ -214,13 +212,12 @@ extractModifiedBasesFromFast5 <- function(fast5file, fast5files=NULL, mc.cores=(
 #'
 #' @param fast5file is the fast5 file to parse
 #' @param fast5files is a vector of files being processed (for pretty logging)
-#' @param force boolean as to whether to force the calculation
 #' @param ... beyond
 #'
 #' @return data.frame of coordinates and sequence names from fast5
 #'
 #' @export
-extract5mCProbabilities <- function(fast5file, fast5files=NULL, force = FALSE, ...) {
+extract5mCProbabilities <- function(fast5file, fast5files=NULL, ...) {
     mod_data <- extractModifiedBasesFromFast5(fast5file, fast5files)
     tab <- as.integer(table(factor(round(mod_data$prob_5mC * 100), levels = seq(0, 100))))
     return(invisible(tab))
