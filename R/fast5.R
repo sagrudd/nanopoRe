@@ -165,7 +165,7 @@ extractMethylatedBases <- function(x, filteredChunk, modifications_df) {
 
 
 
-extractModifiedBasesFromFast5 <- function(fast5file, fast5files=NULL, mc.cores=(parallel::detectCores()-1)) {
+extractModifiedBasesFromFast5 <- function(fast5file, fast5files=NULL, mc.cores=(parallel::detectCores()-1), force=FALSE) {
     if (is.null(fast5files)) {
         cat(paste0("extracting 5mC probabilities from [",fast5file,"]\n"))
     } else {
