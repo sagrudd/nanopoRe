@@ -173,7 +173,7 @@ extractMethylatedBases <- function(x, filteredChunk, modifications_df) {
 
 
 
-extractModifiedBasesFromFast5 <- function(fast5file, mc.cores=(parallel::detectCores()-1), force=FALSE) {
+extractModifiedBasesFromFast5 <- function(fast5file, mc.cores=(parallel::detectCores()-1), force=FALSE, parallel=TRUE) {
 
     baseModResults <- file.path(getRpath(), paste0(digest::digest(fast5file, algo="md5", file = FALSE), ".basemods", ".Rdata"))
     if (file.exists(baseModResults) && !force) {
@@ -200,9 +200,12 @@ extractModifiedBasesFromFast5 <- function(fast5file, mc.cores=(parallel::detectC
         mods_df <- mods_df[which(mods_df$nucleotide=="C"),]
         return(invisible(mods_df))
     }
-
-    mod_data <- dplyr::bind_rows(pbmcapply::pbmclapply(read_ids, extract5mCByRead, fast5file=fast5file, template=methtemplate, mc.cores=mc.cores))
-    #saveRDS(mod_data, file = baseModResults)
+    if (parallel==TRUE) {
+        mod_data <- dplyr::bind_rows(pbmcapply::pbmclapply(read_ids, extract5mCByRead, fast5file=fast5file, template=methtemplate, mc.cores=mc.cores))
+    } else {
+        mod_data <- dplyr::bind_rows(lapply(read_ids, extract5mCByRead, fast5file=fast5file, template=methtemplate))
+    }
+    saveRDS(mod_data, file = baseModResults)
     return(mod_data)
 }
 
