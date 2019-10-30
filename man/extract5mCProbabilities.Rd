@@ -5,7 +5,7 @@
 \title{prepares a data.frame of per-read methylC probability counts}
 \usage{
 extract5mCProbabilities(fast5file, fast5files = NULL, force = FALSE,
-  ...)
+  b = 33, ...)
 }
 \arguments{
 \item{fast5file}{is the fast5 file to parse}
@@ -13,6 +13,8 @@ extract5mCProbabilities(fast5file, fast5files = NULL, force = FALSE,
 \item{fast5files}{is a vector of files being processed (for pretty logging)}
 
 \item{force}{to force recalculation}
+
+\item{b}{the number of sample breaks to make}
 
 \item{...}{beyond}
 }

@@ -229,21 +229,25 @@ fast5parseLegend <- function(fast5file, fast5files) {
 #' @param fast5file is the fast5 file to parse
 #' @param fast5files is a vector of files being processed (for pretty logging)
 #' @param force to force recalculation
+#' @param b the number of sample breaks to make
 #' @param ... beyond
 #'
 #' @return data.frame of coordinates and sequence names from fast5
 #'
 #' @export
-extract5mCProbabilities <- function(fast5file, fast5files=NULL, force=FALSE, ...) {
+extract5mCProbabilities <- function(fast5file, fast5files=NULL, force=FALSE, b=33, ...) {
     fast5parseLegend(fast5file, fast5files)
-    baseProbResults <- file.path(getRpath(), paste0(digest::digest(fast5file, algo="md5", file = FALSE), ".modprobs", ".Rdata"))
+    baseProbResults <- file.path(getRpath(), paste0(digest::digest(fast5file, algo="md5", file = FALSE), ".modprobs.", b, ".Rdata"))
     if (file.exists(baseProbResults) && !force) {
         return(invisible(readRDS(file = baseProbResults)))
     }
 
-    mod_data <- extractModifiedBasesFromFast5(fast5file, force=force, ...)
-    tab <- as.integer(table(factor(round(mod_data$prob_5mC * 100), levels = seq(0, 100))))
+    numericSeq <- seq(0-1/b,1,by=1/b)
 
-    saveRDS(tab, file = baseProbResults)
-    return(invisible(tab))
+    mod_data <- extractModifiedBasesFromFast5(fast5file, force=force, ...)
+    tdata <- transform(mod_data, group=cut(prob_5mC, breaks=numericSeq))
+    rdata <- do.call(data.frame, aggregate(prob_5mC~group, tdata, FUN=function(x) c(Count=length(x), Sum=sum(x))))
+
+    saveRDS(rdata, file = baseProbResults)
+    return(invisible(rdata))
 }
