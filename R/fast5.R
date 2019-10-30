@@ -49,7 +49,7 @@ extract5mC <- function(fast5file, threshold_5mc = 0.85, fast5files=NULL, force=F
     mod_data <- extractModifiedBasesFromFast5(fast5file, force=force, ...)
     mod_data <- mod_data[which(mod_data$prob_5mC>=threshold_5mc),]
 
-    saveRDS(tab, file = baseProbResults)
+    saveRDS(mod_data, file = baseProbResults)
 
     return(invisible(mod_data))
 }
