@@ -150,7 +150,7 @@ extractMethylatedBases <- function(x, filteredChunk, modifications_df) {
 
     if (length(referenceCoordinates)>0) {
         bases <- getChromosomeSequence(getStringSetId(mapData$rname))[referenceCoordinates]
-        if (mapData$strand == '-') {
+        if (mapData$strand == '+') {
             bases <- Biostrings::complement(bases)
         }
         rnt <- strsplit(as.character(bases), "")[[1]]
