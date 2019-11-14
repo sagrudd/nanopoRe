@@ -249,8 +249,7 @@ cachedYAMLToYAML <- function(yaml="config", format=NA, subenv=NULL) {
     } else {
         table <- kable(t(as.data.frame(params, row.names=NULL)),
             format=format, caption="Configuration parameters",
-            booktabs=TRUE, table.envir='table*', linesep="", escape=FALSE) %>%
-            kable_styling(c("striped"))
+            booktabs=TRUE, table.envir='table*', linesep="", escape=FALSE)
         return(table)
     } else if (format=="list") {
         return(params)
