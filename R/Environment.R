@@ -238,17 +238,17 @@ addCachedYAMLValue <- function(yaml="config", field, value, subenv=NULL) {
 #' init()
 #' yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
 #' importConfigYAML(yamlFile=yamlFile)
-#' cachedYAMLToYAML(format="Kable")
+#' cachedYAMLToYAML(format="markdown")
 #'
 #' @export
-cachedYAMLToYAML <- function(yaml="config", format="YAML", subenv=NULL) {
+cachedYAMLToYAML <- function(yaml="config", format=NA, subenv=NULL) {
     params <- getCachedObject(yaml, subenv)
 
-    if (format=="YAML") {
+    if (is.na(format)) {
         return(as.yaml(params))
-    } else if (format=="Kable") {
+    } else {
         table <- kable(t(as.data.frame(params, row.names=NULL)),
-            format="html", caption="Configuration parameters",
+            format=format, caption="Configuration parameters",
             booktabs=TRUE, table.envir='table*', linesep="", escape=FALSE) %>%
             kable_styling(c("striped"))
         return(table)
