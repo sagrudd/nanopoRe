@@ -252,7 +252,7 @@ cachedYAMLToYAML <- function(yaml="config", format=NA, subenv=NULL) {
         table <- kable(t(as.data.frame(params, row.names=NULL)),
                        format=format, caption="Configuration parameters",
                        booktabs=TRUE, table.envir='table*', linesep="", escape=FALSE)
-        return(table)
+        return(paste(as.character(table), collapse="\n"))
     }
     return(NULL)
 }
