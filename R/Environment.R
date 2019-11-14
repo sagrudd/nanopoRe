@@ -246,13 +246,13 @@ cachedYAMLToYAML <- function(yaml="config", format=NA, subenv=NULL) {
 
     if (is.na(format)) {
         return(as.yaml(params))
-    } else {
-        table <- kable(t(as.data.frame(params, row.names=NULL)),
-            format=format, caption="Configuration parameters",
-            booktabs=TRUE, table.envir='table*', linesep="", escape=FALSE)
-        return(table)
     } else if (format=="list") {
         return(params)
+    } else {
+        table <- kable(t(as.data.frame(params, row.names=NULL)),
+                       format=format, caption="Configuration parameters",
+                       booktabs=TRUE, table.envir='table*', linesep="", escape=FALSE)
+        return(table)
     }
     return(NULL)
 }
