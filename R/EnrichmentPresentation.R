@@ -250,12 +250,16 @@ enrichmentMappingByGenomicSegment <- function(format="html") {
     summary.df <- summary.df[, -c(2, 4, 6, 8)]
     summary.df[summary.df == "NaN"] <- ""
 
-    row.names(summary.df)[1] <- paste0(row.names(summary.df)[1],
-        footnote_marker_symbol(1, "html"))
-    row.names(summary.df)[2] <- paste0(row.names(summary.df)[2],
-        footnote_marker_symbol(2, "html"))
-    row.names(summary.df)[6] <- paste0(row.names(summary.df)[6],
-        footnote_marker_symbol(3, "html"))
+
+
+    if (format=="html") {
+
+        row.names(summary.df)[1] <- paste0(row.names(summary.df)[1],
+                                           footnote_marker_symbol(1, "html"))
+        row.names(summary.df)[2] <- paste0(row.names(summary.df)[2],
+                                           footnote_marker_symbol(2, "html"))
+        row.names(summary.df)[6] <- paste0(row.names(summary.df)[6],
+                                           footnote_marker_symbol(3, "html"))
 
     targettable <- kable(summary.df, format = format,
         col.names = rep(" ", ncol(summary.df)), caption = paste0(
@@ -271,6 +275,17 @@ enrichmentMappingByGenomicSegment <- function(format="html") {
         "depth of coverage based only on primary mapping reads"),
         symbol_title = "please note: ", footnote_as_chunk = TRUE)
     return(targettable)
+
+    }
+
+
+    simpletable <- kable(summary.df, format = format, col.names =
+                             c(" ", "Background", "Off-Target", "Target-flanking", "On-Target"),
+                         booktabs = TRUE, table.envir = "table*", linesep="", escape=FALSE)  %>%
+        kable_styling(c("striped", "condensed"))
+
+    return(simpletable)
+
 }
 
 
