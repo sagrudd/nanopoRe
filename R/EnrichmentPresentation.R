@@ -830,6 +830,7 @@ enrichmentOffTargetKaryogram <- function(fill=FALSE) {
 #' @importFrom scales comma_format
 #' @importFrom tibble add_column
 #' @param maxRows the maximum number of rows to display in the table
+#' @param format output format
 #' @return table table
 #'
 #' @examples
@@ -839,7 +840,7 @@ enrichmentOffTargetKaryogram <- function(fill=FALSE) {
 #' enrichmentOffTargetTable()
 #'
 #' @export
-enrichmentOffTargetTable <- function(maxRows=10) {
+enrichmentOffTargetTable <- function(maxRows=10, format="html") {
     offtargetUniverse <- getCachedObject(
         "offtargetUniverse", enrichmentEnvironment)
     offtargtop <- as.data.frame(offtargetUniverse[order(
@@ -864,7 +865,11 @@ enrichmentOffTargetTable <- function(maxRows=10) {
         "reads in segment", "mean read length", "%FWD reads", "mean readQ",
         "mean MAPQ")
 
-    offttable <- kable(offtargtop, format = "html", caption = paste0(
+    if (is.na(format)) {
+        return(offtargtop)
+    } else if (format=="html") {
+
+    offttable <- kable(offtargtop, format = format, caption = paste0(
         "Table summarising the location and characteristics for the off-target",
         " regions with the highest depth-of-coverage"),
         booktabs = TRUE, table.envir = "table*", linesep = "",escape=FALSE) %>%
@@ -881,6 +886,14 @@ enrichmentOffTargetTable <- function(maxRows=10) {
 
 
     return(offttable)
+
+    } else {
+        simpleTable <- kable(offtargtop, format = format,
+            booktabs = TRUE, table.envir = "table*", linesep = "",escape=FALSE) %>%
+            kable_styling(c("striped", "condensed"))
+
+        return(paste(as.character(simpleTable), collapse="\n"))
+    }
 
 }
 
