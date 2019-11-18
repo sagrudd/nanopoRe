@@ -308,7 +308,7 @@ enrichmentMappingByGenomicSegment <- function(format="html") {
 #' enrichmentTargetPerformanceTable()
 #'
 #' @export
-enrichmentTargetPerformanceTable <- function() {
+enrichmentTargetPerformanceTable <- function(format="html") {
     ontargetUniverse <- getCachedObject(
         "ontargetUniverse", enrichmentEnvironment)
 
@@ -335,7 +335,11 @@ enrichmentTargetPerformanceTable <- function() {
     colnames(bygene)[9] <- paste0(
         "Reads on FWD(%)",footnote_marker_symbol(3,"html"))
 
-    candidate_table <- kable(bygene, format = "html", caption =
+    if (format=="raw") {
+        return(bygene)
+    } else if (format=="html") {
+
+    candidate_table <- kable(bygene, format = format, caption =
         "Table summarising target mapping for pre-defined regions of interest",
         booktabs = TRUE, table.envir = "table*", linesep="", escape=FALSE) %>%
         kable_styling(c("striped", "condensed")) %>% footnote(symbol = c(paste0(
@@ -350,6 +354,13 @@ enrichmentTargetPerformanceTable <- function() {
         symbol_title = "please note: ", footnote_as_chunk = TRUE)
 
     return(candidate_table)
+
+    } else {
+        simpleTable = kable(bygene, format = format, booktabs = TRUE, table.envir = "table*", linesep="", escape=FALSE)  %>%
+            kable_styling(c("striped", "condensed"))
+
+        return(paste(as.character(simpleTable), collapse="\n"))
+    }
 }
 
 
