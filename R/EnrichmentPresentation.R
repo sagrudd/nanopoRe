@@ -285,7 +285,7 @@ enrichmentMappingByGenomicSegment <- function(format="html") {
                          booktabs = TRUE, table.envir = "table*", linesep="", escape=FALSE)  %>%
         kable_styling(c("striped", "condensed"))
 
-    return(simpletable)
+    return(paste(as.character(simpletable), collapse="\n"))
     }
 }
 
