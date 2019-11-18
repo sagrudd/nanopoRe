@@ -251,8 +251,9 @@ enrichmentMappingByGenomicSegment <- function(format="html") {
     summary.df[summary.df == "NaN"] <- ""
 
 
-
-    if (format=="html") {
+    if (is.na(format)) {
+        return(summary.df)
+    } else if (format=="html") {
 
         row.names(summary.df)[1] <- paste0(row.names(summary.df)[1],
                                            footnote_marker_symbol(1, "html"))
@@ -276,16 +277,16 @@ enrichmentMappingByGenomicSegment <- function(format="html") {
         symbol_title = "please note: ", footnote_as_chunk = TRUE)
     return(targettable)
 
-    }
+    } else {
 
 
     simpletable <- kable(summary.df, format = format, col.names =
-                             c(" ", "Background", "Off-Target", "Target-flanking", "On-Target"),
+                             c("Background", "Off-Target", "Target-flanking", "On-Target"),
                          booktabs = TRUE, table.envir = "table*", linesep="", escape=FALSE)  %>%
         kable_styling(c("striped", "condensed"))
 
     return(simpletable)
-
+    }
 }
 
 
