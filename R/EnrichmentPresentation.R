@@ -214,7 +214,8 @@ collateMappingCharacteristics <- function(
 #' @import knitr
 #' @import kableExtra
 #' @importFrom methods is
-#' @return kable table in html format
+#' @param format the format of the returned object - html default
+#' @return kable table in specified format
 #'
 #' @examples
 #' yamlFile <- system.file("extdata", "cas9_demo.yaml", package = "nanopoRe")
@@ -223,7 +224,7 @@ collateMappingCharacteristics <- function(
 #' enrichmentMappingByGenomicSegment()
 #'
 #' @export
-enrichmentMappingByGenomicSegment <- function() {
+enrichmentMappingByGenomicSegment <- function(format="html") {
     backgroundUniverse <- getCachedObject(
         "backgroundUniverse", enrichmentEnvironment)
     unmappedReads <- getCachedObject("unmappedReads", enrichmentEnvironment)
@@ -256,7 +257,7 @@ enrichmentMappingByGenomicSegment <- function() {
     row.names(summary.df)[6] <- paste0(row.names(summary.df)[6],
         footnote_marker_symbol(3, "html"))
 
-    targettable <- kable(summary.df, format = "html",
+    targettable <- kable(summary.df, format = format,
         col.names = rep(" ", ncol(summary.df)), caption = paste0(
         "Table summarising global mapping characteristics ranked by on-target",
         ", target-flanking and off-target"),
