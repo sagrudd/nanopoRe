@@ -230,14 +230,17 @@ fast5parseLegend <- function(fast5file, fast5files) {
 #' @param fast5files is a vector of files being processed (for pretty logging)
 #' @param force to force recalculation
 #' @param b the number of sample breaks to make
+#' @param baseProbResults target file
 #' @param ... beyond
 #'
 #' @return data.frame of coordinates and sequence names from fast5
 #'
 #' @export
-extract5mCProbabilities <- function(fast5file, fast5files=NULL, force=FALSE, b=33, ...) {
+extract5mCProbabilities <- function(fast5file, fast5files=NULL, force=FALSE, b=33, baseProbResults=NA, ...) {
     fast5parseLegend(fast5file, fast5files)
-    baseProbResults <- file.path(getRpath(), paste0(digest::digest(fast5file, algo="md5", file = FALSE), ".modprobs.", b, ".Rdata"))
+    if (is.na(baseProbResults)) {
+        baseProbResults <- file.path(getRpath(), paste0(digest::digest(paste0(fast5file,b), algo="md5", file = FALSE), ".modprobs.", b, ".Rdata"))
+    }
     if (file.exists(baseProbResults) && !force) {
         return(invisible(readRDS(file = baseProbResults)))
     }
