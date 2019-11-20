@@ -139,6 +139,7 @@ getBAMReadCoverageStats <- function(bamFile, bamSummary) {
 #' @param bamSummary is the result from  bamSummarise
 #' @param validationResponse is the product of the floundeR fastqCheckup method
 #' @param bamFile  is a path to a file
+#' @param format format of table to prepare
 #' @return kable table of mapping characteristics as tuned for the
 #' ont_tutorial_sv document
 #'
@@ -160,7 +161,7 @@ getBAMReadCoverageStats <- function(bamFile, bamSummary) {
 #'
 #' @export
 SVMappingCharacteristicTable <- function(
-    bamSummary, validationResponse, bamFile) {
+    bamSummary, validationResponse, bamFile, format=NA) {
     primaryBAM <- bamSummary[which(bamSummary$readFlag == "Primary"), ]
     unmappedBAM <- bamSummary[which(bamSummary$readFlag == "Unmapped"), ]
     totalSeqs <- as.numeric(validationResponse[7])
@@ -180,6 +181,17 @@ SVMappingCharacteristicTable <- function(
 
     rownames(mapping) <- mapping[, 1]
     mapping <- mapping[, -1]
+
+    if (is.na(format)) {
+        return(mapping)
+    } else if (format=="markdown") {
+        simple <- kable(mapping, format = "markdown",
+              caption = "Table summarising mapping characteristics",
+              table.envir = "table*", linesep = "", escape = FALSE) %>%
+            kable_styling(c("striped", "condensed"))
+        return(simple)
+    }
+
     row.names(mapping)[6] <- paste0(row.names(mapping)[6],
         footnote_marker_symbol(1, "html"))
     row.names(mapping)[7] <- paste0(row.names(mapping)[7],
