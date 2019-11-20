@@ -99,9 +99,12 @@ listOutputFormat <- function() {
 
 
 
-ggplot2save <- function(plot) {
+ggplot2save <- function(plot, filename=NA) {
     dim <- getPlotDimensions()
     dest <- tempfile(pattern = "", tmpdir = getRpath(), fileext = ".png")
+    if (!is.na(filename)) {
+        dest <- file.path(getRpath(), filename)
+    }
     ggplot2::ggsave(
         dest, plot = plot, width = dim$width, height = dim$height,
         units = dim$units, dpi = dim$dpi)
