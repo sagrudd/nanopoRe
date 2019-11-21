@@ -143,6 +143,7 @@ extractMethylatedBases <- function(x, filteredChunk, modifications_df) {
     # there is a sneaky exception case where NA values creep in ...
     if (NA %in% referenceCoordinates) {
         op <- op[-which(is.na(referenceCoordinates))]
+        varData <- varData[-which(is.na(referenceCoordinates)),]
         referenceCoordinates <- referenceCoordinates[-which(is.na(referenceCoordinates))]
     }
 
