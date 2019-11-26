@@ -175,7 +175,7 @@ extractMethylatedBases <- function(x, filteredChunk, modifications_df) {
 
 
 
-extractModifiedBasesFromFast5 <- function(fast5file, mc.cores=(parallel::detectCores()-1), force=FALSE, parallel=TRUE) {
+extractModifiedBasesFromFast5 <- function(fast5file, mc.cores=(parallel::detectCores()-1), motif="CG", force=FALSE, parallel=TRUE) {
 
     baseModResults <- file.path(getRpath(), paste0(digest::digest(fast5file, algo="md5", file = FALSE), ".basemods", ".Rdata"))
     if (file.exists(baseModResults) && !force) {
@@ -199,9 +199,13 @@ extractModifiedBasesFromFast5 <- function(fast5file, mc.cores=(parallel::detectC
         basemodprob <- data.frame(t(rhdf5::h5read(fast5file, targetMods)))[,4]/255
 
         mods_df <- data.frame(read_id=read_id, position=seq(length(fastq)), nucleotide=fastq, prob_5mC=basemodprob, stringsAsFactors=FALSE)
-        mods_df <- mods_df[which(mods_df$nucleotide=="C"),]
+        mods_df$CpG <- fastq[mods_df$pos]=="C" & fastq[mods_df$pos+1]=="G"
+        mods_df <- mods_df[which(mods_df$CpG),]
+
+        mods_df$seq_context = unlist(lapply(mods_df$pos, function(x) { paste0(fastq[seq(from=max(x-5,1), to=min(x+5, length(fastq)))], collapse="") }))
         return(invisible(mods_df))
     }
+
     if (parallel==TRUE) {
         mod_data <- dplyr::bind_rows(pbmcapply::pbmclapply(read_ids, extract5mCByRead, fast5file=fast5file, template=methtemplate, mc.cores=mc.cores))
     } else {
