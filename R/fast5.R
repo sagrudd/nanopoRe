@@ -165,6 +165,7 @@ extractMethylatedBases <- function(x, filteredChunk, modifications_df) {
                             G=as.integer(rnt=='G'),
                             T=as.integer(rnt=='T'),
                             prob=varData$prob_5mC,
+                            seq_context=as.character(varData$seq_context),
                             stringsAsFactors = FALSE)
         pdata <- pdata[which(pdata$op == "M"), ]
     }
