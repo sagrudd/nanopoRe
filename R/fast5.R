@@ -49,7 +49,7 @@ extract5mC <- function(fast5file, threshold_5mc = 0.85, fast5files=NULL, force=F
     mod_data <- extractModifiedBasesFromFast5(fast5file, force=force, ...)
     mod_data <- mod_data[which(mod_data$prob_5mC>=threshold_5mc),]
 
-    saveRDS(mod_data, file = baseProbResults)
+    saveRDS(mod_data, file = baseProbResults, compress=FALSE)
 
     return(invisible(mod_data))
 }
@@ -103,7 +103,7 @@ loadMethylationBamFile <- function(bamFile, chrId, force=FALSE) {
     drop <- unique(append(append(secondary, supplemen), unmapped))
     bamChunk <- bamChunk[-drop, ]
 
-    saveRDS(bamChunk, file = bamParseResults)
+    saveRDS(bamChunk, file = bamParseResults, compress=FALSE)
 
     return(invisible(bamChunk))
 }
@@ -212,7 +212,7 @@ extractModifiedBasesFromFast5 <- function(fast5file, mc.cores=(parallel::detectC
     } else {
         mod_data <- dplyr::bind_rows(lapply(read_ids, extract5mCByRead, fast5file=fast5file, template=methtemplate))
     }
-    saveRDS(mod_data, file = baseModResults)
+    saveRDS(mod_data, file = baseModResults, compress=FALSE)
     return(mod_data)
 }
 
@@ -258,6 +258,6 @@ extract5mCProbabilities <- function(fast5file, fast5files=NULL, force=FALSE, b=3
     tdata <- transform(mod_data, group=cut(prob_5mC, breaks=numericSeq))
     rdata <- do.call(data.frame, aggregate(prob_5mC~group, tdata, FUN=function(x) c(Count=length(x), Sum=sum(x))))
 
-    saveRDS(rdata, file = baseProbResults)
+    saveRDS(rdata, file = baseProbResults, compress=FALSE)
     return(invisible(rdata))
 }

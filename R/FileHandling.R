@@ -28,7 +28,7 @@ fastqCheckup <- function(input_fastq, force = FALSE) {
     }
     if (!fastqValidator(input_fastq)) {
         # something is FUBAR with this file ...
-        saveRDS(FALSE, file = fileResults)
+        saveRDS(FALSE, file = fileResults, compress=FALSE)
         return(FALSE)
     }
 
@@ -41,6 +41,6 @@ fastqCheckup <- function(input_fastq, force = FALSE) {
         input_fastq), reads = (scales::comma_format())(getFastqCount()),
         bases = bases, size=gdata::humanReadable(file.info(input_fastq)$size),
         nt = getFastqBases(), n = getFastqCount())
-    saveRDS(fileinfo, file = fileResults)
+    saveRDS(fileinfo, file = fileResults, compress=FALSE)
     return(fileinfo)
 }

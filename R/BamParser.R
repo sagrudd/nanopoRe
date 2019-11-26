@@ -106,7 +106,7 @@ bamSummariseByChr <- function(
         bamInfo <- rbind(bamInfo, processBamChunk(reads))
     }
     close(bam)
-    saveRDS(bamInfo, file = bamSummaryResults)
+    saveRDS(bamInfo, file = bamSummaryResults, compress=FALSE)
     return(bamInfo)
 }
 
@@ -166,7 +166,7 @@ parallelBamSummarise <- function(
         for (chr in getChromosomeIds()) {
             bamInfo <- rbind(bamInfo, bamSummariseByChr(chr, bamFile))
         }
-        saveRDS(bamInfo, file = bamSummaryResults)
+        saveRDS(bamInfo, file = bamSummaryResults, compress=FALSE)
     }
     setCachedObject("bamfile", new.env())
     assign("bamInfo", bamInfo, envir = getCachedObject("bamfile"))
@@ -222,7 +222,7 @@ bamSummarise <- function(bamFile, force = FALSE, blockSize = 50000L) {
             bamInfo <- rbind(bamInfo, processBamChunk(reads))
         }
         close(bam)
-        saveRDS(bamInfo, file = bamSummaryResults)
+        saveRDS(bamInfo, file = bamSummaryResults, compress=FALSE)
     }
     # and save the object into memory
     setCachedObject("bamfile", new.env())

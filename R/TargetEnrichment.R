@@ -429,7 +429,7 @@ harvestUnmappedQuals <- function(
         }
         offset <- offset + chunk.size
     }
-    saveRDS(unmapped.content, file=chromosomeFile)
+    saveRDS(unmapped.content, file=chromosomeFile, compress=FALSE)
     return(invisible(unmapped.content))
 
 }

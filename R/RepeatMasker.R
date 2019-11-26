@@ -62,7 +62,7 @@ RepeatMaskerGR <- function(RepeatMaskerFile = NULL, RepeatMaskerSRC = NULL,
         unlist(repeatMaskData[, 9])),
         repeatClass = unlist(repeatMaskData[, 11]),
         repeatUnit = unlist(repeatMaskData[, 10]))
-    saveRDS(GRdata, file = RepeatMaskerGRData)
+    saveRDS(GRdata, file = RepeatMaskerGRData, compress=FALSE)
     return(GRdata)
 
 }
