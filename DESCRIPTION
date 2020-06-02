@@ -46,6 +46,7 @@ Imports:
     reshape2,
     Rsamtools,
     RCurl,
+    rhdf5,
     R.utils,
     scales,
     S4Vectors,
